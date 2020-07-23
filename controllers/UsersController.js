@@ -1,5 +1,5 @@
 var validator = require('validator');
-var checker= require('../controllers/Checker');
+var checker= require('./Check');
 const user = require('../models/UsersModel');
 
 //Check login
