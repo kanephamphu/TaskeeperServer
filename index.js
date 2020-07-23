@@ -5,17 +5,9 @@ var bodyparser=require("body-parser");
 var server= require("http").createServer(app);
 var io=require("socket.io").listen(server);
 var mongoose = require("mongoose");
-var nodemailer= require("nodemailer");
 var config = require('./config/default.json');
 var userController = require('./controllers/UsersController');
 var jwt= require('jsonwebtoken');
-app.set('view engine','ejs');
-app.set('views','./views');
-app.use(express.static('public'));
-
-app.get('/',(req,res)=>
-	res.send("HHEHEHE")
-);
 server.listen(process.env.PORT || 3000);
 app.use(bodyparser.json());
 mongoose.connect(config.ConnectMongo).then(
