@@ -3,6 +3,7 @@ var app = express();
 var server= require("http").createServer(app);
 var io=require("socket.io").listen(server);
 var config = require('./config/default.json');
+var bodyparser = require('body-parser');
 var userController = require('./controllers/UsersController');
 var jwt= require('jsonwebtoken');
 server.listen(process.env.PORT || 3000);
