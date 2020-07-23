@@ -116,6 +116,22 @@ async function getInformation(_id){
     }
 }
 
+//Change password 
+async function changePassword(_id, password){
+    try{
+        var result = await user.updateOne({"_id":_id}, {"login_information.password" : checker.encrypt(password)});
+        if(result.n>0){
+            return 'true';
+        }else{
+            return 'failed';
+        }
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+module.exports.changePassword = changePassword;
 module.exports.getInformation = getInformation;
 module.exports.getFunction = getFunction;
 module.exports.getGroup = getGroup;

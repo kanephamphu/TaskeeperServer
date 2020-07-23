@@ -6,6 +6,8 @@ var config = require('./config/default.json');
 var bodyparser = require('body-parser');
 var userController = require('./controllers/UsersController');
 var jwt= require('jsonwebtoken');
+var checker = require('./controllers/Check')
+const user = require("./models/UsersModel");
 server.listen(process.env.PORT || 3000);
 app.use(bodyparser.json());
 
@@ -28,11 +30,14 @@ io.sockets.on('connection',function(socket){
 					"phone_number" : INFORMATION.phone_number.current_phone_number
 				};
 				jwt.sign(tokenInformation,config.login_secret_key, { expiresIn: 60*60*2 },(err,token)=>{
-						socket.token = token;
-						console.log(socket.token);
+						if(err){
+							console.log(err);
+						}
+						socket.auth = true;
+						console.log(token);
 						var loginresult = {
 							"result" : result,
-							"secret_key" : socket.token
+							"secret_key" : token
 						}
 						socket.emit("sv-send-login-res",loginresult);
 				});
@@ -43,7 +48,7 @@ io.sockets.on('connection',function(socket){
 				socket.emit("sv-send-login-res",loginresult);
 			}
 		}catch(e){
-			console.log(e);
+			socket.emit("sv-send-login-res",{"result" : "error"});
 			throw(e);
 		}
 		
@@ -60,6 +65,7 @@ io.sockets.on('connection',function(socket){
 			console.log(result);
 			socket.emit("sv-send-register-res",{"result" : result });
 		}catch(e){
+			socket.emit("sv-send-register-res",{"result" : "error"});
 			console.log(e);
 			throw(e);
 		}
@@ -70,7 +76,7 @@ io.sockets.on('connection',function(socket){
 		try{
 			jwt.verify(data,config.login_secret_key,(err,decoded)=>{
 				if(err) 
-					console.log(err);
+				socket.emit("sv-send-token-decode",{"result":"token-error"});
 				if(decoded)
 				{
 					console.log(decoded);
@@ -80,17 +86,46 @@ io.sockets.on('connection',function(socket){
 			})
 			
 		}catch(e){
-			console.log(e);
+			socket.emit("sv-send-token-decode",{"result" : "error"});
 			throw(e);
 		}
 	});
 
+	//Change password
+	socket.on("cl-change-password",(data)=>{
+		try{
+			jwt.verify(data.secret_key,config.login_secret_key,async (err,decoded)=>{
+				if(err) 
+					socket.emit("sv-change-password",{"result":"token-error"})
+				if(decoded)
+				{
+					if( checker.encrypt(data.old_password) == decoded.password){
+						if(data.new_password == data.verify_password){
+							var changepassword = await userController.changePassword(decoded._id,data.new_password);
+							if(typeof changepassword !== undefined){
+								socket.emit("sv-change-password",{"result" : "success"});
+							}else{
+								socket.emit("sv-change-password",{"result" : "error"});
+							}
+						}else{
+							socket.emit("sv-change-password",{"result" : "two-password-not-similar"});
+						}
+					}else{
+						socket.emit("sv-change-password",{"result" : "wrong-password"});
+					}
+				}
+				
+			})
+		}catch(e){
+			socket.emit("sv-change-password",{"result" : "error"});
+			throw(e);
+		}
+	})
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
 	});
 });
-
 
 app.get('/',(req,res)=>
 	res.send('Server Thoy Mey Ben Oyyy')
