@@ -24,7 +24,7 @@ var options={
 };
 var transporter=nodemailer.createTransport(options);
 
-server.listen(process.env.PORT || 30200);
+server.listen(process.env.PORT || 3000);
 app.use(bodyparser.json());
 mongoose.connect(config.ConnectMongo).then(
 	()=>{
@@ -69,7 +69,9 @@ io.sockets.on('connection',function(socket){
 		console.log(socket.id+" disconnected");
 	});
 });
-
+app.get('/',(req,res)=>{
+	res.response("heheher");
+});
 app.get('/verify/:token', function(request, response, next) {
 	console.log(request.params.token);
 	User.updateOne({"VERIFY_TOKEN":request.params.token},{"STATUS":"isActive"}).exec((err, result)=>{
