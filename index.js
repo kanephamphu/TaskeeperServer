@@ -1,23 +1,12 @@
 var express = require("express");
 var app = express();
-var path=require("path");
-var bodyparser=require("body-parser");
 var server= require("http").createServer(app);
 var io=require("socket.io").listen(server);
-var mongoose = require("mongoose");
 var config = require('./config/default.json');
 var userController = require('./controllers/UsersController');
 var jwt= require('jsonwebtoken');
 server.listen(process.env.PORT || 3000);
 app.use(bodyparser.json());
-mongoose.connect(config.ConnectMongo).then(
-	()=>{
-		console.log("Connect DB succesfully");
-	},
-	err=>{
-		console.log("Failed to connect to database");
-	}
-);
 
 
 io.sockets.on('connection',function(socket){

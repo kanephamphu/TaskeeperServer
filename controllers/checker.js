@@ -1,8 +1,6 @@
 var CryptoJS = require("crypto-js");
 var user = require('../models/UsersModel');
 var config= require('../config/default.json');
-const { resolve } = require("path");
-const { nextTick } = require("process");
 //encrypt text to sha256
 function encrypt(text) {
     return CryptoJS.HmacSHA256(text,config.Checking.secret_key).toString(CryptoJS.enc.Hex);
