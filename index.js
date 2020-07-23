@@ -13,16 +13,9 @@ app.set('view engine','ejs');
 app.set('views','./views');
 app.use(express.static('public'));
 
-app.get('/',(req,res)=>res.render('home'));
-var options={
-    service: 'Gmail',
-    auth:{
-        user: 'nowayit69@gmail.com',
-        pass: 'Anhphutai0159'
-    }
-};
-var transporter=nodemailer.createTransport(options);
-
+app.get('/',(req,res)=>
+	res.send("HHEHEHE")
+);
 server.listen(process.env.PORT || 3000);
 app.use(bodyparser.json());
 mongoose.connect(config.ConnectMongo).then(
@@ -86,22 +79,11 @@ io.sockets.on('connection',function(socket){
 		console.log(socket.id+" disconnected");
 	});
 });
-app.get('/',(req,res)=>{
-	res.response("Server Thoy Mey Ben Oyyy");
-});
+app.get('/',(req,res)=>
+	res.send('Server Thoy Mey Ben Oyyy')
+);
 
-app.post('/api/posts',verifyToken, (req,res)=>{
-	jwt.verify(req.token, 'secretkey', (err,authData)=>{
-		if(err){
-			res.sendStatus(403);
-		}else{
-			res.json({
-				message: 'Post new app',
-				authData
-			});
-		}
-	})
-});
+
 
 
 
