@@ -18,7 +18,16 @@ io.sockets.on('connection',function(socket){
 		try{
 			const result = await userController.checkLogin(data.loginquery,data.password);
 			if(result =='success'){
-				jwt.sign(data,config.login_secret_key,(err,token)=>{
+				const ID = await userController.getUserID(data.loginquery);
+				const INFORMATION = await userController.getInformation(ID);
+				const tokenInformation = {
+					"_id" : ID,
+					"username" : INFORMATION.login_information.username,
+					"password" : INFORMATION.login_information.password,
+					"email" : INFORMATION.email.current_email,
+					"phone_number" : INFORMATION.phone_number.current_phone_number
+				};
+				jwt.sign(tokenInformation,config.login_secret_key, { expiresIn: 60 * 60 * 24 },(err,token)=>{
 						socket.token = token;
 						console.log(socket.token);
 						var loginresult = {
@@ -56,11 +65,23 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
+	//Get token decode 
+	socket.on("cl-send-token-decode", async(data)=>{
+		try{
+			console.log(jwt.decode(data));
+			socket.emit("sv-send-token-decode",jwt.decode(data));
+		}catch(e){
+			console.log(e);
+			throw(e);
+		}
+	});
+
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
 	});
 });
+
 app.get('/',(req,res)=>
 	res.send('Server Thoy Mey Ben Oyyy')
 );

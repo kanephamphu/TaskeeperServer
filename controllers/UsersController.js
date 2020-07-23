@@ -1,5 +1,5 @@
 var validator = require('validator');
-var checker= require('./Checker');
+var checker= require('../controllers/Checker');
 const user = require('../models/UsersModel');
 
 //Check login
@@ -73,11 +73,52 @@ async function getGroupUser(id) {
 //Get ID by email or phone number or username
 async function getUserID(loginquery){
     try{
-        
+        var id = await user.findOne(
+            {$or: [{"email.current_email" : loginquery}, {"phone_number.current_phone_number": loginquery}, {"login_information.username": loginquery}]}
+            ,"_id");
+        return id._id;
     }catch(e){
         console.log(e);
         throw(e);
     }
 }
+
+//Get group by ID
+async function  getGroup(_id) {
+    try{
+        var group = await user.findOne({"_id": _id},"group");
+        return group.group;
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+//Get function by ID
+async function  getFunction(_id) {
+    try{
+        var group = await user.findOne({"_id": _id},"function");
+        return group.function;
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+//Get JWT Token Information By ID
+async function getInformation(_id){
+    try{
+        var information = await user.findOne({"_id":_id},["login_information.username"
+        ,"login_information.password","email.current_email","phone_number.current_phone_number"]);
+        return information;
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+module.exports.getInformation = getInformation;
+module.exports.getFunction = getFunction;
+module.exports.getGroup = getGroup;
+module.exports.getUserID = getUserID;
 module.exports.register=register;
 module.exports.checkLogin= checkLogin;
