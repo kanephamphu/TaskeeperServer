@@ -1,7 +1,31 @@
 var validator = require('validator');
-var checker= require('../controllers/checker');
+var checker= require('./Checker');
 const user = require('../models/UsersModel');
 
+//Check login
+async function checkLogin(loginquery, passwordquery){
+    if(validator.isEmail(loginquery) || validator.isMobilePhone(loginquery)){
+        const password= await user.findOne({
+            $or: [{"email.current_email" : loginquery},
+            {"phone_number.current_phone_number": loginquery}, {"login_information.username": loginquery}]},"login_information.password");
+        if(password==null){
+            return 'not-found-login-query';
+        }else{
+            try{
+                if(password.login_information.password==checker.encrypt(passwordquery)){
+                    return 'success';
+                }else{
+                    return 'wrong-password';
+                }
+            }catch(e){
+                console.log(e);
+                throw(e);
+            }
+        }
+    }else{
+        return 'wrong-format';
+    }
+}
 //Register new account
 async function register(first_name, last_name, email, phone_number, password) {
     if(validator.isEmail(email)){
@@ -36,5 +60,9 @@ async function register(first_name, last_name, email, phone_number, password) {
         return 'wrong-email-format';
     }
 }
-
+//Get Group User 
+async function getGroupUser(id) {
+    
+}
 module.exports.register=register;
+module.exports.checkLogin= checkLogin;
