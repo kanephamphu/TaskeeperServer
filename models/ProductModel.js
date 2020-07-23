@@ -1,7 +1,8 @@
 // 1. Require mongoose
 const mongoose= require("mongoose");
 var randomToken = require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
-mongoose.connect("mongodb+srv://admin:admin@cluster0.fsksm.gcp.mongodb.net/Taskeeper?retryWrites=true&w=majority");
+var config= require('../config/default.json');
+mongoose.connect(config.ConnectMongo);
 
 var ProductSchema=new mongoose.Schema({
 	PRODUCT_NAME:{
