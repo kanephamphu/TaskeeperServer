@@ -9,7 +9,6 @@ async function register(first_name, last_name, email, phone_number, password) {
                 if(validator.isMobilePhone(phone_number)){
                     if(await checker.isNumberPhoneExist(phone_number) == false){
                         var userdocs = {
-                            
                             "first_name": first_name,
                             "last_name": last_name,
                             "login_information.password": checker.encrypt(password),

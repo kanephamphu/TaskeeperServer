@@ -8,7 +8,7 @@ var mongoose = require("mongoose");
 var nodemailer= require("nodemailer");
 var config = require('./config/default.json');
 var login = require('./controllers/LoginController');
-var randomToken = require("random-token").create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
+var register = require('./controllers/RegisterController');
 var jwt= require('jsonwebtoken');
 app.set('view engine','ejs');
 app.set('views','./views');
@@ -41,28 +41,46 @@ io.sockets.on('connection',function(socket){
 	console.log(socket.id+" is connecting");
 	//Login server listener, if the account status is unActive send result unActive to client
 	socket.on("client-send-login-request", async function(data){
-		console.log(data);
-		console.log(data.loginquery);
-		const result = await login.checkLogin(data.loginquery,data.password);
-		console.log(result);
-		if(result =='success'){
-			jwt.sign(data,config.login_secret_key,(err,token)=>{
-					socket.token = token;
-					var loginresult = {
-						"result" : result,
-						"secret_key" : socket.token
-					}
-					socket.emit("server-send-login-respone",loginresult);
-			});
-		}else{
-			var loginresult = {
-				"result" : result
+		try{
+			const result = await login.checkLogin(data.loginquery,data.password);
+			if(result =='success'){
+				jwt.sign(data,config.login_secret_key,(err,token)=>{
+						socket.token = token;
+						console.log(socket.token);
+						var loginresult = {
+							"result" : result,
+							"secret_key" : socket.token
+						}
+						socket.emit("server-send-login-respone",loginresult);
+				});
+			}else{
+				var loginresult = {
+					"result" : result
+				}
+				socket.emit("server-send-login-respone",loginresult);
 			}
-			socket.emit("server-send-login-respone",loginresult);
+		}catch(e){
+			console.log(e);
+			throw(e);
+		}
+		
+	});
+	//Client send logout request
+	socket.on("client-send-logout-request",(token)=>{
+		if(socket.token==token)
+			console.log("authenticated")
+	});
+	//Client send register request
+	socket.on("client-send-register-request",async (data)=>{
+		try{
+			var result = await register.register(data.first_name,data.last_name,data.email,data.phone_number,data.password);
+			console.log(result);
+			socket.emit("server-send-register-respone",{"result" : result });
+		}catch(e){
+			console.log(e);
+			throw(e);
 		}
 	});
-	//Show list product
-	
 
 	//Disconnect
 	socket.on('disconnect', function () {
