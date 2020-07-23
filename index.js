@@ -40,7 +40,7 @@ io.sockets.on('connection',function(socket){
 	socket.token=''
 	console.log(socket.id+" is connecting");
 	//Login server listener, if the account status is unActive send result unActive to client
-	socket.on("client-send-login-request", async function(data){
+	socket.on("cl-send-login-req", async function(data){
 		try{
 			const result = await login.checkLogin(data.loginquery,data.password);
 			if(result =='success'){
@@ -51,13 +51,13 @@ io.sockets.on('connection',function(socket){
 							"result" : result,
 							"secret_key" : socket.token
 						}
-						socket.emit("server-send-login-respone",loginresult);
+						socket.emit("sv-send-login-res",loginresult);
 				});
 			}else{
 				var loginresult = {
 					"result" : result
 				}
-				socket.emit("server-send-login-respone",loginresult);
+				socket.emit("sv-send-login-res",loginresult);
 			}
 		}catch(e){
 			console.log(e);
@@ -71,11 +71,11 @@ io.sockets.on('connection',function(socket){
 			console.log("authenticated")
 	});
 	//Client send register request
-	socket.on("client-send-register-request",async (data)=>{
+	socket.on("cl-send-register-req",async (data)=>{
 		try{
 			var result = await register.register(data.first_name,data.last_name,data.email,data.phone_number,data.password);
 			console.log(result);
-			socket.emit("server-send-register-respone",{"result" : result });
+			socket.emit("sv-send-register-res",{"result" : result });
 		}catch(e){
 			console.log(e);
 			throw(e);
