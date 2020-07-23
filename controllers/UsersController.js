@@ -62,7 +62,22 @@ async function register(first_name, last_name, email, phone_number, password) {
 }
 //Get Group User 
 async function getGroupUser(id) {
-    
+    try{
+        
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+//Get ID by email or phone number or username
+async function getUserID(loginquery){
+    try{
+        
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
 }
 module.exports.register=register;
 module.exports.checkLogin= checkLogin;

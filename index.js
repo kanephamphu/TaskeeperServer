@@ -102,16 +102,7 @@ app.post('/api/posts',verifyToken, (req,res)=>{
 		}
 	})
 });
-async function verifyToken(token) {
-	// Check if bearer is undifiend
-	if(typeof bearerHeader !== 'undefined'){
-		//Split at the space
-		
-	}else{
-		//Forbidden
-		return 'unauthenticated'
-	}
-}
+
 
 
   
