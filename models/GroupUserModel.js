@@ -3,10 +3,12 @@ var config= require('../config/default.json');
 mongoose.connect(config.ConnectMongo);
 var GroupUser = new mongoose.Schema({
     group_name: {
-        type: String
+        type: String,
+        unique: true
     },
     created_time: {
-        type: Number
+        type: Number,
+        default: Date.now()
     },
     updated_time: {
         type: Number
@@ -22,7 +24,8 @@ var GroupUser = new mongoose.Schema({
                 type: String
             },
             created_time: {
-                type: Number
+                type: Number,
+                default: Date.now()
             },
             updated_time: {
                 type: Number

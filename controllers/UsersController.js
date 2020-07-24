@@ -131,6 +131,34 @@ async function changePassword(_id, password){
     }
 }
 
+//Add group to user
+async function addNewGroup(_id,_groupid) {
+    try{
+        var result = await checker.isGroupExist(_groupid);
+        if(result){
+            if(await checker.isAlreadyGroup(_id,_groupid)==false){
+                var result=await user.findOne(
+                    {
+                        "_id" : _id
+                    },"group");
+                result=result.group;
+                result.push(_groupid);
+                var result1 = await user.update({"_id": _id},{"group": result});
+                if(result1)
+                    return 'success';
+                else
+                    return 'failed';
+
+            }else{
+                return 'already-in-group';
+            }
+        }else
+            return 'group-not-exists';
+    }catch(e){
+        throw(e);
+    }
+}
+module.exports.addNewGroup = addNewGroup;
 module.exports.changePassword = changePassword;
 module.exports.getInformation = getInformation;
 module.exports.getFunction = getFunction;

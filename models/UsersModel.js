@@ -82,7 +82,7 @@ var UserChema = new mongoose.Schema({
         main_skills: {
             type: String
         },
-        working_information: [{
+        working_details: [{
             working_id: {
                 type: String
             },
@@ -133,7 +133,8 @@ var UserChema = new mongoose.Schema({
             type: String
         },
         created_time: {
-            type: Number
+            type: Number,
+            default: Date.now()
         },
         updated_time: {
             type: Number
