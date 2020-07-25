@@ -50,6 +50,9 @@ var UserChema = new mongoose.Schema({
     day_of_birth: {
         type: Number
     },
+    month_of_birth:{
+        type: Number
+    },
     year_of_birth: {
         type: Number
     },

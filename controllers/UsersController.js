@@ -27,7 +27,7 @@ async function checkLogin(loginquery, passwordquery){
     }
 }
 //Register new account
-async function register(first_name, last_name, email, phone_number, password) {
+async function register(first_name, last_name, email, phone_number, password, day, month, year) {
     if(validator.isEmail(email)){
         if(await checker.isEmailExist(email)==false){
                 if(validator.isMobilePhone(phone_number)){
@@ -37,7 +37,10 @@ async function register(first_name, last_name, email, phone_number, password) {
                             "last_name": last_name,
                             "login_information.password": checker.encrypt(password),
                             "phone_number.current_phone_number": phone_number,
-                            "email.current_email": email
+                            "email.current_email": email,
+                            "day_of_birth" : day,
+                            "month_of_birth" : month,
+                            "year_of_birth" : year
                         }
                         
                         const result = user.create(userdocs);

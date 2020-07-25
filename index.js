@@ -62,7 +62,7 @@ io.sockets.on('connection',function(socket){
 	//Client send register request
 	socket.on("cl-send-register-req",async (data)=>{
 		try{
-			var result = await userController.register(data.first_name,data.last_name,data.email,data.phone_number,data.password);
+			var result = await userController.register(data.first_name,data.last_name,data.email,data.phone_number,data.password,data.day,data.month,data.year);
 			console.log(result);
 			socket.emit("sv-send-register-res",{"result" : result });
 		}catch(e){
