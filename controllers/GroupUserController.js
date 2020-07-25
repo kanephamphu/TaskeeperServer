@@ -1,5 +1,3 @@
-var validator = require('validator');
-var checker= require('./Check');
 const group = require('../models/GroupUserModel');
 
 //Create new group user
@@ -20,3 +18,5 @@ async function addNewGroup(groupname,functions) {
 async function addNewFunction(groupname,functions) {
     
 }
+
+module.exports.addNewGroup = addNewGroup;

@@ -7,7 +7,8 @@ var bodyparser = require('body-parser');
 var userController = require('./controllers/UsersController');
 var jwt= require('jsonwebtoken');
 var checker = require('./controllers/Check')
-const user = require("./models/UsersModel");
+var tasksController = require('./controllers/TaskController');
+const tasks = require("./models/TasksModel");
 server.listen(process.env.PORT || 3000);
 app.use(bodyparser.json());
 
@@ -29,7 +30,7 @@ io.sockets.on('connection',function(socket){
 					"email" : INFORMATION.email.current_email,
 					"phone_number" : INFORMATION.phone_number.current_phone_number
 				};
-				jwt.sign(tokenInformation,config.login_secret_key, { expiresIn: 60*60*2 },(err,token)=>{
+				jwt.sign(tokenInformation,config.login_secret_key, { expiresIn: 60*60*24 },(err,token)=>{
 						if(err){
 							console.log(err);
 						}
@@ -76,7 +77,7 @@ io.sockets.on('connection',function(socket){
 		try{
 			jwt.verify(data,config.login_secret_key,(err,decoded)=>{
 				if(err) 
-				socket.emit("sv-send-token-decode",{"result":"token-error"});
+					socket.emit("sv-send-token-decode",{"result":"token-error"});
 				if(decoded)
 				{
 					console.log(decoded);
@@ -96,7 +97,7 @@ io.sockets.on('connection',function(socket){
 		try{
 			jwt.verify(data.secret_key,config.login_secret_key,async (err,decoded)=>{
 				if(err) 
-					socket.emit("sv-change-password",{"result":"token-error"})
+					socket.emit("sv-change-password",{"result":"token-error"});
 				if(decoded)
 				{
 					if( checker.encrypt(data.old_password) == decoded.password){
@@ -121,6 +122,51 @@ io.sockets.on('connection',function(socket){
 			throw(e);
 		}
 	})
+
+	//Add new tasks
+	socket.on("cl-new-tasks",(data)=>{
+		try {
+			console.log(data.secret_key);
+			jwt.verify(data.secret_key,config.login_secret_key,async (err,decoded)=>{
+				if(err){
+					console.log(err);
+					socket.emit("sv-new-tasks",{"result":"token-error"})
+				}
+				if(decoded){
+					if(typeof data.price_type !== 'undefined'){
+						if(data.price_type == 'unextract'){
+							if(data.floor_price >= data.ceiling_price){
+								socket.emit("sv-new-tasks", {"result" : "price-error"})
+							}else{
+								var result = await tasksController.addTask(data.task_title,data.task_description,data.task_type,decoded._id,
+									data.tags,data.floor_price, data.ceiling_price, data.location, data.price_type);
+								if(typeof result !== 'undefined'){
+									socket.emit("sv-new-tasks",{"result" : result})
+								}else{
+									socket.emit("sv-new-tasks", {"result" : "undefined"});
+								}
+							}
+						}else if(data.price_type == 'dealing'){
+							var result = await tasksController.addTask(data.task_title,data.task_description,data.task_type,decoded._id,
+								data.tags,null, null, data.location, data.price_type);
+							if(typeof result !== 'undefined'){
+								socket.emit("sv-new-tasks",{"result" : result})
+							}else{
+								socket.emit("sv-new-tasks", {"result" : "undefined"});
+							}
+						}else{
+							socket.emit("sv-new-tasks", {"result" : "undefined"});
+						}
+					}else{
+						socket.emit("sv-new-tasks",{"result":"miss-price-type"})
+					}
+				}
+			});
+		} catch (e) {
+			socket.emit("sv-new-tasks",{"result" : "error"});
+			throw(e);	
+		}
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");

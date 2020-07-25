@@ -104,7 +104,7 @@ async function  getFunction(_id) {
     }
 }
 
-//Get JWT Token Information By ID
+//Get Information By ID
 async function getInformation(_id){
     try{
         var information = await user.findOne({"_id":_id},["login_information.username"
@@ -202,7 +202,38 @@ async function addNewEducationInformation(_id,education_name,education_descripti
     }
 }
 
+//Set active account
+async function setActive(_id) {
+    try{
+        var result = await user.update({"_id" : _id},{"status" : "isActive"});
+        if(result){
+            return 'success';
+        }else{
+            return 'failed';
+        }
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
 
+//Set suspended account
+async function setSuspended(_id) {
+    try{
+        var result = await user.update({"_id" : _id},{"status" : "suspended"});
+        if(result){
+            return 'success';
+        }else{
+            return 'failed';
+        }
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+module.exports.setActive = setActive;
+module.exports.setSuspended = setSuspended;
 module.exports.addNewWorkingInformation = addNewWorkingInformation;
 module.exports.addNewEducationInformation = addNewEducationInformation;
 module.exports.addNewGroup = addNewGroup;

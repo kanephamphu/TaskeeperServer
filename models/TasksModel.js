@@ -2,6 +2,29 @@ const mongoose = require('mongoose');
 var config= require('../config/default.json');
 mongoose.connect(config.ConnectMongo);
 var Tasks= new mongoose.Schema({
+    task_title: {
+        type: String
+    },
+    task_description: {
+        type: String
+    },
+    price: {
+        price_type : {
+            type: String,
+            enum: ['unextract','dealing'],
+            default: 'unextract'
+        },
+        floor_price : Number,
+        ceiling_price : Number
+    },
+    location : {
+        type: String
+    },
+    task_type : {
+        type: String,
+        enum: ['full-time','part-time','freelance'],
+        default: 'freelance'
+    },
     task_owner_id: {
         type: String
     },
@@ -12,9 +35,9 @@ var Tasks= new mongoose.Schema({
         information: {
             type: String
         },
-        dealing_price: {
-            type: Number
-        }
+        floor_price : Number,
+        ceiling_price : Number,
+        extract_price: Number
     }],
     _id_employee: {
         _id_employee: {
@@ -24,24 +47,26 @@ var Tasks= new mongoose.Schema({
             type: Number
         }
     },
-    tags: [{
-        tag_id: {
-            type: String
-        },
-        tag_description: {
+    tags: [
+        {
             type: String
         }
+    ],
+    created_time : {
+        type: Number,
+        default: Date.now()
+    },
+    languages : [{
+        type: String
     }],
-    images: [{
-        id_images: {
-            type: String
-        },
-        image_url: {
-            type: String
-        },
-        description: {
-            type: String
-        }
+    industry: {
+        type: String
+    },
+    position : {
+        type: String
+    },
+    skills: [{
+        type: String
     }]
 });
 
