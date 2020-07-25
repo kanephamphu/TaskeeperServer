@@ -158,6 +158,53 @@ async function addNewGroup(_id,_groupid) {
         throw(e);
     }
 }
+
+//Add new working detail
+async function addNewWorkingInformation(_id,specialize,level) {
+    try{
+        var result=await user.findOne(
+            {
+                "_id" : _id
+            },"working_information.working_details");
+        result = result.working_information.working_details;
+        result.push({"specialize" : specialize, "level" : level});
+        console.log(result);
+        var result1 = await user.update({"_id": _id},{"working_information.working_details": result});
+        if(result1)
+                    return 'success';
+                else
+                    return 'failed';
+    }catch(e){
+        throw(e);
+    }
+}
+
+//Add new education detail
+async function addNewEducationInformation(_id,education_name,education_description) {
+    try{
+        var result=await user.findOne(
+            {
+                "_id" : _id
+            },"education_information.education");
+            console.log(result);
+        result = result.education_information;
+        console.log(result);
+        result.push({"education_name" : education_name, "education_description" : education_description});
+        console.log(result);
+        var result1 = await user.update({"_id": _id},{"education_information": result});
+        if(result1)
+                    return 'success';
+                else
+                    return 'failed';
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+
+module.exports.addNewWorkingInformation = addNewWorkingInformation;
+module.exports.addNewEducationInformation = addNewEducationInformation;
 module.exports.addNewGroup = addNewGroup;
 module.exports.changePassword = changePassword;
 module.exports.getInformation = getInformation;

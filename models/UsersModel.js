@@ -84,7 +84,10 @@ var UserChema = new mongoose.Schema({
         },
         working_details: [{
             working_id: {
-                type: String
+                type: mongoose.Schema.Types.ObjectId,
+                index: true,
+                required: true,
+                auto: true,
             },
             specialize: {
                 type: String
@@ -95,19 +98,26 @@ var UserChema = new mongoose.Schema({
         }]
     },
     education_information: [{
-        education: {
-            education_id: {
-                type: String
+        education_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            index: true,
+            required: true,
+            auto: true,
             },
-            education_name: {
-                type: String
-            },
-            education_description: {
-                type: String
-            }
+        education_name: {
+            type: String
+        },
+        education_description: {
+            type: String
         }
     }],
     payment_information: [{
+        payment_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            index: true,
+            required: true,
+            auto: true,
+        },
         payment_information: {
             type: String
         },
