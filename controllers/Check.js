@@ -2,11 +2,11 @@ var CryptoJS = require("crypto-js");
 var user = require('../models/UsersModel');
 var group = require('../models/GroupUserModel');
 var config= require('../config/default.json');
+require('dotenv').config();
 //encrypt text to sha256
 function encrypt(text) {
-    return CryptoJS.HmacSHA256(text,config.Checking.secret_key).toString(CryptoJS.enc.Hex);
+    return CryptoJS.HmacSHA256(text,process.env.encrypt_secret_key).toString(CryptoJS.enc.Hex);
 }
-
 //Check: is email is used
 async function isEmailExist(email) {
     try{

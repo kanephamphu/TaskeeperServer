@@ -3,34 +3,32 @@ var checker= require('./Check');
 const user = require('../models/UsersModel');
 
 //Check login
-async function checkLogin(loginquery, passwordquery){
+async function checkLoginQuery(loginquery){
     if(validator.isEmail(loginquery) || validator.isMobilePhone(loginquery)){
-        const password= await user.findOne({
-            $or: [{"email.current_email" : loginquery},
-            {"phone_number.current_phone_number": loginquery}, {"login_information.username": loginquery}]},"login_information.password");
-        if(password==null){
-            return 'not-found-login-query';
-        }else{
-            try{
-                if(password.login_information.password==checker.encrypt(passwordquery)){
-                    return 'success';
-                }else{
-                    return 'wrong-password';
-                }
-            }catch(e){
-                console.log(e);
-                throw(e);
-            }
-        }
+        return true;
     }else{
-        return 'wrong-format';
+        return false;
     }
+}
+async function checkLogin(loginquery, passwordquery){
+    const password= await user.findOne({
+        $or: [{"email.current_email" : loginquery},
+        {"phone_number.current_phone_number": loginquery}, {"login_information.username": loginquery}]},
+        "login_information.password");
+        if(password != null) {
+            if(password.login_information.password==checker.encrypt(passwordquery)){
+                return 'success';
+            }else{
+                return {"password": {"message": "The password is not matched","rule": 'wrong-password'}};
+            }
+        }else{
+            return {"loginquery": {"message": "Can n't found the email","rule": 'not-found-email'}};
+        }
+        
 }
 //Register new account
 async function register(first_name, last_name, email, phone_number, password, day, month, year) {
-    if(validator.isEmail(email)){
         if(await checker.isEmailExist(email)==false){
-                if(validator.isMobilePhone(phone_number)){
                     if(await checker.isNumberPhoneExist(phone_number) == false){
                         var userdocs = {
                             "first_name": first_name,
@@ -46,22 +44,15 @@ async function register(first_name, last_name, email, phone_number, password, da
                         const result = user.create(userdocs);
                         
                         if(result)
-                            return 'success';
+                            return {"success" : true};
                         else
-                            return 'failed';
+                            return {"success" : false, "errors" : {message : "Cann't register"}};
                     }else{
-                        return 'phone-number-exists';
+                        return {"success" : false, "errors" : {"message" : "Phone number already exists", "rule" : "phoneNumber"}};
                     }
-                }else{
-                    return 'wrong-phone-number-format';
-                }
             }else{
-                return 'email-exists';
+                return {"success" : false, "errors" : {message : "Email already exists", "rule" : "email"}};
             }
-    }else
-    {
-        return 'wrong-email-format';
-    }
 }
 //Get Group User 
 async function getGroupUser(id) {
@@ -247,3 +238,4 @@ module.exports.getGroup = getGroup;
 module.exports.getUserID = getUserID;
 module.exports.register=register;
 module.exports.checkLogin= checkLogin;
+module.exports.checkLoginQuery = checkLoginQuery;

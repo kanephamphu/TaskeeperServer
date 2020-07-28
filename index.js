@@ -2,54 +2,83 @@ var express = require("express");
 var app = express();
 var server= require("http").createServer(app);
 var io=require("socket.io").listen(server);
-var config = require('./config/default.json');
+const rateLimit = require("express-rate-limit");
 var bodyparser = require('body-parser');
 var userController = require('./controllers/UsersController');
 var jwt= require('jsonwebtoken');
-var checker = require('./controllers/Check')
+var checker = require('./controllers/Check');
+const helmet = require('helmet')
 var tasksController = require('./controllers/TaskController');
-const tasks = require("./models/TasksModel");
+const niv = require('node-input-validator');
 server.listen(process.env.PORT || 3000);
-app.use(bodyparser.json());
+require('dotenv').config()
 
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 200 // limit each IP to 100 requests per windowMs
+  });
+app.use(bodyparser.json());
+app.use(limiter);
+app.use(helmet())
+app.use(express.json({ limit: '300kb' })); // body-parser defaults to a body size limit of 300kb
 
 io.sockets.on('connection',function(socket){
-	socket.token=''
+	socket.token='';
 	console.log(socket.id+" is connecting");
 	//Login server listener, if the account status is unActive send result unActive to client
 	socket.on("cl-send-login-req", async function(data){
 		try{
-			const result = await userController.checkLogin(data.loginquery,data.password);
-			if(result =='success'){
-				const ID = await userController.getUserID(data.loginquery);
-				const INFORMATION = await userController.getInformation(ID);
-				const tokenInformation = {
-					"_id" : ID,
-					"username" : INFORMATION.login_information.username,
-					"password" : INFORMATION.login_information.password,
-					"email" : INFORMATION.email.current_email,
-					"phone_number" : INFORMATION.phone_number.current_phone_number
-				};
-				jwt.sign(tokenInformation,config.login_secret_key, { expiresIn: 60*60*24 },(err,token)=>{
-						if(err){
-							console.log(err);
+			const v= new niv.Validator(data,{
+				loginquery : 'required|email',
+				password : 'required|minLength:8'
+			});
+			const matched = await v.check();
+			if(matched){
+				const result = await userController.checkLogin(data.loginquery,data.password);
+				if(result =='success'){
+					const ID = await userController.getUserID(data.loginquery);
+					const INFORMATION = await userController.getInformation(ID);
+					const tokenInformation = {
+						"_id" : ID,
+						"username" : INFORMATION.login_information.username,
+						"password" : INFORMATION.login_information.password,
+						"email" : INFORMATION.email.current_email,
+						"phone_number" : INFORMATION.phone_number.current_phone_number
+					};
+					jwt.sign(tokenInformation,process.env.login_secret_key, { expiresIn: 60*60*24 },(err,token)=>{
+							if(err){
+								console.log(err);
+							}
+							socket.auth = true;
+							console.log(token);
+							var loginresult = {
+								"success" : true,
+								"secret_key" : token
+							}
+							socket.emit("sv-send-login-res",loginresult);
+					});
+				}else{
+					var loginresult = {
+						"success" : false,
+						"errors" : {
+							result 
 						}
-						socket.auth = true;
-						console.log(token);
-						var loginresult = {
-							"result" : result,
-							"secret_key" : token
-						}
-						socket.emit("sv-send-login-res",loginresult);
-				});
-			}else{
-				var loginresult = {
-					"result" : result
+					}
+					socket.emit("sv-send-login-res",loginresult);
 				}
+			}else{
+
+				console.log(v.errors);
+				let loginresult = {
+					"success" : false,
+					"errors": v.errors
+				};
+				console.log(loginresult);
 				socket.emit("sv-send-login-res",loginresult);
 			}
+			
 		}catch(e){
-			socket.emit("sv-send-login-res",{"result" : "error"});
+			socket.emit("sv-send-login-res",{"success" : false, "errors" : {"message" : "undefined"}});
 			throw(e);
 		}
 		
@@ -62,40 +91,39 @@ io.sockets.on('connection',function(socket){
 	//Client send register request
 	socket.on("cl-send-register-req",async (data)=>{
 		try{
-			var result = await userController.register(data.first_name,data.last_name,data.email,data.phone_number,data.password,data.day,data.month,data.year);
-			console.log(result);
-			socket.emit("sv-send-register-res",{"result" : result });
+			const v= new niv.Validator(data,{
+				first_name : 'required|maxLength:50|regex:[a-z]',
+				last_name : 'required|maxLength:50|regex:[a-z]',
+				password : 'required|minLength:8',
+				email : 'required|email',
+				phone_number : 'required|phoneNumber',
+				day : 'required|numeric',
+				month : 'required|numeric',
+				year : 'required|numeric'
+			});
+			const matched = await v.check();
+			if(matched){
+				var result = await userController.register(data.first_name,data.last_name,data.email,data.phone_number,data.password,data.day,data.month,data.year);
+				console.log(result);
+				socket.emit("sv-send-register-res",result);
+			}else{
+				socket.emit("sv-send-register-res",{"success" : false, "errors" : v.errors});
+			}
+			
 		}catch(e){
-			socket.emit("sv-send-register-res",{"result" : "error"});
+			socket.emit("sv-send-register-res",{"success" : false, "errors" :{
+				"message" : "undefined"
+			}});
 			console.log(e);
 			throw(e);
 		}
 	});
 
-	//Get token decode 
-	socket.on("cl-send-token-decode", async(data)=>{
-		try{
-			jwt.verify(data,config.login_secret_key,(err,decoded)=>{
-				if(err) 
-					socket.emit("sv-send-token-decode",{"result":"token-error"});
-				if(decoded)
-				{
-					console.log(decoded);
-					socket.emit("sv-send-token-decode",decoded);
-				}
-				
-			})
-			
-		}catch(e){
-			socket.emit("sv-send-token-decode",{"result" : "error"});
-			throw(e);
-		}
-	});
 
 	//Change password
 	socket.on("cl-change-password",(data)=>{
 		try{
-			jwt.verify(data.secret_key,config.login_secret_key,async (err,decoded)=>{
+			jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 				if(err) 
 					socket.emit("sv-change-password",{"result":"token-error"});
 				if(decoded)
@@ -127,55 +155,94 @@ io.sockets.on('connection',function(socket){
 	socket.on("cl-new-tasks",(data)=>{
 		try {
 			console.log(data.secret_key);
-			jwt.verify(data.secret_key,config.login_secret_key,async (err,decoded)=>{
+			jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+				//If token error, cancel transaction
 				if(err){
 					console.log(err);
-					socket.emit("sv-new-tasks",{"result":"token-error"})
+					socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}})
 				}
 				if(decoded){
-					if(typeof data.price_type !== 'undefined'){
-						if(data.price_type == 'unextract'){
-							if(data.floor_price >= data.ceiling_price){
-								socket.emit("sv-new-tasks", {"result" : "price-error"})
-							}else{
-								var result = await tasksController.addTask(data.task_title,data.task_description,data.task_type,decoded._id,
-									data.tags,data.floor_price, data.ceiling_price, data.location, data.price_type);
-								if(typeof result !== 'undefined'){
-									socket.emit("sv-new-tasks",{"result" : result})
+					//Validate input of users
+					const v= new niv.Validator(data,{
+						first_name : 'required|maxLength:50|regex:[a-z]',
+						last_name : 'required|maxLength:50|regex:[a-z]',
+						password : 'required|minLength:8',
+						email : 'required|email',
+						phone_number : 'required|phoneNumber',
+						day : 'required|numeric',
+						month : 'required|numeric',
+						year : 'required|numeric'
+					});
+					const matched = await v.check();
+					if(matched){
+						//Check price_type, if it difference with undefined format, continue handle transaction 
+						if(typeof data.price_type !== 'undefined'){
+							if(data.price_type == 'unextract'){
+								if(data.floor_price >= data.ceiling_price){
+									socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 								}else{
-									socket.emit("sv-new-tasks", {"result" : "undefined"});
+									var result = await tasksController.addTask(data.task_title,data.task_description,data.task_type,decoded._id,
+										data.tags,data.floor_price, data.ceiling_price, data.location, data.price_type);
+									if(typeof result !== 'undefined'){
+										socket.emit("sv-new-tasks",{"success" : true});
+									}else{
+										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
+									}
 								}
-							}
-						}else if(data.price_type == 'dealing'){
-							var result = await tasksController.addTask(data.task_title,data.task_description,data.task_type,decoded._id,
-								data.tags,null, null, data.location, data.price_type);
-							if(typeof result !== 'undefined'){
-								socket.emit("sv-new-tasks",{"result" : result})
+							//Handle the dealing price type 
+							}else if(data.price_type == 'dealing'){
+								var result = await tasksController.addTask(data.task_title,data.task_description,data.task_type,decoded._id,
+									data.tags,null, null, data.location, data.price_type);
+								if(typeof result !== 'undefined'){
+									socket.emit("sv-new-tasks",{"success" : true});
+								}else{
+									socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
+								}
 							}else{
 								socket.emit("sv-new-tasks", {"result" : "undefined"});
 							}
 						}else{
-							socket.emit("sv-new-tasks", {"result" : "undefined"});
+							socket.emit("sv-new-tasks",{"success":false, "errors": {"message" : "Miss price data type", "rule": "price_type"}})
 						}
 					}else{
-						socket.emit("sv-new-tasks",{"result":"miss-price-type"})
+						socket.emit("sv-new-tasks", {"success": false, "errors": v.errors})
 					}
+					
 				}
 			});
 		} catch (e) {
-			socket.emit("sv-new-tasks",{"result" : "error"});
+			socket.emit("sv-new-tasks",{"success" : false, "errors" : {"message" : "Undefined error"}});
 			throw(e);	
 		}
 	});
+
+	//Check validate test
+	socket.on("test",async (data)=>{
+		console.log(data);
+		const v=new Validator(data,
+			{
+				first_name : 'required',
+				last_name : 'required'
+			});
+		const matched = await v.check();
+		console.log(matched);
+		if(!matched){
+			console.log(v.errors);
+			socket.emit("sv-test",v.errors);
+		}else{
+			socket.emit("sv-test",data);
+		}
+		
+	})
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
 	});
 });
-
 app.get('/',(req,res)=>
 	res.send('Server Thoy Mey Ben Oyyy')
 );
+
 
 
 
