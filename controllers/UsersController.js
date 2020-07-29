@@ -196,6 +196,7 @@ async function addNewEducationInformation(_id,education_name,education_descripti
     }
 }
 
+
 //Set active account
 async function setActive(_id) {
     try{

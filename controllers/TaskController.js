@@ -1,7 +1,7 @@
 var task = require('../models/TasksModel');
-
+require('dotenv').config()
 //Add Freelancer Task
-async function addTask(task_title,task_description,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type) {
+async function addFreelanceTask(task_title,task_description,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type,languages,industry) {
     try{
         if(task_type=='freelance'){
             var taskDocs = {
@@ -23,7 +23,44 @@ async function addTask(task_title,task_description,task_type,task_owner_id,tags,
             }
         }
     }catch(e){
-        console.log("e");
+        console.log(e);
+        throw(e);
+    }
+}
+
+//Add Freelancer Task
+async function addFreelanceTask(task_title,task_description,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type) {
+    try{
+        if(task_type!='freelance'){
+            var taskDocs = {
+                "task_title" : task_title,
+                "task_description" : task_description,
+                "task_owner_id" : task_owner_id,
+                "tags" : tags,
+                "price.price_type" : price_type,
+                "task_type" : task_type,
+                "price.floor_price" : floor_price,
+                "price.ceiling_price" : ceiling_price,
+                "location" : location
+            };
+            var result = await task.create(taskDocs);
+            if(result){
+                return 'success';
+            }else{
+                return 'failed';
+            }
+        }
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+async function viewTasks(number_task,skip){
+    try{
+
+    }catch(e){
+        console.log(e);
         throw(e);
     }
 }
@@ -37,4 +74,4 @@ async function test() {
 
 //test();
 
-module.exports.addTask = addTask;
+module.exports.addFreelanceTask = addFreelanceTask;

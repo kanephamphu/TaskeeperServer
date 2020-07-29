@@ -1,6 +1,6 @@
 const mongoose= require("mongoose");
-var config= require('../config/default.json');
-mongoose.connect(config.ConnectMongo);
+mongoose.connect(process.env.mongo_URL);
+require('dotenv').config()
 var GroupUser = new mongoose.Schema({
     group_name: {
         type: String,

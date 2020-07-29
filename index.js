@@ -183,7 +183,7 @@ io.sockets.on('connection',function(socket){
 								if(data.floor_price >= data.ceiling_price){
 									socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 								}else{
-									var result = await tasksController.addTask(data.task_title,data.task_description,data.task_type,decoded._id,
+									var result = await tasksController.addFreelanceTask(data.task_title,data.task_description,data.task_type,decoded._id,
 										data.tags,data.floor_price, data.ceiling_price, data.location, data.price_type);
 									if(typeof result !== 'undefined'){
 										socket.emit("sv-new-tasks",{"success" : true});
