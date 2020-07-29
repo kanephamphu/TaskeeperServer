@@ -115,9 +115,9 @@ async function changePassword(_id, password){
     try{
         var result = await user.updateOne({"_id":_id}, {"login_information.password" : checker.encrypt(password)});
         if(result.n>0){
-            return 'true';
+            return {"success" : true};
         }else{
-            return 'failed';
+            return {"success" : false};
         }
     }catch(e){
         console.log(e);
@@ -165,9 +165,9 @@ async function addNewWorkingInformation(_id,specialize,level) {
         console.log(result);
         var result1 = await user.update({"_id": _id},{"working_information.working_details": result});
         if(result1)
-                    return 'success';
-                else
-                    return 'failed';
+            return {"success" : true};
+        else
+            return {"success" : true, "errors" : {"message" : "Undefined errors"}};
     }catch(e){
         throw(e);
     }
@@ -187,9 +187,9 @@ async function addNewEducationInformation(_id,education_name,education_descripti
         console.log(result);
         var result1 = await user.update({"_id": _id},{"education_information": result});
         if(result1)
-                    return 'success';
-                else
-                    return 'failed';
+            return {"success" : true};
+        else
+            return {"success" : true, "errors" : {"message" : "Undefined errors"}};
     }catch(e){
         console.log(e);
         throw(e);
@@ -200,11 +200,10 @@ async function addNewEducationInformation(_id,education_name,education_descripti
 async function setActive(_id) {
     try{
         var result = await user.update({"_id" : _id},{"status" : "isActive"});
-        if(result){
-            return 'success';
-        }else{
-            return 'failed';
-        }
+        if(result)
+            return {"success" : true};
+        else
+            return {"success" : true, "errors" : {"message" : "Undefined errors"}};
     }catch(e){
         console.log(e);
         throw(e);
@@ -215,11 +214,10 @@ async function setActive(_id) {
 async function setSuspended(_id) {
     try{
         var result = await user.update({"_id" : _id},{"status" : "suspended"});
-        if(result){
-            return 'success';
-        }else{
-            return 'failed';
-        }
+        if(result)
+            return {"success" : true};
+        else
+            return {"success" : true, "errors" : {"message" : "Undefined errors"}};
     }catch(e){
         console.log(e);
         throw(e);

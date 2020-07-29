@@ -125,28 +125,33 @@ io.sockets.on('connection',function(socket){
 		try{
 			jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 				if(err) 
-					socket.emit("sv-change-password",{"result":"token-error"});
+					socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 				if(decoded)
 				{
-					if( checker.encrypt(data.old_password) == decoded.password){
-						if(data.new_password == data.verify_password){
+					const v= new niv.Validator(data,{
+						old_password : 'required|minLength:8',
+						new_password : 'required|minLength:8|same:confirm_password',
+						confirm_password : 'required|minLength:8'
+					});
+					const matched = await v.check();
+					if(matched){
+						if( checker.encrypt(data.old_password) == decoded.password){
 							var changepassword = await userController.changePassword(decoded._id,data.new_password);
 							if(typeof changepassword !== undefined){
-								socket.emit("sv-change-password",{"result" : "success"});
+								socket.emit("sv-change-password", changepassword);
 							}else{
-								socket.emit("sv-change-password",{"result" : "error"});
+								socket.emit("sv-change-password", {"success" : false, "errors" : {"message" : "Server errors"}});
 							}
 						}else{
-							socket.emit("sv-change-password",{"result" : "two-password-not-similar"});
+							socket.emit("sv-change-password",{"success" : false, "errors": {"message": "Wrong password", "rule": "old_password" }});
 						}
 					}else{
-						socket.emit("sv-change-password",{"result" : "wrong-password"});
+						socket.emit("sv-change-password", {"success" : false, "errors" : v.errors} );
 					}
 				}
-				
 			})
 		}catch(e){
-			socket.emit("sv-change-password",{"result" : "error"});
+			socket.emit("sv-change-password", {"success" : false, "errors" : {"message" : "Server errors"}});
 			throw(e);
 		}
 	})
@@ -154,27 +159,24 @@ io.sockets.on('connection',function(socket){
 	//Add new tasks
 	socket.on("cl-new-tasks",(data)=>{
 		try {
-			console.log(data.secret_key);
-			jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
-				//If token error, cancel transaction
-				if(err){
-					console.log(err);
-					socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}})
-				}
-				if(decoded){
-					//Validate input of users
-					const v= new niv.Validator(data,{
-						first_name : 'required|maxLength:50|regex:[a-z]',
-						last_name : 'required|maxLength:50|regex:[a-z]',
-						password : 'required|minLength:8',
-						email : 'required|email',
-						phone_number : 'required|phoneNumber',
-						day : 'required|numeric',
-						month : 'required|numeric',
-						year : 'required|numeric'
-					});
-					const matched = await v.check();
-					if(matched){
+			//Validate input of users
+			const v= new niv.Validator(data,{
+				secret_key : 'required',
+				task_title : 'required',
+				task_description : 'required',
+				task_type : 'required',
+				price_type : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					//If token error, cancel transaction
+					if(err){
+						console.log(err);
+						socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						
 						//Check price_type, if it difference with undefined format, continue handle transaction 
 						if(typeof data.price_type !== 'undefined'){
 							if(data.price_type == 'unextract'){
@@ -207,15 +209,73 @@ io.sockets.on('connection',function(socket){
 					}else{
 						socket.emit("sv-new-tasks", {"success": false, "errors": v.errors})
 					}
-					
-				}
-			});
+						
+				});
+			}
+			console.log(data.secret_key);
+			
 		} catch (e) {
 			socket.emit("sv-new-tasks",{"success" : false, "errors" : {"message" : "Undefined error"}});
 			throw(e);	
 		}
 	});
+	//Add New Working Information
+	socket.on("cl-new-working",async (data)=>{
+		try{
+			const v= new niv.Validator(data,{
+				secret_key : 'required',
+				specialize : 'required',
+				level : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.addNewWorkingInformation(decoded._id,data.specialize,data.level);
+						socket.emit("sv-new-working",result);
+					}
+				})
+			}else{
+				socket.emit("sv-new-working",{"success" : false, "errors" : v.errors});
+			}
+			
+		}catch(e){
+			socket.emit("sv-new-tasks",{"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
 
+	//Add New Education Information
+	socket.on("cl-new-edu",async (data)=>{
+		try{
+			const v= new niv.Validator(data,{
+				secret_key : 'required',
+				education_name : 'required',
+				education_description : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-new-edu",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.addNewEducationInformation(decoded._id,data.education_name,data.education_description);
+						socket.emit("sv-new-edu",result);
+					}
+				})
+			}else{
+				socket.emit("sv-new-edu",{"success" : false, "errors" : v.errors});
+			}
+			
+		}catch(e){
+			socket.emit("sv-new-edu",{"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
 	//Check validate test
 	socket.on("test",async (data)=>{
 		console.log(data);
