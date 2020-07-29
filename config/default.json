@@ -1,7 +1,0 @@
-{
-    "Checking": {
-        "secret_key": "2QskxwBLT2jFnbcZbJu2IZ17pwgRLOsj"
-    },
-    "ConnectMongo": "mongodb+srv://tai123:tai123@cluster0.fsksm.gcp.mongodb.net/Taskeeper?retryWrites=true&w=majority",
-    "login_secret_key": "w3nHbUG3vGFi9sqHD2gDcx4RexXCAwHe"
-}
