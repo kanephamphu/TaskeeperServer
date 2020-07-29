@@ -157,7 +157,7 @@ io.sockets.on('connection',function(socket){
 	})
 
 	//Add new tasks
-	socket.on("cl-new-tasks",(data)=>{
+	socket.on("cl-new-tasks",async (data)=>{
 		try {
 			//Validate input of users
 			const v= new niv.Validator(data,{
