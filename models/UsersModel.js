@@ -165,6 +165,10 @@ var UserChema = new mongoose.Schema({
             type: Number
         },
         is_limited: Boolean
+    }],
+    votes : [{
+        voter_id : String,
+        vote_point : Number
     }]
 });
 

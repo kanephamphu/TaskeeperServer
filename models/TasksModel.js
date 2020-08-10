@@ -67,6 +67,10 @@ var Tasks= new mongoose.Schema({
     },
     skills: [{
         type: String
+    }],
+    votes : [{
+        voter_id : String,
+        vote_point : Number
     }]
 });
 

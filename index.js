@@ -96,14 +96,11 @@ io.sockets.on('connection',function(socket){
 				last_name : 'required|maxLength:50|regex:[a-z]',
 				password : 'required|minLength:8',
 				email : 'required|email',
-				phone_number : 'required|phoneNumber',
-				day : 'required|numeric',
-				month : 'required|numeric',
-				year : 'required|numeric'
+				phone_number : 'required|phoneNumber'
 			});
 			const matched = await v.check();
 			if(matched){
-				var result = await userController.register(data.first_name,data.last_name,data.email,data.phone_number,data.password,data.day,data.month,data.year);
+				var result = await userController.register(data.first_name,data.last_name,data.email,data.phone_number,data.password);
 				console.log(result);
 				socket.emit("sv-send-register-res",result);
 			}else{

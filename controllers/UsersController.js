@@ -35,10 +35,7 @@ async function register(first_name, last_name, email, phone_number, password, da
                             "last_name": last_name,
                             "login_information.password": checker.encrypt(password),
                             "phone_number.current_phone_number": phone_number,
-                            "email.current_email": email,
-                            "day_of_birth" : day,
-                            "month_of_birth" : month,
-                            "year_of_birth" : year
+                            "email.current_email": email
                         }
                         
                         const result = user.create(userdocs);
