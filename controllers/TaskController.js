@@ -23,13 +23,14 @@ async function addFreelanceTask(task_title,task_description,task_type,task_owner
             }
         }
     }catch(e){
+        console.log("loi")
         console.log(e);
         throw(e);
     }
 }
 
 //Add Freelancer Task
-async function addFreelanceTask(task_title,task_description,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type) {
+async function addTask(task_title,task_description,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type) {
     try{
         if(task_type!='freelance'){
             var taskDocs = {
@@ -75,3 +76,4 @@ async function test() {
 //test();
 
 module.exports.addFreelanceTask = addFreelanceTask;
+module.exports.addTask = addTask;

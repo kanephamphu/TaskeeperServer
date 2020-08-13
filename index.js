@@ -156,6 +156,7 @@ io.sockets.on('connection',function(socket){
 	//Add new tasks
 	socket.on("cl-new-tasks",async (data)=>{
 		try {
+			console.log(data);
 			//Validate input of users
 			const v= new niv.Validator(data,{
 				secret_key : 'required',
@@ -168,16 +169,17 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					//If token error, cancel transaction
+					console.log(data);
 					if(err){
 						console.log(err);
 						socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						
+						console.log(data)
 						//Check price_type, if it difference with undefined format, continue handle transaction 
 						if(typeof data.price_type !== 'undefined'){
 							if(data.price_type == 'unextract'){
-								if(data.floor_price >= data.ceiling_price){
+								if(data.floor_price < data.ceiling_price){
 									socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 								}else{
 									var result = await tasksController.addFreelanceTask(data.task_title,data.task_description,data.task_type,decoded._id,
@@ -228,7 +230,7 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
-						socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						socket.emit("sv-new-working",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
 						let result = await userController.addNewWorkingInformation(decoded._id,data.specialize,data.level);
@@ -244,7 +246,33 @@ io.sockets.on('connection',function(socket){
 			throw(e);
 		}
 	});
-
+	//Edit The Working Information 
+	socket.on("cl-edit-working",async (data)=>{
+		try{
+			const v = new niv.Validator(data,{
+				secret_key : 'required',
+				working_id : 'required',
+				specialize : 'required',
+				level : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key, async(err,decoded)=>{
+					if(err){
+						socket.emit("sv-edit-working",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						
+					}
+				})
+			}else{
+				socket.emit("sv-edit-working",{"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-edit-working",{"success" : false, "errors" : {"message" : "Undefined error"}})
+			throw(e);
+		}
+	})
 	//Add New Education Information
 	socket.on("cl-new-edu",async (data)=>{
 		try{
@@ -273,6 +301,7 @@ io.sockets.on('connection',function(socket){
 			throw(e);
 		}
 	});
+
 	//Check validate test
 	socket.on("test",async (data)=>{
 		console.log(data);

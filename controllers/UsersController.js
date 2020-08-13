@@ -170,6 +170,20 @@ async function addNewWorkingInformation(_id,specialize,level) {
     }
 }
 
+//Edit working detail
+async function editWorkingInformation(_id, workingid, specialize, level){
+    try{
+        var result = await user.findOne(
+            {
+                "_id" : _id
+            }, "working_information.working_details"
+        );
+        result = result.working_information.working_details;
+        
+    }catch(e){
+        throw(e);
+    }
+}
 //Add new education detail
 async function addNewEducationInformation(_id,education_name,education_description) {
     try{
