@@ -163,7 +163,8 @@ io.sockets.on('connection',function(socket){
 				task_title : 'required',
 				task_description : 'required',
 				task_type : 'required',
-				price_type : 'required'
+				price_type : 'required',
+				
 			});
 			const matched = await v.check();
 			if(matched){
@@ -179,15 +180,22 @@ io.sockets.on('connection',function(socket){
 						//Check price_type, if it difference with undefined format, continue handle transaction 
 						if(typeof data.price_type !== 'undefined'){
 							if(data.price_type == 'unextract'){
-								if(data.floor_price >= data.ceiling_price){
-									socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
-								}else{
-									var result = await tasksController.addFreelanceTask(data.task_title,data.task_description,data.task_type,decoded._id,
-										data.tags,data.floor_price, data.ceiling_price, data.location, data.price_type);
-									if(typeof result !== 'undefined'){
-										socket.emit("sv-new-tasks",{"success" : true});
+								const v= new niv.Validator(data,{
+									floor_price : 'required',
+									ceiling_price : 'required'
+								});
+								const matched = await v.check();
+								if(matched){
+									if(data.floor_price >= data.ceiling_price){
+										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 									}else{
-										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
+										var result = await tasksController.addFreelanceTask(data.task_title,data.task_description,data.task_type,decoded._id,
+											data.tags,data.floor_price, data.ceiling_price, data.location, data.price_type);
+										if(typeof result !== 'undefined'){
+											socket.emit("sv-new-tasks",{"success" : true});
+										}else{
+											socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
+										}
 									}
 								}
 							//Handle the dealing price type 
