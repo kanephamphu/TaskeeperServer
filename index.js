@@ -122,7 +122,7 @@ io.sockets.on('connection',function(socket){
 		try{
 			jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 				if(err) 
-					socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					socket.emit("sv-change-password",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 				if(decoded)
 				{
 					const v= new niv.Validator(data,{
@@ -179,7 +179,7 @@ io.sockets.on('connection',function(socket){
 						//Check price_type, if it difference with undefined format, continue handle transaction 
 						if(typeof data.price_type !== 'undefined'){
 							if(data.price_type == 'unextract'){
-								if(data.floor_price < data.ceiling_price){
+								if(data.floor_price >= data.ceiling_price){
 									socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 								}else{
 									var result = await tasksController.addFreelanceTask(data.task_title,data.task_description,data.task_type,decoded._id,
