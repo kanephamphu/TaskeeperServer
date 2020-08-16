@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-mongoose.connect(process.env.mongo_URL);
-require('dotenv').config()
+require('dotenv').config();
+mongoose.connect(process.env.mongo_URL || "mongodb+srv://tai123:tai123@cluster0.fsksm.gcp.mongodb.net/Taskeeper?retryWrites=true&w=majority");
 var Tasks= new mongoose.Schema({
     task_title: {
         type: String
@@ -39,7 +39,7 @@ var Tasks= new mongoose.Schema({
         ceiling_price : Number,
         extract_price: Number
     }],
-    _id_employee: {
+    work_employee: {
         _id_employee: {
             type: String
         },
@@ -68,10 +68,22 @@ var Tasks= new mongoose.Schema({
     skills: [{
         type: String
     }],
-    votes : [{
-        voter_id : String,
-        vote_point : Number
-    }]
+    votes : {
+        vote_point : Number,
+        review: String
+    },
+    isDone: {
+        type: Boolean
+    },
+    day_of_working_done: {
+        type: Number
+    },
+    month_of_working_done: {
+        type: Number
+    },
+    year_of_working_done: {
+        type: Number
+    }
 });
 
 const tasks = mongoose.model("Tasks",Tasks);

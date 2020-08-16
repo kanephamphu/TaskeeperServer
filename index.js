@@ -319,7 +319,6 @@ io.sockets.on('connection',function(socket){
 				last_name : 'required'
 			});
 		const matched = await v.check();
-		console.log(matched);
 		if(!matched){
 			console.log(v.errors);
 			socket.emit("sv-test",v.errors);
@@ -327,11 +326,51 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-test",data);
 		}
 		
+	});
+
+	//View Task History List
+	socket.on("cl-job-history", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				"_employee_id" : required,
+				"skip": skip
+			});
+			const matched = await v.check();
+			if(!matched){
+				socket.emit("sv-job-history",{"success" : false, "errors" : v.errors});
+			}else{
+				let list = await tasksController.viewTaskHistoryList(data._employee_id, data.skip);
+				socket.emit("sv-job-history",{"success": true, "data": list});
+			}
+		}catch(e){
+			socket.emit("sv-job-history",{"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
+
+	//View Task Detail 
+	socket.on("cl-task-detail", async(data)=>{
+		try{
+			const v= new niv.Validator(data,{
+				"_task_id": required
+			});
+			const matched = await v.check();
+			if(!matched){
+				socket.emit("sv-task-detail", {"success": true, "errors" : v.errors})
+			}else{
+				let detail = await tasksController.viewTaskDetail(data._task_id);
+				socket.emit("sv-task-detail", {"success": false, "data": detail});
+			}
+		}catch(e){
+			socket.emit("sv-task-detail",{"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
 	})
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
 	});
+	
 });
 app.get('/',(req,res)=>
 	res.send('Server Thoy Mey Ben Oyyy')

@@ -1,5 +1,5 @@
 var task = require('../models/TasksModel');
-require('dotenv').config()
+require('dotenv').config();
 //Add Freelancer Task
 async function addFreelanceTask(task_title,task_description,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type,languages,industry) {
     try{
@@ -66,6 +66,32 @@ async function viewTasks(number_task,skip){
     }
 }
 
+//View Job History
+async function viewTaskHistoryList(employee_id,number_of_skip){
+    try{
+        //Job Finding Condition
+        let condition = {
+            "work_employee._id_employee": employee_id
+        }
+        let listJobs = await task.find(condition, ["_id", "task_owner_id", "task_title", "month_of_working_done", 
+    "year_of_working_done", "votes.vote_point"], {skip: number_of_skip }).exec();
+        return listJobs;
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+//View Task Detail
+async function viewTaskDetail(task_id){
+    try{
+        let taskDetail = await task.findOne({"_id": task_id}).exec();
+        return taskDetail;
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
 async function test() {
     var tags = [];
     tags.push('Lập Trình');
@@ -73,7 +99,13 @@ async function test() {
     console.log(result);  
 }
 
-//test();
+async function testviewJob(){
+    var result = await viewTaskDetail("5f1c581dcde7010774853652");
+    console.log(result);
+}
 
+
+module.exports.viewTaskDetail = viewTaskDetail;
+module.exports.viewTaskHistoryList = viewTaskHistoryList;
 module.exports.addFreelanceTask = addFreelanceTask;
 module.exports.addTask = addTask;
