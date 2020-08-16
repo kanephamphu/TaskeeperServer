@@ -236,6 +236,26 @@ async function setSuspended(_id) {
     }
 }
 
+//Get all detail of user
+async function getAllDetail(_id){
+    try{
+        let detail = await user.findOne({"_id": _id}, ["avatar","first_name","last_name","gender",
+    "description", "website","day_of_birth","month_of_birth","year_of_birth","nationality",
+    "email.current_email","phone_number.current_phone_number","working_information","education_information",
+    "votes"]).exec();
+        return detail;
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+async function testviewJob(){
+    var result = await getAllDetail("5f2546def9ca2b000466c467");
+    console.log(result);
+}
+
+
 module.exports.setActive = setActive;
 module.exports.setSuspended = setSuspended;
 module.exports.addNewWorkingInformation = addNewWorkingInformation;

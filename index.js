@@ -330,6 +330,10 @@ io.sockets.on('connection',function(socket){
 
 	//View Task History List
 	socket.on("cl-job-history", async(data)=>{
+		/* Args: 
+			_employee_id: is employee which id you want to look the job history
+			skip: skip number of data list  
+		*/
 		try{
 			const v= new niv.Validator(data, {
 				"_employee_id" : required,
@@ -350,6 +354,9 @@ io.sockets.on('connection',function(socket){
 
 	//View Task Detail 
 	socket.on("cl-task-detail", async(data)=>{
+		/* Args: 
+			task_id: is task which id you want to see detail
+		*/
 		try{
 			const v= new niv.Validator(data,{
 				"_task_id": required
@@ -365,7 +372,7 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-task-detail",{"success" : false, "errors" : {"message" : "Undefined error"}});
 			throw(e);
 		}
-	})
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
