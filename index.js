@@ -41,9 +41,10 @@ io.sockets.on('connection',function(socket){
 					const tokenInformation = {
 						"_id" : ID,
 						"username" : INFORMATION.login_information.username,
-						"password" : INFORMATION.login_information.password,
 						"email" : INFORMATION.email.current_email,
-						"phone_number" : INFORMATION.phone_number.current_phone_number
+						"phone_number" : INFORMATION.phone_number.current_phone_number,
+						"first_name" : INFORMATION.first_name,
+						"last_name" : INFORMATION.last_name
 					};
 					jwt.sign(tokenInformation,process.env.login_secret_key, { expiresIn: 60*60*24 },(err,token)=>{
 							if(err){
@@ -371,6 +372,29 @@ io.sockets.on('connection',function(socket){
 		}catch(e){
 			socket.emit("sv-task-detail",{"success" : false, "errors" : {"message" : "Undefined error"}});
 			throw(e);
+		}
+	});
+	
+	//Get all user infromation  detail
+	socket.on("cl-user-detail", async(data)=>{
+		/* 	Args:
+				_id: user id
+			Returns:
+				All information of user. For instance, first_name, last_name
+		*/
+		try{
+			const v= niv.Validator(data, {
+				"_user_id" : required
+			});
+			const matched = await v.check();
+			if(!matched){
+				socket.emit("sv-user-detail", {"success" : false, "errors" : v.errors});
+			}else{
+				let userDetail = await userController.getAllDetail(data._user_id);
+				socket.emit("sv-user-detail", {"success" : true, "data" : userDetail});
+			}
+		}catch(e){
+			socket.emit("sv-user-detail", {"success" : false, "errors" : {"message" : "Undefined error"}})
 		}
 	});
 	//Disconnect

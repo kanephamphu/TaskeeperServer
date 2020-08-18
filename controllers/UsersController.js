@@ -1,6 +1,7 @@
 var validator = require('validator');
 var checker= require('./Check');
 const user = require('../models/UsersModel');
+const { mode } = require('crypto-js');
 
 //Check login
 async function checkLoginQuery(loginquery){
@@ -99,7 +100,7 @@ async function  getFunction(_id) {
 async function getInformation(_id){
     try{
         var information = await user.findOne({"_id":_id},["login_information.username"
-        ,"login_information.password","email.current_email","phone_number.current_phone_number"]);
+        ,"email.current_email","phone_number.current_phone_number","first_name","last_name"]);
         return information;
     }catch(e){
         console.log(e);
@@ -255,7 +256,7 @@ async function testviewJob(){
     console.log(result);
 }
 
-
+module.exports.getAllDetail = getAllDetail;
 module.exports.setActive = setActive;
 module.exports.setSuspended = setSuspended;
 module.exports.addNewWorkingInformation = addNewWorkingInformation;
