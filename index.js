@@ -416,7 +416,7 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
-	
+
 	//Check validate test
 	socket.on("test",async (data)=>{
 		console.log(data);
@@ -458,28 +458,6 @@ io.sockets.on('connection',function(socket){
 			throw(e);
 		}
 	});
-
-	//View Task Detail 
-	socket.on("cl-task-detail", async(data)=>{
-		/* Args: 
-			task_id: is task which id you want to see detail
-		*/
-		try{
-			const v= new niv.Validator(data,{
-				"_task_id": required
-			});
-			const matched = await v.check();
-			if(!matched){
-				socket.emit("sv-task-detail", {"success": true, "errors" : v.errors})
-			}else{
-				let detail = await tasksController.viewTaskDetail(data._task_id);
-				socket.emit("sv-task-detail", {"success": false, "data": detail});
-			}
-		}catch(e){
-			socket.emit("sv-task-detail",{"success" : false, "errors" : {"message" : "Undefined error"}});
-			throw(e);
-		}
-	});
 	
 	//Get all user infromation  detail
 	socket.on("cl-user-detail", async(data)=>{
@@ -504,6 +482,51 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
+	//View Task Detail 
+	socket.on("cl-task-detail", async(data)=>{
+		/* Args: 
+			task_id: is task which id you want to see detail
+		*/
+		try{
+			const v= new niv.Validator(data,{
+				"_task_id": required
+			});
+			const matched = await v.check();
+			if(!matched){
+				socket.emit("sv-task-detail", {"success": false, "errors" : v.errors})
+			}else{
+				let detail = await tasksController.viewTaskDetail(data._task_id);
+				socket.emit("sv-task-detail", {"success": true, "data": detail});
+			}
+		}catch(e){
+			socket.emit("sv-task-detail",{"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
+
+	//WARNING: Get list tasks, for testing 
+	socket.on("cl-get-default-tasks",async(data)=>{
+		/*Args:
+			number_task: It is count number of tasks
+			skip : Skip number  
+		*/
+		try{
+			const v=new niv.Validator(data,{
+				number_task : 'required',
+				skip : 'required'
+			});
+
+			const matched = await v.check();
+			if(!matched){
+				socket.emit("sv-get-default-tasks", {"success": false, "errors" : v.errors})
+			}else{
+				let listTasks = tasksController.getTasks(data.number_task,data.skip);
+				socket.emit("sv-get-default-tasks",{"success" : true, "data" : listTasks});
+			}
+		}catch(e){
+			socket.emit("sv-get-default-tasks", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	})
 
 	//Disconnect
 	socket.on('disconnect', function () {

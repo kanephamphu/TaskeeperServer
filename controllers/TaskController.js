@@ -57,9 +57,11 @@ async function addTask(task_title,task_description,task_type,task_owner_id,tags,
     }
 }
 
-async function viewTasks(number_task,skip){
+//Get tasks by number of tasks
+async function getTasks(number_task,skip){
     try{
-
+        let listTasks = await task.find({}, ["_id", "task_title", "task_description", "created_time"],{limit : number_task, skip: skip}).exec();
+        return listTasks;
     }catch(e){
         console.log(e);
         throw(e);
@@ -100,7 +102,8 @@ async function test() {
 }
 
 async function testviewJob(){
-    var result = await viewTaskDetail("5f1c581dcde7010774853652");
+    //var result = await viewTaskDetail("5f1c581dcde7010774853652");
+    var result = await viewTasks(10, 10);
     console.log(result);
 }
 
@@ -109,3 +112,4 @@ module.exports.viewTaskDetail = viewTaskDetail;
 module.exports.viewTaskHistoryList = viewTaskHistoryList;
 module.exports.addFreelanceTask = addFreelanceTask;
 module.exports.addTask = addTask;
+module.exports.getTasks = getTasks;
