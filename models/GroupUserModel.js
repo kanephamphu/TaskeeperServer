@@ -1,6 +1,7 @@
 const mongoose= require("mongoose");
-mongoose.connect(process.env.mongo_URL);
-require('dotenv').config()
+require('dotenv').config();
+mongoose.connect(process.env.mongo_URL || "mongodb+srv://tai123:tai123@cluster0.fsksm.gcp.mongodb.net/Taskeeper?retryWrites=true&w=majority");
+
 var GroupUser = new mongoose.Schema({
     group_name: {
         type: String,

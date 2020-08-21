@@ -165,7 +165,7 @@ async function addNewWorkingInformation(_id,specialize,level) {
         if(result1)
             return {"success" : true};
         else
-            return {"success" : true, "errors" : {"message" : "Undefined errors"}};
+            return {"success" : false, "errors" : {"message" : "Undefined errors"}};
     }catch(e){
         throw(e);
     }
@@ -174,13 +174,38 @@ async function addNewWorkingInformation(_id,specialize,level) {
 //Edit working detail
 async function editWorkingInformation(_id, workingid, specialize, level){
     try{
-        var result = await user.findOne(
+        var result = await user.update(
             {
-                "_id" : _id
-            }, "working_information.working_details"
+                "_id" : _id,
+                "working_information.working_details.working_id" : workingid
+            }, {"$set" : {
+                "working_information.working_details.$.specialize" : specialize,
+                "working_information.working_details.$.level" : level
+            }}
         );
-        result = result.working_information.working_details;
-        
+        if(result)
+            return {"success" : true};
+        else
+            return {"success" : false};
+    }catch(e){
+        throw(e);
+    }
+}
+
+//Delete working detail
+async function deleteWorkingInformation(_id, workingid){
+    try{
+        var result = await user.update({
+            "_id" : _id
+        },{
+            $pull : {
+                "working_information.working_details" : { "working_id" : workingid}
+            }
+        });
+        if(result)
+            return {"success" : true}
+        else
+            return {"success" : false}  
     }catch(e){
         throw(e);
     }
@@ -208,7 +233,45 @@ async function addNewEducationInformation(_id,education_name,education_descripti
     }
 }
 
+//Edit education 
+async function editEducationInformation(_id, education_id, education_name, education_description){
+    try{
+        var result = await user.update(
+            {
+                "_id" : _id,
+                "education_information.education_id" : education_id
+            }, {"$set" : {
+                "education_information.$.education_name" : education_name,
+                "education_information.$.education_description" : education_description
+            }}
+        );
+        if(result)
+            return {"success" : true};
+        else
+            return {"success" : false};
+    }catch(e){
+        throw(e);
+    }
+}
 
+//Delete education
+async function deleteEducationInformation(_id, education_id){
+    try{
+        var result = await user.update({
+            "_id" : _id
+        },{
+            $pull : {
+                "education_information" : { "education_id" : education_id}
+            }
+        });
+        if(result)
+            return {"success" : true}
+        else
+            return {"success" : false}  
+    }catch(e){
+        throw(e);
+    }
+}
 //Set active account
 async function setActive(_id) {
     try{
@@ -252,10 +315,19 @@ async function getAllDetail(_id){
 }
 
 async function testviewJob(){
-    var result = await getAllDetail("5f2546def9ca2b000466c467");
+    //var result = await getAllDetail("5f2546def9ca2b000466c467");
+    //var result = await addNewWorkingInformation("5f17ea80959405207c09f752", "Xin caho", "Tai")
+    //var result1 = await editWorkingInformation("5f17ea80959405207c09f752", "5f3f87226d44ed2e346cd6e2", "Sdf Tai", "level");
+    //var result = await deleteWorkingInformation("5f17ea80959405207c09f752","5f3f87565979632c187cc153");
     console.log(result);
 }
 
+//testviewJob();
+
+module.exports.editEducationInformation =editWorkingInformation;
+module.exports.deleteEducationInformation = deleteEducationInformation;
+module.exports.deleteWorkingInformation = deleteWorkingInformation;
+module.exports.editWorkingInformation = editWorkingInformation;
 module.exports.getAllDetail = getAllDetail;
 module.exports.setActive = setActive;
 module.exports.setSuspended = setSuspended;

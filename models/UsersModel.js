@@ -1,6 +1,6 @@
 const mongoose= require("mongoose");
 require('dotenv').config();
-mongoose.connect(process.env.mongo_URL);
+mongoose.connect(process.env.mongo_URL || "mongodb+srv://tai123:tai123@cluster0.fsksm.gcp.mongodb.net/Taskeeper?retryWrites=true&w=majority");
 var UserChema = new mongoose.Schema({
     login_information: {
         username:{

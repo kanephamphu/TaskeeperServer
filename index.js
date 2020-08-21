@@ -380,7 +380,7 @@ io.sockets.on('connection',function(socket){
 		/* 	Args:
 				_id: user id
 			Returns:
-				All information of user. For instance, first_name, last_name
+				All information of user. For instance, first_name, last_name, phone_number ...
 		*/
 		try{
 			const v= niv.Validator(data, {
@@ -397,6 +397,7 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-user-detail", {"success" : false, "errors" : {"message" : "Undefined error"}})
 		}
 	});
+	
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
