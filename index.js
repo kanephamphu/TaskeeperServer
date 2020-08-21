@@ -10,6 +10,7 @@ var checker = require('./controllers/Check');
 const helmet = require('helmet')
 var tasksController = require('./controllers/TaskController');
 const niv = require('node-input-validator');
+const { match } = require("assert");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -255,6 +256,7 @@ io.sockets.on('connection',function(socket){
 			throw(e);
 		}
 	});
+
 	//Edit The Working Information 
 	socket.on("cl-edit-working",async (data)=>{
 		try{
@@ -271,7 +273,8 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-edit-working",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						
+						let result = await userController.addNewEducationInformation(decoded._id,data.working_id,data.specialize,data.required);
+						socket.emit("sv-edit-working",result);
 					}
 				})
 			}else{
@@ -281,7 +284,40 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-edit-working",{"success" : false, "errors" : {"message" : "Undefined error"}})
 			throw(e);
 		}
-	})
+	});
+
+	//Delete The Wokring Infomation
+	socket.on("cl-delete-working", async(data)=>{
+		/*
+		Args:
+			secret_key: Jwt token key
+			working_id:  Working of ID 
+		*/
+		try{
+			const v= new niv.Validator(data,{
+				secret_key : 'required',
+				working_id : 'required' 
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-delete-working",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.deleteWorkingInformation(decoded._id,data.working_id);
+						socket.emit("sv-delete-working",result);
+					}
+				})
+			}else{
+				socket.emit("sv-delete-working",{"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-delete-working",{"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
+
 	//Add New Education Information
 	socket.on("cl-new-edu",async (data)=>{
 		try{
@@ -310,7 +346,77 @@ io.sockets.on('connection',function(socket){
 			throw(e);
 		}
 	});
+	//Edit education information 
+	socket.on("cl-edit-edu", async(data)=>{
+		/*
+		Args: 
+			secret_key : Secret is sent by user. 
+			education_id : Id of education information
+			education_name : Name of course or school
+			education_description: description of education
+		Returns: 
+			Result of socket 
+		*/
+		try{
+			const v= niv.Validator(data, {
+				"secret_key" : required,
+				"education_id" : required,
+				"education_name" : required,
+				"education_description" : required
+			});
+			const matched = v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-edit-edu",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.editEducationInformation(decoded._id,data.education_id,data.education_name,data.education_description);
+						socket.emit("sv-edit-edu",result);
+					}
+				})
+			}else{
+				socket.emit("sv-edit-edu",{"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-edit-edu", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
 
+	});	
+
+	//Delete The Education Infomation
+	socket.on("cl-delete-working", async(data)=>{
+		/*
+		Args:
+			secret_key: Jwt token key
+			education_id:  Working of ID 
+		*/
+		try{
+			const v= new niv.Validator(data,{
+				secret_key : 'required',
+				education_id : 'required' 
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-delete-edu",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.deleteEducationInformation(decoded._id,data.education_id);
+						socket.emit("sv-delete-edu",result);
+					}
+				})
+			}else{
+				socket.emit("sv-delete-edu",{"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-delete-edu",{"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
+
+	
 	//Check validate test
 	socket.on("test",async (data)=>{
 		console.log(data);
@@ -329,7 +435,7 @@ io.sockets.on('connection',function(socket){
 		
 	});
 
-	//View Task History List
+	//View User Task History List
 	socket.on("cl-job-history", async(data)=>{
 		/* Args: 
 			_employee_id: is employee which id you want to look the job history
@@ -394,10 +500,11 @@ io.sockets.on('connection',function(socket){
 				socket.emit("sv-user-detail", {"success" : true, "data" : userDetail});
 			}
 		}catch(e){
-			socket.emit("sv-user-detail", {"success" : false, "errors" : {"message" : "Undefined error"}})
+			socket.emit("sv-user-detail", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
-	
+
+
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");

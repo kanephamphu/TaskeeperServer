@@ -324,7 +324,7 @@ async function testviewJob(){
 
 //testviewJob();
 
-module.exports.editEducationInformation =editWorkingInformation;
+module.exports.editEducationInformation =editEducationInformation;
 module.exports.deleteEducationInformation = deleteEducationInformation;
 module.exports.deleteWorkingInformation = deleteWorkingInformation;
 module.exports.editWorkingInformation = editWorkingInformation;
