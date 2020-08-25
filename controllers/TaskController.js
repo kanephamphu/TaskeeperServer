@@ -107,7 +107,110 @@ async function testviewJob(){
     console.log(result);
 }
 
+// Employee apply to the task
+async function addApplicationJob(user_id,task_id, introduction,floor_price,ceiling_price){
+    try{
+        let isApplied = task.findOne({
+            "_id" : task_id,
+            "task_candidate_apply_list._id_candidate" : user_id
+        }).exec();
+        if(isApplied){
+            let applyTask = task.update({"_id" : task_id},
+            {
+                $push : {
+                    "task_candidate_apply_list" : {
+                        "_id_candidate" : user_id,
+                        "introduction" : introduction,
+                        "floor_price" : floor_price,
+                        "ceiling_price" : ceiling_price
+                    }
+                }
+            }).exec();
 
+            if(applyTask){
+                return {"success" : true };
+            }
+            return {"success" : false, "errors" : {"message" : "Undefined errors"}};
+        }else{
+            return {"success" : false, "errors" : {"message" : "Already applied"}};
+        }
+        
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+// Delete application of job
+async function deleteApplicationJob(user_id, task_id){
+    try{
+        let isApplied = task.findOne({
+            "_id" : task_id,
+            "task_candidate_apply_list._id_candidate" : user_id
+        }).exec();
+        if(!isApplied){
+            let applyTask = task.update({"_id" : task_id},
+            {
+                $pull : {
+                    "task_candidate_apply_list" : {
+                        "_id_candidate" : user_id
+                    }
+                }
+            }).exec();
+
+            if(applyTask){
+                return {"success" : true };
+            }
+            return {"success" : false, "errors" : {"message" : "Undefined errors"}};
+        }else{
+            return {"success" : false, "errors" : {"message" : "Did n't apply"}};
+        }
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+// Update job application of job
+
+async function updateApplicationJob(user_id,task_id, introduction,floor_price,ceiling_price){
+    try{
+        let isApplied = task.findOne({
+            "_id" : task_id,
+            "task_candidate_apply_list._id_candidate" : user_id
+        }).exec();
+        if(isApplied){
+            let applyTask = task.update({
+                "_id" : task_id,
+                "task_candidate_apply_list._id_candidate" : user_id},
+            {
+                $set : {
+                    "task_candidate_apply_list" : {
+                        "_id_candidate" : user_id,
+                        "introduction" : introduction,
+                        "floor_price" : floor_price,
+                        "ceiling_price" : ceiling_price
+                    }
+                }
+            }).exec();
+
+            if(applyTask){
+                return {"success" : true };
+            }
+            return {"success" : false, "errors" : {"message" : "Undefined errors"}};
+        }else{
+            return {"success" : false, "errors" : {"message" : "Already applied"}};
+        }
+        
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+
+module.exports.updateApplicationJob = updateApplicationJob;
+module.exports.deleteApplicationJob = deleteApplicationJob;
+module.exports.addApplicationJob = addApplicationJob;
 module.exports.viewTaskDetail = viewTaskDetail;
 module.exports.viewTaskHistoryList = viewTaskHistoryList;
 module.exports.addFreelanceTask = addFreelanceTask;

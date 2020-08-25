@@ -28,16 +28,15 @@ var Tasks= new mongoose.Schema({
     task_owner_id: {
         type: String
     },
-    task_candidate_list: [{
+    task_candidate_apply_list: [{
         _id_candidate: {
             type: String
         },
-        information: {
+        introduction: {
             type: String
         },
         floor_price : Number,
-        ceiling_price : Number,
-        extract_price: Number
+        ceiling_price : Number
     }],
     work_employee: {
         _id_employee: {
@@ -68,10 +67,6 @@ var Tasks= new mongoose.Schema({
     skills: [{
         type: String
     }],
-    votes : {
-        vote_point : Number,
-        review: String
-    },
     isDone: {
         type: Boolean
     },

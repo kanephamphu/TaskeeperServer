@@ -20,8 +20,9 @@ var UserChema = new mongoose.Schema({
         enum: ['unActive','isActive','suspended'],
         default: 'unActive'
     },
-    created_time: {
-        type: Number
+    created_time: created_time : {
+        type: Number,
+        default: Date.now()
     },
     updated_time: {
         type: Number
@@ -169,6 +170,12 @@ var UserChema = new mongoose.Schema({
     votes : [{
         voter_id : String,
         vote_point : Number
+    }],
+    followers : [{
+        follower_id : String,
+        follower_first_name : String,
+        follower_last_name : String,
+        avatar : String 
     }]
 });
 
