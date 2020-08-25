@@ -20,7 +20,7 @@ var UserChema = new mongoose.Schema({
         enum: ['unActive','isActive','suspended'],
         default: 'unActive'
     },
-    created_time: created_time : {
+    created_time : {
         type: Number,
         default: Date.now()
     },

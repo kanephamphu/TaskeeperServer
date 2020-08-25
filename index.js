@@ -526,7 +526,7 @@ io.sockets.on('connection',function(socket){
 		}catch(e){
 			socket.emit("sv-get-default-tasks", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
-	})
+	});
 
 	//Disconnect
 	socket.on('disconnect', function () {
