@@ -78,6 +78,9 @@ var Tasks= new mongoose.Schema({
     },
     year_of_working_done: {
         type: Number
+    },
+    task_view_count : {
+        type : Number
     }
 });
 

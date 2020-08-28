@@ -169,13 +169,24 @@ var UserChema = new mongoose.Schema({
     }],
     votes : [{
         voter_id : String,
-        vote_point : Number
+        vote_point : {
+            type : Number,
+            enum: [1,2,3,4,5]
+        }
     }],
     followers : [{
         follower_id : String,
         follower_first_name : String,
         follower_last_name : String,
         avatar : String 
+    }],
+    search_queries : [{
+        search_query : {
+            type : String
+        },
+        search_count : [{
+            type : Number
+        }]
     }]
 });
 

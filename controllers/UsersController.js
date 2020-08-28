@@ -314,8 +314,97 @@ async function getAllDetail(_id){
     }
 }
 
+// Add follower to follower_list
+async function addFollower(user_id, follower_id){
+    try{
+        let isExist = await user.findOne({"followers.follower_id" : follower_id, "_id" : user_id});
+        if(isExist){
+            return {"success" : false, "errors" : {"message" : "Already follow"}};
+        }else{
+            let detail = await user.findOne({"_id" : follower_id},["first_name", "last_name", "avatar"]);
+            let inserted = await user.update({"_id" : user_id}, {
+                $push : {
+                    "followers" : {
+                        "follower_id" : follower_id,
+                        "followers.follower_first_name" : detail.first_name,
+                        "followers.follower_first_name" : detail.last_name,
+                        "followers.avatar" : detail.avatar
+                    }
+                }
+            });
+            if(inserted){
+                return {"success" : true};
+            }else{
+                return {"success" : false, "errors" : {"message" : "Could n't import to follower list"}};
+            }
+        }
+    }catch(e){
+        throw(e);
+    }
+}
 
+// Delete follower from follower list
+async function deleteFollower(user_id, follower_id){
+    try{
+        let isExist = await user.findOne({"followers.follower_id" : follower_id, "_id" : user_id});
+        if(isExist){
+            let deleted = await user.update({"_id" : user_id}, {
+                $pull : {
+                    "followers" : {
+                        "follower_id" : follower_id
+                    }
+                }
+            });
+            if(deleted){
+                return {"success" : true};
+            }else{
+                return {"success" : false, "errors" : {"message" : "Could not delete"}};
+            }
+        }else{
+            return {"success" : false, "errors" : {"message" : "Did n't follow"}};
+        }
+    }catch(e){
+        throw(e);
+    }
+}
 
+// Vote user
+async function voteUser(user_id, voter_id, vote_point){
+    try{
+        let isExist = await user.findOne({"_id" : user_id, "votes.voter_id" : voter_id});
+        if(isExist){
+            let updated = await user.update({"_id" : user_id, "votes.voter_id" : voter_id}, {
+                $set : {
+                    "votes" : {
+                        "votes.voter_id" : voter_id,
+                        "vote_point" : vote_point
+                    }
+                }
+            });
+            if(updated){
+                return {"success" : true};
+            }else{
+                return {"success" : false, "errors" : {"message" : "Could not vote"}};
+            }
+        }else{
+            let added = await user.update({"_id" : user_id}, {
+                $push : {
+                    "votes" : {
+                        "votes.voter_id" : voter_id,
+                        "vote_point" : vote_point
+                    }
+                }
+            });
+            if(added){
+                return {"success" : true};
+            }else{
+                return {"success" : false, "errors" : {"message" : "Could not vote"}};
+            }
+        }
+    }catch(e){
+        throw(e);
+    }
+}
 async function testviewJob(){
     //var result = await getAllDetail("5f2546def9ca2b000466c467");
     //var result = await addNewWorkingInformation("5f17ea80959405207c09f752", "Xin caho", "Tai")
@@ -327,8 +416,9 @@ async function testviewJob(){
 //testviewJob();
 
 
-    
-
+module.exports.voteUser = voteUser;
+module.exports.deleteFollower = deleteFollower;
+module.exports.addFollower = addFollower;
 module.exports.editEducationInformation =editEducationInformation;
 module.exports.deleteEducationInformation = deleteEducationInformation;
 module.exports.deleteWorkingInformation = deleteWorkingInformation;
