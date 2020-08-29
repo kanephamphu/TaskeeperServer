@@ -663,7 +663,8 @@ io.sockets.on('connection',function(socket){
 			if(!matched){
 				socket.emit("sv-get-default-tasks", {"success": false, "errors" : v.errors})
 			}else{
-				let listTasks = tasksController.getTasks(data.number_task,data.skip);
+				let listTasks = await tasksController.getTasks(data.number_task,data.skip);
+				console.log(listTasks);
 				socket.emit("sv-get-default-tasks",{"success" : true, "data" : listTasks});
 			}
 		}catch(e){

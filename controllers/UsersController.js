@@ -1,7 +1,6 @@
 var validator = require('validator');
 var checker= require('./Check');
 const user = require('../models/UsersModel');
-const { mode } = require('crypto-js');
 
 //Check login
 async function checkLoginQuery(loginquery){

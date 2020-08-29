@@ -81,6 +81,9 @@ var Tasks= new mongoose.Schema({
     },
     task_view_count : {
         type : Number
+    },
+    isMatched : {
+        type: Boolean
     }
 });
 

@@ -103,10 +103,12 @@ async function test() {
 
 async function testviewJob(){
     //var result = await viewTaskDetail("5f1c581dcde7010774853652");
-    var result = await viewTasks(10, 10);
+    //var result = await viewTasks(10, 10);
+    var result = await getTasks(10,0);
     console.log(result);
 }
 
+testviewJob();
 // Employee apply to the task
 async function addApplicationJob(user_id,task_id, introduction,floor_price,ceiling_price){
     try{
