@@ -359,10 +359,10 @@ io.sockets.on('connection',function(socket){
 		*/
 		try{
 			const v= niv.Validator(data, {
-				"secret_key" : required,
-				"education_id" : required,
-				"education_name" : required,
-				"education_description" : required
+				secret_key : 'required',
+				education_id : 'required',
+				education_name : 'required',
+				education_description : 'required'
 			});
 			const matched = v.check();
 			if(matched){
@@ -443,8 +443,8 @@ io.sockets.on('connection',function(socket){
 		*/
 		try{
 			const v= new niv.Validator(data, {
-				"_employee_id" : required,
-				"skip": skip
+				_employee_id : 'required',
+				skip : 'required'
 			});
 			const matched = await v.check();
 			if(!matched){
@@ -468,7 +468,7 @@ io.sockets.on('connection',function(socket){
 		*/
 		try{
 			const v= niv.Validator(data, {
-				"_user_id" : required
+				_user_id : 'required'
 			});
 			const matched = await v.check();
 			if(!matched){
@@ -489,7 +489,7 @@ io.sockets.on('connection',function(socket){
 		*/
 		try{
 			const v= new niv.Validator(data,{
-				"_task_id": required
+				_task_id : 'required'
 			});
 			const matched = await v.check();
 			if(!matched){
@@ -504,6 +504,149 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
+	// Employee apply to job
+	socket.on("cl-apply-job", async(data)=>{
+		/* 
+		Args:
+			secret_key: Json web token cotains user id
+			task_id:  task id of job to join
+			introduction: give some information about you
+			floor_price: 
+			ceiling_price:
+		*/
+		try{
+			const v = new niv.Validator(data,{
+				secret_key : 'required',
+				task_id : 'required',
+				introduction : 'required',
+				floor_price : 'required',
+				ceiling_price : 'required' 
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await tasksController.addApplicationJob(decoded._id,data._task_id,data.introduction,data.floor_price,data.ceiling_price);
+						socket.emit("sv-apply-job",result);
+					}
+				});
+			}else{
+				socket.emit("sv-apply-job",{"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-apply-job",{"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
+
+	// Employee delete job application
+	socket.on("cl-delete-apply-job", async(data)=>{
+		/*
+		Args:
+			secret_key : Json web token
+			task_id : Task id which you want to delete job application
+		*/
+		try{
+			const v=new niv.Validator(data,{
+				secret_key : 'required',
+				task_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-delete-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await tasksController.deleteApplicationJob(decoded._id, data.task_id);
+						socket.emit("sv-apply-job",result);
+					}
+				});
+			}else{
+				socket.emit("sv-delete-apply-job", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-delete-apply-job", {"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
+
+	// Update job application
+	socket.on("cl-update-apply-job", async(data)=>{
+		/* 
+		Args:
+			secret_key: Json web token cotains user id
+			task_id:  task id of job to join
+			introduction: give some information about you
+			floor_price: 
+			ceiling_price:
+		*/
+		try{
+			const v = new niv.Validator(data,{
+				secret_key : 'required',
+				task_id : 'required',
+				introduction : 'required',
+				floor_price : 'required',
+				ceiling_price : 'required' 
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-update-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await tasksController.updateApplicationJob(decoded._id,data._task_id,data.introduction,data.floor_price,data.ceiling_price);
+						socket.emit("sv-update-apply-job",result);
+					}
+				});
+			}else{
+				socket.emit("sv-update-apply-job",{"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-update-apply-job", {"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
+
+	// Client following another user
+	socket.on("cl-follow-user", async(data)=>{
+		/*
+		Args:
+			secret_key: Json web token,
+			user_id: ID of user is followed
+		*/
+		try{
+			const v = new niv.Validator(data,{
+				secret_key : 'required',
+				task_id : 'required',
+				introduction : 'required',
+				floor_price : 'required',
+				ceiling_price : 'required' 
+			});
+			const matched = await v.check();
+			if(!matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-follow-user",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.addFollower(data.user_id, decoded._id);
+						socket.emit("sv-follow-user",result);
+					}
+				});
+			}else{
+				socket.emit("sv-follow-user",{"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-follow-user", {"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
+	
 	//WARNING: Get list tasks, for testing 
 	socket.on("cl-get-default-tasks",async(data)=>{
 		/*Args:
@@ -525,6 +668,7 @@ io.sockets.on('connection',function(socket){
 			}
 		}catch(e){
 			socket.emit("sv-get-default-tasks", {"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
 		}
 	});
 
