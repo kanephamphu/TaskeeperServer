@@ -34,11 +34,30 @@ async function addSearchQuery(query_string){
     }
 }
 
-async function test(){
-    let t = await addSearchQuery("Phu Tai Chat Vl");
-    console.log(t);
-    let te = await addSearchQuery("Phu Tai Chatdd Vl");
-    console.log(te);
+// Search query autocomplete
+async function searchAutoComplete(search_string){
+    try{
+        let t = await searchquery.find({
+            $text : {
+                $search : search_string
+            }
+        }).sort({'search_count' : -1});
+        return t;
+    }catch(e){
+        throw(e);
+    }
 }
 
+async function test(){
+    /*let t = await addSearchQuery("Phu Tai Chat Vl");
+    console.log(t);*/
+    let te = await addSearchQuery("Lập Trình NodeJS");
+    console.log(te);
+    let t = await searchAutoComplete("Trinh");
+    console.log(t);
+}
+
+//test();
+
+module.exports.searchAutoComplete = searchAutoComplete;
 module.exports.addSearchQuery = addSearchQuery;

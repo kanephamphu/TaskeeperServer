@@ -9,8 +9,10 @@ var jwt= require('jsonwebtoken');
 var checker = require('./controllers/Check');
 const helmet = require('helmet')
 var tasksController = require('./controllers/TaskController');
+var searchController = require('./controllers/SearchQueryController');
 const niv = require('node-input-validator');
 const { match } = require("assert");
+const searchquery = require("./models/SearchQueryModel");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -672,6 +674,29 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
+	// Search auto complete 
+	socket.on("cl-search-autocomplete", async(data)=>{
+		/*
+		Args:
+			search_string : search string for predict
+		Returns:
+			socket.on auto complete search string
+		*/
+		try{
+			const v=new niv.Validator(data, {
+				search_string : 'required'
+			});
+			const matched = v.check();
+			if(matched){
+				let result = await searchController.searchAutoComplete(data.search_string);
+				socket.emit("sv-search_autocomplete", {"success" : true, "data" : result});
+			}else{
+				socket.emit("sv-search-autocomplete", {"success": false, "errors" : v.errors})
+			}
+		}catch(e){
+			throw(e);
+		}
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");

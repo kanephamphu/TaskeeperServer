@@ -1,6 +1,5 @@
-const search = require('../models/SearchQueryModel');
 const user = require('../models/UsersModel');
-const task = require('../models/TaskModel');
+const task = require('../models/TasksModel');
 const searchquery = require('../models/SearchQueryModel');
 
 //Search
@@ -13,14 +12,8 @@ async function searchTask(search_string){
     */
     try{
         let searchResult = await task.find({
-            "title" : {
-                $regex : search_string
-            },
-            "description" : {
-                $regex : search_string
-            },
-            "location" : {
-                $regex : search_string
+            $text : {
+                $search : search_string
             }
         });
         return searchResult;    
@@ -31,7 +24,7 @@ async function searchTask(search_string){
 
 // Test
 async function test(){
-    let t = await searchTask("Thanh An");
+    let t = await searchTask("Móa");
     console.log(t);
 }
 

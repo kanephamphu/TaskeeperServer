@@ -13,5 +13,6 @@ var SearchQuery= new mongoose.Schema({
     }
 });
 
+SearchQuery.index({query_string : "text"});
 const searchquery = mongoose.model("SearchQuery",SearchQuery);
 module.exports = searchquery;
