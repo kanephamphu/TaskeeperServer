@@ -41,7 +41,7 @@ async function searchAutoComplete(search_string){
             $text : {
                 $search : search_string
             }
-        },["_id,query_string"],{limit : 10}).sort({'search_count' : -1});
+        },["_id","query_string"],{limit : 10}).sort({'search_count' : -1});
         return t;
     }catch(e){
         throw(e);
