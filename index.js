@@ -689,7 +689,7 @@ io.sockets.on('connection',function(socket){
 			const matched = v.check();
 			if(matched){
 				let result = await searchController.searchAutoComplete(data.search_string);
-				socket.emit("sv-search_autocomplete", {"success" : true, "data" : result});
+				socket.emit("sv-search-autocomplete", {"success" : true, "data" : result});
 			}else{
 				socket.emit("sv-search-autocomplete", {"success": false, "errors" : v.errors})
 			}

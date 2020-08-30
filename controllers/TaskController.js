@@ -108,7 +108,6 @@ async function testviewJob(){
     console.log(result);
 }
 
-testviewJob();
 // Employee apply to the task
 async function addApplicationJob(user_id,task_id, introduction,floor_price,ceiling_price){
     try{
