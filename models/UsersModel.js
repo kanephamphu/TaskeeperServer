@@ -190,5 +190,12 @@ var UserChema = new mongoose.Schema({
     }]
 });
 
+
+UserChema.index(
+    {
+        first_name : "text",
+        last_name : "text"
+    }
+);
 const user = mongoose.model("User",UserChema);
 module.exports=user;

@@ -9,10 +9,11 @@ var jwt= require('jsonwebtoken');
 var checker = require('./controllers/Check');
 const helmet = require('helmet')
 var tasksController = require('./controllers/TaskController');
-var searchController = require('./controllers/SearchQueryController');
+var searchqueryController = require('./controllers/SearchQueryController');
 const niv = require('node-input-validator');
 const { match } = require("assert");
 const searchquery = require("./models/SearchQueryModel");
+const SearchController = require('./controllers/SearchController');
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -440,19 +441,19 @@ io.sockets.on('connection',function(socket){
 	//View User Task History List
 	socket.on("cl-job-history", async(data)=>{
 		/* Args: 
-			_employee_id: is employee which id you want to look the job history
+			_user_id: is employee which id you want to look the job history
 			skip: skip number of data list  
 		*/
 		try{
 			const v= new niv.Validator(data, {
-				_employee_id : 'required',
+				_user_id : 'required',
 				skip : 'required'
 			});
 			const matched = await v.check();
 			if(!matched){
 				socket.emit("sv-job-history",{"success" : false, "errors" : v.errors});
 			}else{
-				let list = await tasksController.viewTaskHistoryList(data._employee_id, data.skip);
+				let list = await tasksController.viewTaskHistoryList(data._user_id, data.skip);
 				socket.emit("sv-job-history",{"success": true, "data": list});
 			}
 		}catch(e){
@@ -688,7 +689,7 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = v.check();
 			if(matched){
-				let result = await searchController.searchAutoComplete(data.search_string);
+				let result = await searchqueryController.searchAutoComplete(data.search_string);
 				console.log(result);
 				socket.emit("sv-search-autocomplete", {"success" : true, "data" : result});
 			}else{
@@ -697,6 +698,56 @@ io.sockets.on('connection',function(socket){
 		}catch(e){
 			socket.emit("sv-search-autocomplete", {"success" : false, "errors" : {"message" : "Undefined error"}});
 			throw(e);
+		}
+	});
+
+	//Client send search user 
+	socket.on("cl-search-user", async(data)=>{
+		/*
+		Args: 
+			search_string : Search string for looking 
+		Returns: 
+			socket.on search result 
+		*/
+		try{
+			const v=new niv.Validator(data, {
+				search_string : 'required'
+			});
+			const matched = v.check();
+			if(matched){
+				let result = await SearchController.searchUser(data.search_string);
+				console.log(result);
+				socket.emit("sv-search-user", {"success" : true, "data" : result});
+			}else{
+				socket.emit("sv-search-user", {"success": false, "errors" : v.errors})
+			}
+		}catch(e){
+			socket.emit("sv-search-user", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
+	//Client send search task 
+	socket.on("cl-search-task", async(data)=>{
+		/*
+		Args: 
+			search_string : Search string for looking 
+		Returns: 
+			socket.on search result 
+		*/
+		try{
+			const v=new niv.Validator(data, {
+				search_string : 'required'
+			});
+			const matched = v.check();
+			if(matched){
+				let result = await SearchController.searchTask(data.search_string);
+				console.log(result);
+				socket.emit("sv-search-task", {"success" : true, "data" : result});
+			}else{
+				socket.emit("sv-search-task", {"success": false, "errors" : v.errors})
+			}
+		}catch(e){
+			socket.emit("sv-search-task", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
 	//Disconnect

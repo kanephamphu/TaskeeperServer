@@ -87,5 +87,12 @@ var Tasks= new mongoose.Schema({
     }
 });
 
+Tasks.index(
+    {task_title : "text",
+    task_description : "text",
+    location : "text"
+    }
+);
+
 const tasks = mongoose.model("Tasks",Tasks);
 module.exports = tasks;
