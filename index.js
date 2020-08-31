@@ -470,7 +470,7 @@ io.sockets.on('connection',function(socket){
 				All information of user. For instance, first_name, last_name, phone_number ...
 		*/
 		try{
-			const v= niv.Validator(data, {
+			const v= new niv.Validator(data, {
 				_user_id : 'required'
 			});
 			const matched = await v.check();
