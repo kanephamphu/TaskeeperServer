@@ -716,7 +716,6 @@ io.sockets.on('connection',function(socket){
 			const matched = v.check();
 			if(matched){
 				let result = await SearchController.searchUser(data.search_string);
-				console.log(result);
 				socket.emit("sv-search-user", {"success" : true, "data" : result});
 			}else{
 				socket.emit("sv-search-user", {"success": false, "errors" : v.errors})
@@ -741,13 +740,50 @@ io.sockets.on('connection',function(socket){
 			const matched = v.check();
 			if(matched){
 				let result = await SearchController.searchTask(data.search_string);
-				console.log(result);
 				socket.emit("sv-search-task", {"success" : true, "data" : result});
 			}else{
 				socket.emit("sv-search-task", {"success": false, "errors" : v.errors})
 			}
 		}catch(e){
 			socket.emit("sv-search-task", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
+	// User edit information 
+	socket.on("cl-edit-info",async(data)=>{
+		/*
+		Args: 
+
+		*/
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required',
+				first_name : 'required',
+				last_name : 'required',
+				email : 'required|email',
+				phone_number : 'required|phoneNumber',
+				gender : 'required',
+				day_of_birth : 'required',
+				month_of_birth : 'required',
+				year_of_birth : 'required'
+			});
+			const matched = v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-edit-info",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.editPersonalInfo(decoded._id,data.first_name, data.last_name, data.email,
+							data.phone_number, data.gender, data.day_of_birth, data.month_of_birth, data.year_of_birth);
+						socket.emit("sv-edit-info", result);
+					}
+				})
+			}else{
+				socket.emit("sv-edit-info", {"success": false, "errors" : v.errors})
+			}
+		}catch(e){
+			socket.emit("sv-edit-info", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
 	//Disconnect

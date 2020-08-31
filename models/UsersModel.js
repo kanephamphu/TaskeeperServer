@@ -40,7 +40,9 @@ var UserChema = new mongoose.Schema({
         type: String
     },
     gender: {
-        type: String
+        type: String,
+        enum: ['male','female','undefined'],
+        default : 'undefined'
     },
     description: {
         type: String

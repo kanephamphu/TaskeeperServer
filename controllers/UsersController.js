@@ -61,6 +61,30 @@ async function getGroupUser(id) {
     }
 }
 
+// Edit personal information
+async function editPersonalInfo(user_id,first_name, last_name, email, phone_number, gender, 
+    day_of_birth, month_of_birth, year_of_birth){
+    try{
+        let userDocs = {
+            "first_name" : first_name,
+            "last_name" : last_name,
+            "email.current_email" : email,
+            "phone_number.current_phone_number" : phone_number,
+            "gender" : gender,
+            "day_of_birth" : day_of_birth,
+            "month_of_birth" : month_of_birth,
+            "year_of_birth" : year_of_birth
+        }
+        let result = user.update({"_id" : user_id}, userDocs).exec();
+        if(result){
+            return {"success" : true};
+        }else{
+            return {"success" : false};
+        }
+    }catch(e){
+        throw(e);
+    }
+}
 //Get ID by email or phone number or username
 async function getUserID(loginquery){
     try{
@@ -408,13 +432,13 @@ async function testviewJob(){
     //var result = await getAllDetail("5f2546def9ca2b000466c467");
     //var result = await addNewWorkingInformation("5f17ea80959405207c09f752", "Xin caho", "Tai")
     //var result1 = await editWorkingInformation("5f17ea80959405207c09f752", "5f3f87226d44ed2e346cd6e2", "Sdf Tai", "level");
-    //var result = await deleteWorkingInformation("5f17ea80959405207c09f752","5f3f87565979632c187cc153");
+    var result = await editPersonalInfo("5f17ea80959405207c09f752","Te","Phem","123123","123132","male",16,08,1999);
     console.log(result);
 }
 
 //testviewJob();
 
-
+module.exports.editPersonalInfo = editPersonalInfo;
 module.exports.voteUser = voteUser;
 module.exports.deleteFollower = deleteFollower;
 module.exports.addFollower = addFollower;
