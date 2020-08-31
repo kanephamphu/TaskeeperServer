@@ -19,7 +19,7 @@ require('dotenv').config()
 
 const limiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 200 // limit each IP to 100 requests per windowMs
+	max: 200 // limit each IP to 200 requests per windowMs
   });
 app.use(bodyparser.json());
 app.use(limiter);
@@ -481,6 +481,7 @@ io.sockets.on('connection',function(socket){
 				socket.emit("sv-user-detail", {"success" : true, "data" : userDetail});
 			}
 		}catch(e){
+			console.log(e);
 			socket.emit("sv-user-detail", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
@@ -786,6 +787,8 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-edit-info", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
+
+	
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
