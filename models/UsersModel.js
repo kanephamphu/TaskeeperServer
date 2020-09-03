@@ -62,6 +62,11 @@ var UserChema = new mongoose.Schema({
     nationality: {
         type: String
     },
+    address_list : [{
+        address: {
+            type: String
+        }
+    }],
     email: {
         current_email: {
             type: String,

@@ -632,7 +632,7 @@ io.sockets.on('connection',function(socket){
 				ceiling_price : 'required' 
 			});
 			const matched = await v.check();
-			if(!matched){
+			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
 						socket.emit("sv-follow-user",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
