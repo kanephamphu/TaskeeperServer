@@ -13,7 +13,9 @@ var searchqueryController = require('./controllers/SearchQueryController');
 const niv = require('node-input-validator');
 const { match } = require("assert");
 const searchquery = require("./models/SearchQueryModel");
-const SearchController = require('./controllers/SearchController');
+const searchController = require('./controllers/SearchController');
+const messageController = require('./controllers/MessageController');
+
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -50,7 +52,8 @@ io.sockets.on('connection',function(socket){
 						"first_name" : INFORMATION.first_name,
 						"last_name" : INFORMATION.last_name
 					};
-					jwt.sign(tokenInformation,process.env.login_secret_key, { expiresIn: 60*60*24 },(err,token)=>{
+					//, { expiresIn: 60*60*24 }
+					jwt.sign(tokenInformation,process.env.login_secret_key,(err,token)=>{
 							if(err){
 								console.log(err);
 							}
@@ -716,7 +719,7 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = v.check();
 			if(matched){
-				let result = await SearchController.searchUser(data.search_string);
+				let result = await searchController.searchUser(data.search_string);
 				socket.emit("sv-search-user", {"success" : true, "data" : result});
 			}else{
 				socket.emit("sv-search-user", {"success": false, "errors" : v.errors})
@@ -740,7 +743,7 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = v.check();
 			if(matched){
-				let result = await SearchController.searchTask(data.search_string);
+				let result = await searchController.searchTask(data.search_string);
 				socket.emit("sv-search-task", {"success" : true, "data" : result});
 			}else{
 				socket.emit("sv-search-task", {"success": false, "errors" : v.errors})
@@ -788,7 +791,34 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
+	//Add new message
+	socket.on('cl-new-text-message', async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required',
+				receiver_id : 'required',
+				message_text : 'required'
+			});
+			const matched = v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-new-text-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await messageController.addMessage(decoded._id,data.receiver_id, 'text', data.message_text, null);
+						socket.emit("sv-new-text-message", result);
+					}
+				})
+			}else{
+				socket.emit("sv-new-text-message", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-new-text-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	
+	//Add new message
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
