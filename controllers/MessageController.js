@@ -64,3 +64,4 @@ async function setReaded(sender_id, receiver_id){
 //setReaded("5f2ae09e8e857e00041dc2bf","5f15dee66d224e19dcbf6bbf");
 module.exports.readMessage = readMessage;
 module.exports.addMessage = addMessage;
+module.exports.setReaded = setReaded;

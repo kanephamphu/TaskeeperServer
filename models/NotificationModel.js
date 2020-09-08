@@ -5,27 +5,23 @@ var Notification= new mongoose.Schema({
     user_id : {
         type: String
     },
-    notifications : [{
-        notification_image : {
-            type : String
-        },
-        created_time : {
-            type: Number,
-            default: Date.now()
-        },
-        description : {
-            type : String
-        },
-        type : {
-            type : String
-        },
-        isReaded : {
-            type : Boolean
-        },
-        task_id : {
-            type : String
-        }
-    }]
+    created_time : {
+        type: Number,
+        default: Date.now()
+    },
+    description : {
+        type : String
+    },
+    type : {
+        type : String
+    },
+    is_readed : {
+        type : Boolean,
+        default: false
+    },
+    task_id : {
+        type : String
+    }
 });
 
 const notification = mongoose.model("Notification",Notification);

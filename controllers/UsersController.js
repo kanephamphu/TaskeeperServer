@@ -345,13 +345,14 @@ async function addFollower(user_id, follower_id){
             return {"success" : false, "errors" : {"message" : "Already follow"}};
         }else{
             let detail = await user.findOne({"_id" : follower_id},["first_name", "last_name", "avatar"]);
+            console.log(detail.first_name);
             let inserted = await user.update({"_id" : user_id}, {
                 $push : {
                     "followers" : {
                         "follower_id" : follower_id,
-                        "followers.follower_first_name" : detail.first_name,
-                        "followers.follower_first_name" : detail.last_name,
-                        "followers.avatar" : detail.avatar
+                        "follower_first_name" : detail.first_name,
+                        "follower_last_name" : detail.last_name,
+                        "avatar" : detail.avatar
                     }
                 }
             });
@@ -428,16 +429,34 @@ async function voteUser(user_id, voter_id, vote_point){
         throw(e);
     }
 }
+
+// Get follower list
+async function getFollowerList(user_id){
+    let followers = await user.findOne({
+        "_id" : user_id
+    },["followers"]);
+    if(followers){
+        return {"success" : true, "data" : followers}
+    }else{
+        return {"success" : false}
+    }
+}
+
 async function testviewJob(){
     //var result = await getAllDetail("5f2546def9ca2b000466c467");
     //var result = await addNewWorkingInformation("5f17ea80959405207c09f752", "Xin caho", "Tai")
     //var result1 = await editWorkingInformation("5f17ea80959405207c09f752", "5f3f87226d44ed2e346cd6e2", "Sdf Tai", "level");
-    var result = await editPersonalInfo("5f17ea80959405207c09f752","Te","Phem","123123","123132","male",16,08,1999);
+    //var result = await editPersonalInfo("5f17ea80959405207c09f752","Te","Phem","123123","123132","male",16,08,1999);
+    var result = await getFollowerList("5f15dee66d224e19dcbf6bbf");
+    console.log(result.data.followers);
     console.log(result);
 }
 
+//addFollower("5f15dee66d224e19dcbf6bbf","5f17ea80959405207c09f752");
+//addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");
 //testviewJob();
 
+module.exports.getFollowerList = getFollowerList;
 module.exports.editPersonalInfo = editPersonalInfo;
 module.exports.voteUser = voteUser;
 module.exports.deleteFollower = deleteFollower;

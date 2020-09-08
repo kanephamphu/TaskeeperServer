@@ -173,7 +173,6 @@ async function deleteApplicationJob(user_id, task_id){
 }
 
 // Update job application of job
-
 async function updateApplicationJob(user_id,task_id, introduction,floor_price,ceiling_price){
     try{
         let isApplied = task.findOne({
@@ -209,6 +208,19 @@ async function updateApplicationJob(user_id,task_id, introduction,floor_price,ce
     }
 }
 
+// Get job applicant list
+async function getApplyList(task_id){
+    let candidate_apply_list = await user.findOne({
+        "_id" : task_id
+    },["task_candidate_apply_list"]);
+    if(candidate_apply_list){
+        return {"success" : true, "data" : candidate_apply_list}
+    }else{
+        return {"success" : false}
+    }   
+}
+
+module.exports.getApplyList = getApplyList;
 module.exports.updateApplicationJob = updateApplicationJob;
 module.exports.deleteApplicationJob = deleteApplicationJob;
 module.exports.addApplicationJob = addApplicationJob;

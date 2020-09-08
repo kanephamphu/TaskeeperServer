@@ -15,6 +15,7 @@ const { match } = require("assert");
 const searchquery = require("./models/SearchQueryModel");
 const searchController = require('./controllers/SearchController');
 const messageController = require('./controllers/MessageController');
+const user = require("./models/UsersModel");
 
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
@@ -123,7 +124,6 @@ io.sockets.on('connection',function(socket){
 			throw(e);
 		}
 	});
-
 
 	//Change password
 	socket.on("cl-change-password",(data)=>{
@@ -421,7 +421,6 @@ io.sockets.on('connection',function(socket){
 			throw(e);
 		}
 	});
-
 
 	//Check validate test
 	socket.on("test",async (data)=>{
@@ -791,8 +790,8 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
-	//Add new message
-	socket.on('cl-new-text-message', async(data)=>{
+	// Add new message
+	socket.on("cl-new-text-message", async(data)=>{
 		try{
 			const v=new niv.Validator(data, {
 				secret_key : 'required',
@@ -817,8 +816,55 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-new-text-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
+
+	// Get follower list
+	socket.on("cl-get-followers", async(data)=>{
+		try {
+			const v=new niv.Validator(data, {
+				secret_key : 'required'
+			});
+			const matched = v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-followers",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.getFollowerList(decoded._id);
+						socket.emit("sv-get-followers", result);
+					}
+				})
+			}
+		} catch (e) {
+			socket.emit("sv-get-followers", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
+	// Get apply list 
+	socket.on("cl-get-apply-job-list", async(data)=>{
+		try {
+			const v=new niv.Validator(data, {
+				secret_key : 'required',
+				task_id : 'required'
+			});
+			const matched = v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-apply-job-list",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await tasksController.getApplyList(data.task_id);
+						socket.emit("sv-get-apply-job-list", result);
+					}
+				})
+			}
+		} catch (e) {
+			socket.emit("sv-get-apply-job-list", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});	
+
 	
-	//Add new message
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
