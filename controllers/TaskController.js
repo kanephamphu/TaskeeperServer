@@ -101,13 +101,6 @@ async function test() {
     console.log(result);  
 }
 
-async function testviewJob(){
-    //var result = await viewTaskDetail("5f1c581dcde7010774853652");
-    //var result = await viewTasks(10, 10);
-    var result = await getTasks(10,0);
-    console.log(result);
-}
-
 // Employee apply to the task
 async function addApplicationJob(user_id,task_id, introduction,floor_price,ceiling_price){
     try{
@@ -220,6 +213,29 @@ async function getApplyList(task_id){
     }   
 }
 
+// Get list job which a client applied
+async function getAppliedJobs(user_id){
+    let listJobs = await task.find({
+        "task_candidate_apply_list._id_candidate" : user_id
+    },["task_title", "task_type", "position"]).exec();
+    if(listJobs){
+        return {"success" : true, "data" : listJobs}
+    }else{
+        return {"success" : false}
+    }
+}
+
+async function testviewJob(){
+    //var result = await viewTaskDetail("5f1c581dcde7010774853652");
+    //var result = await viewTasks(10, 10);
+    var result = await getAppliedJobs("5f19a81b1cc2f7000458a566");
+    //var result = await addApplicationJob("5f19a81b1cc2f7000458a566","5f1c581dcde7010774853652", "Hddd",34, 65);
+    console.log(result);
+}
+
+
+//testviewJob();
+module.exports.getAppliedJobs = getAppliedJobs;
 module.exports.getApplyList = getApplyList;
 module.exports.updateApplicationJob = updateApplicationJob;
 module.exports.deleteApplicationJob = deleteApplicationJob;
