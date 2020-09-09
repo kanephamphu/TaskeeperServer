@@ -690,7 +690,7 @@ io.sockets.on('connection',function(socket){
 			const v=new niv.Validator(data, {
 				search_string : 'required'
 			});
-			const matched = v.check();
+			const matched = await v.check();
 			if(matched){
 				let result = await searchqueryController.searchAutoComplete(data.search_string);
 				console.log(result);
@@ -716,7 +716,7 @@ io.sockets.on('connection',function(socket){
 			const v=new niv.Validator(data, {
 				search_string : 'required'
 			});
-			const matched = v.check();
+			const matched = await v.check();
 			if(matched){
 				let result = await searchController.searchUser(data.search_string);
 				socket.emit("sv-search-user", {"success" : true, "data" : result});
@@ -740,7 +740,7 @@ io.sockets.on('connection',function(socket){
 			const v=new niv.Validator(data, {
 				search_string : 'required'
 			});
-			const matched = v.check();
+			const matched = await v.check();
 			if(matched){
 				let result = await searchController.searchTask(data.search_string);
 				socket.emit("sv-search-task", {"success" : true, "data" : result});
@@ -770,7 +770,7 @@ io.sockets.on('connection',function(socket){
 				month_of_birth : 'required',
 				year_of_birth : 'required'
 			});
-			const matched = v.check();
+			const matched = await v.check();
 			console.log(matched);
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
@@ -801,7 +801,7 @@ io.sockets.on('connection',function(socket){
 				receiver_id : 'required',
 				message_text : 'required'
 			});
-			const matched = v.check();
+			const matched = await v.check();
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
@@ -826,7 +826,7 @@ io.sockets.on('connection',function(socket){
 			const v=new niv.Validator(data, {
 				secret_key : 'required'
 			});
-			const matched = v.check();
+			const matched = await v.check();
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
@@ -850,7 +850,7 @@ io.sockets.on('connection',function(socket){
 				secret_key : 'required',
 				task_id : 'required'
 			});
-			const matched = v.check();
+			const matched = await v.check();
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
