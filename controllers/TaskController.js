@@ -210,7 +210,7 @@ async function updateApplicationJob(user_id,task_id, introduction,floor_price,ce
 
 // Get job applicant list
 async function getApplyList(task_id){
-    let candidate_apply_list = await user.findOne({
+    let candidate_apply_list = await task.findOne({
         "_id" : task_id
     },["task_candidate_apply_list"]);
     if(candidate_apply_list){
