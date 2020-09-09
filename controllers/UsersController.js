@@ -329,7 +329,7 @@ async function getAllDetail(_id){
         let detail = await user.findOne({"_id": _id}, ["avatar","first_name","last_name","gender",
         "description", "website","day_of_birth","month_of_birth","year_of_birth","nationality",
         "email.current_email","phone_number.current_phone_number","working_information","education_information",
-        "votes"]).exec();
+        "votes","avatar"]).exec();
         return detail;
     }catch(e){
         console.log(e);

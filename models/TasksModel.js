@@ -79,7 +79,7 @@ var Tasks= new mongoose.Schema({
     year_of_working_done: {
         type: Number
     },
-    task_view_count : {
+    impression : {
         type : Number
     },
     isMatched : {
@@ -92,7 +92,7 @@ Tasks.index(
     task_description : "text",
     location : "text"
     }
-);
+);  
 
 const tasks = mongoose.model("Tasks",Tasks);
 module.exports = tasks;
