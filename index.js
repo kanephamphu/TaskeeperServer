@@ -777,12 +777,14 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-edit-info",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						console.log("Ok")
 						let result = await userController.editPersonalInfo(decoded._id,data.first_name, data.last_name, data.email,
 							data.phone_number, data.gender, data.day_of_birth, data.month_of_birth, data.year_of_birth);
 						socket.emit("sv-edit-info", result);
 					}
 				})
 			}else{
+				console.log("Khong duoc");
 				socket.emit("sv-edit-info", {"success": false, "errors" : v.errors})
 			}
 		}catch(e){
