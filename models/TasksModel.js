@@ -38,14 +38,14 @@ var Tasks= new mongoose.Schema({
         floor_price : Number,
         ceiling_price : Number
     }],
-    work_employee: {
+    work_employee: [{
         _id_employee: {
             type: String
         },
         price: {
             type: Number
         }
-    },
+    }],
     tags: [
         {
             type: String

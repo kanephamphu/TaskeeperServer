@@ -843,8 +843,8 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
-	// Get apply list 
-	socket.on("cl-get-apply-job-list", async(data)=>{
+	// Get all of the candidate who apply to the job
+	socket.on("cl-get-candidate-apply-job", async(data)=>{
 		try {
 			const v=new niv.Validator(data, {
 				secret_key : 'required',
@@ -854,19 +854,45 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
-						socket.emit("sv-get-apply-job-list",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						socket.emit("sv-get-candidate-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
 						let result = await tasksController.getApplyList(data.task_id);
-						socket.emit("sv-get-apply-job-list", result);
+						socket.emit("sv-get-candidate-apply-job", result);
 					}
-				})
+				});
+			}else{
+				socket.emit("sv-get-candidate-apply-job", {"success": false, "errors" : v.errors})
 			}
 		} catch (e) {
-			socket.emit("sv-get-apply-job-list", {"success" : false, "errors" : {"message" : "Undefined error"}});
+			socket.emit("sv-get-candidate-apply-job", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});	
 
+	// Get all job is applied
+	socket.on("cl-get-applied-job", async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-applied-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await tasksController.getAppliedJobs(decoded._id);
+						socket.emit("sv-get-applied-job", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-applied-job", {"success": false, "errors" : v.errors})
+			}
+		}catch(e){
+			socket.emit("sv-get-applied-job", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	
 	//Disconnect
 	socket.on('disconnect', function () {
