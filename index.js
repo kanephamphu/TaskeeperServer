@@ -535,7 +535,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await tasksController.addApplicationJob(decoded._id,data._task_id,data.introduction,data.floor_price,data.ceiling_price);
+						let result = await tasksController.addApplicationJob(decoded._id,data.task_id,data.introduction,data.floor_price,data.ceiling_price);
 						socket.emit("sv-apply-job",result);
 					}
 				});
