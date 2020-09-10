@@ -107,9 +107,9 @@ async function addApplicationJob(user_id,task_id, introduction,floor_price,ceili
         let isApplied = await task.findOne({
             "_id" : task_id,
             "task_candidate_apply_list._id_candidate" : user_id
-        });
-        console.log(isApplied)
-        if(!isApplied){
+        },"_id");
+
+        if(isApplied == null){
             let applyTask = await task.update({"_id" : task_id},
             {
                 $push : {
@@ -230,12 +230,12 @@ async function testviewJob(){
     //var result = await viewTaskDetail("5f1c581dcde7010774853652");
     //var result = await viewTasks(10, 10);
     //var result = await getAppliedJobs("5f19a81b1cc2f7000458a566");
-    //var result = await addApplicationJob("5f17ea80959405207c09f752","5f1c581dcde7010774853652", "Hddd",34, 65);
+    var result = await addApplicationJob("5f2ac25e8e857e00041dc2b8","5f1c581dcde7010774853652", "Hddd",34, 65);
     console.log(result);
 }
 
 
-//testviewJob();
+testviewJob();
 module.exports.getAppliedJobs = getAppliedJobs;
 module.exports.getApplyList = getApplyList;
 module.exports.updateApplicationJob = updateApplicationJob;
