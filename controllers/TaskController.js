@@ -110,7 +110,7 @@ async function addApplicationJob(user_id,task_id, introduction,floor_price,ceili
         });
 
         if(!isApplied){
-            let applyTask = task.update({"_id" : task_id},
+            let applyTask = await task.update({"_id" : task_id},
             {
                 $push : {
                     "task_candidate_apply_list" : {
@@ -120,7 +120,7 @@ async function addApplicationJob(user_id,task_id, introduction,floor_price,ceili
                         "ceiling_price" : ceiling_price
                     }
                 }
-            }).exec();
+            });
 
             if(applyTask){
                 return {"success" : true };
