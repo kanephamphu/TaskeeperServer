@@ -720,8 +720,16 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				let result = await searchController.searchUser(data.search_string);
 				socket.emit("sv-search-user", {"success" : true, "data" : result});
+				if(data.secret_key){
+					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+						if(decoded){
+							userController.addSearchHistory(decoded._id, data.search_string);
+						}
+					});
+				}
 			}else{
 				socket.emit("sv-search-user", {"success": false, "errors" : v.errors})
+
 			}
 		}catch(e){
 			socket.emit("sv-search-user", {"success" : false, "errors" : {"message" : "Undefined error"}});
@@ -744,6 +752,13 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				let result = await searchController.searchTask(data.search_string);
 				socket.emit("sv-search-task", {"success" : true, "data" : result});
+				if(data.secret_key){
+					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+						if(decoded){
+							userController.addSearchHistory(decoded._id, data.search_string);
+						}
+					});
+				}
 			}else{
 				socket.emit("sv-search-task", {"success": false, "errors" : v.errors})
 			}

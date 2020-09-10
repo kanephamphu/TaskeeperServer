@@ -191,9 +191,13 @@ var UserChema = new mongoose.Schema({
         search_query : {
             type : String
         },
-        search_count : [{
+        search_count : {
             type : Number
-        }]
+        },
+        last_time : {
+            type : Number,
+            default : Date.now()
+        }
     }]
 });
 

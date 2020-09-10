@@ -1,5 +1,6 @@
 const user = require('../models/UsersModel');
 const task = require('../models/TasksModel');
+const searchquery = require('../models/SearchQueryModel');
 
 //Search
 async function searchTask(search_string){
@@ -14,7 +15,7 @@ async function searchTask(search_string){
             $text : {
                 $search : search_string
             }
-        },{},{limit : 10});
+        },{},{limit : 10}).sort({"search_count" : -1});
         return searchResult;    
     }catch(e){
         throw(e);
@@ -34,12 +35,18 @@ async function searchUser(search_string){
             $text : {
                 $search : search_string
             }
-        },{},{limit : 10});
+        },{},{limit : 10}).sort({"search_count" : -1});
         return searchResult;    
     }catch(e){
         throw(e);
     }
 };
+
+// Get search trend
+async function getSearchTrend(){
+    let result = await searchquery.find({},["query_string"], {limit : 4}).sort({"search_count_recently" : -1});
+    return result;
+}
 // Test
 async function test(){
     let t = await searchTask("Nodejs");
@@ -48,5 +55,6 @@ async function test(){
     console.log(te);
 }
 
+module.exports.getSearchTrend = getSearchTrend;
 module.exports.searchTask = searchTask;
 module.exports.searchUser = searchUser;

@@ -104,10 +104,10 @@ async function test() {
 // Employee apply to the task
 async function addApplicationJob(user_id,task_id, introduction,floor_price,ceiling_price){
     try{
-        let isApplied = task.findOne({
+        let isApplied = await task.findOne({
             "_id" : task_id,
             "task_candidate_apply_list._id_candidate" : user_id
-        }).exec();
+        });
         if(isApplied){
             let applyTask = task.update({"_id" : task_id},
             {
@@ -228,8 +228,8 @@ async function getAppliedJobs(user_id){
 async function testviewJob(){
     //var result = await viewTaskDetail("5f1c581dcde7010774853652");
     //var result = await viewTasks(10, 10);
-    var result = await getAppliedJobs("5f19a81b1cc2f7000458a566");
-    //var result = await addApplicationJob("5f19a81b1cc2f7000458a566","5f1c581dcde7010774853652", "Hddd",34, 65);
+    //var result = await getAppliedJobs("5f19a81b1cc2f7000458a566");
+    //var result = await addApplicationJob("5f17ea80959405207c09f752","5f1c581dcde7010774853652", "Hddd",34, 65);
     console.log(result);
 }
 
