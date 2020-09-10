@@ -108,7 +108,8 @@ async function addApplicationJob(user_id,task_id, introduction,floor_price,ceili
             "_id" : task_id,
             "task_candidate_apply_list._id_candidate" : user_id
         });
-        if(isApplied){
+
+        if(!isApplied){
             let applyTask = task.update({"_id" : task_id},
             {
                 $push : {
