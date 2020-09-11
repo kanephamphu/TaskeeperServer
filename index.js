@@ -949,6 +949,56 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-get-search-history", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
+	
+	// Get news feed 
+	socket.on("cl-get-news-feed", async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				number_task : 'required',
+				skip : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				if(data.secret_key){
+					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+						if(err){
+							socket.emit("sv-get-news-feed",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						}
+						if(decoded){
+							let result = await newsController.getNewsData(decoded._id, number_task, skip);
+							socket.emit("sv-get-news-feed", result);
+						}
+					});
+				}else{
+					socket.emit("sv-get-news-feed", {"success" : true, "data" : {}});
+				}
+			}else{
+				socket.emit("sv-get-news-feed", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-news-feed", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
+	// Get wall task 
+	socket.on("cl-get-wall-task", async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				user_id : 'required',
+				number_task : 'required',
+				skip : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				let result = await wallController.getWallData(user_id, number_task, skip);
+				socket.emit("sv-get-wall-task", result);
+			}else{
+				socket.emit("sv-get-news-feed", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-wall-task", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");

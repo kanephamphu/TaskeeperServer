@@ -1,5 +1,6 @@
 const news = require('../models/NewsModel');
 const user = require('../models/UsersModel');
+const task = require('../models/TasksModel');
 // Add task to news
 async function addNews(user_id, task_id){
     try{
@@ -74,9 +75,29 @@ async function addNewsToFollowers(user_id, task_id){
     }
 } 
 
-
+// Get top number news
+async function getNewsData(user_id, number_task, skip){
+    let tasknews = await news.findOne({"user_id" : user_id}, {
+        "task_news" : {
+            $slice : [skip,number_task]
+        }
+    });
+    let task_id = tasknews.task_news;
+    let list_task_id = [];
+    for(let i in task_id){
+        list_task_id.push(task_id[i].task_id)
+    }
+    let result = await task.find({"_id": {
+        $in : list_task_id
+    }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price"]);
+    if(result){
+        return {"success" : true, "data" : result};
+    }else{
+        return {"success" : false};
+    }
+}
 //addFollowers("5f15dee66d224e19dcbf6bbf","5f1c5df095199238c4282655");
-
+//getNewsData("5f19a01bb989ab4374ab6c09",2,0)
 /*async function test(){
     //let te = await addNews("123","3443","2342346","Tai", "sdfsf", "Thanh An", "unextract", 34, 67, "freelance", "Taa", 123123);
     //console.log(te);
@@ -84,6 +105,7 @@ async function addNewsToFollowers(user_id, task_id){
     //console.log(t);
 }*/
 
+module.exports.getNewsData = getNewsData;
 module.exports.addNews = addNews;
 module.exports.addNewsToFollowers = addNewsToFollowers;
 module.exports.deleteNews = deleteNews;
