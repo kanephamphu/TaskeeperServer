@@ -142,21 +142,22 @@ async function addApplicationJob(user_id,task_id, introduction,floor_price,ceili
 // Delete application of job
 async function deleteApplicationJob(user_id, task_id){
     try{
-        let isApplied = task.findOne({
+        let isApplied = await task.findOne({
             "_id" : task_id,
             "task_candidate_apply_list._id_candidate" : user_id
-        }).exec();
-        if(!isApplied){
-            let applyTask = task.update({"_id" : task_id},
+        });
+        
+        if(isApplied){
+            let deleteTask = await task.update({"_id" : task_id},
             {
                 $pull : {
                     "task_candidate_apply_list" : {
                         "_id_candidate" : user_id
                     }
                 }
-            }).exec();
+            });
 
-            if(applyTask){
+            if(deleteTask){
                 return {"success" : true };
             }
             return {"success" : false, "errors" : {"message" : "Undefined errors"}};
@@ -238,7 +239,7 @@ async function testviewJob(){
     //var result = await addApplicationJob("5f2ac25e8e857e00041dc2b8","5f1c581dcde7010774853652", "Hddd",34, 65);
     console.log(result);
 }
-
+deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
 module.exports.getAppliedJobs = getAppliedJobs;
 module.exports.getApplyList = getApplyList;

@@ -575,7 +575,7 @@ io.sockets.on('connection',function(socket){
 					}
 					if(decoded){
 						let result = await tasksController.deleteApplicationJob(decoded._id, data.task_id);
-						socket.emit("sv-apply-job",result);
+						socket.emit("sv-delete-apply-job",result);
 					}
 				});
 			}else{
