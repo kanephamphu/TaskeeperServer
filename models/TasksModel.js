@@ -28,6 +28,15 @@ var Tasks= new mongoose.Schema({
     task_owner_id: {
         type: String
     },
+    task_owner_first_name : {
+        type: String
+    },
+    task_owner_last_name : {
+        type : String
+    },
+    task_owner_avatar : {
+        type : String
+    },
     task_candidate_apply_list: [{
         _id_candidate: {
             type: String

@@ -1,7 +1,7 @@
 var task = require('../models/TasksModel');
 require('dotenv').config();
 //Add Freelancer Task
-async function addFreelanceTask(task_title,task_description,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type,languages,industry) {
+async function addFreelanceTask(task_title,task_description,task_owner_first_name, task_owner_last_name, task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type,languages,industry) {
     try{
         if(task_type=='freelance'){
             var taskDocs = {
@@ -11,45 +11,48 @@ async function addFreelanceTask(task_title,task_description,task_type,task_owner
                 "tags" : tags,
                 "price.price_type" : price_type,
                 "task_type" : task_type,
+                "task_owner_first_name" : task_owner_first_name,
+                "task_owner_last_name" : task_owner_last_name,
+                "task_owner_avatar" : task_owner_avatar,
                 "price.floor_price" : floor_price,
                 "price.ceiling_price" : ceiling_price,
                 "location" : location
             };
             var result = await task.create(taskDocs);
             if(result){
-                return 'success';
+                return {"success" : true, "data" : result};
             }else{
-                return 'failed';
+                return {"success" : false};
             }
         }
     }catch(e){
-        console.log("loi")
         console.log(e);
         throw(e);
     }
 }
 
 //Add Freelancer Task
-async function addTask(task_title,task_description,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type) {
+async function addTask(task_title,task_description,task_owner_first_name, task_owner_last_name, task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type) {
     try{
-        if(task_type!='freelance'){
-            var taskDocs = {
-                "task_title" : task_title,
-                "task_description" : task_description,
-                "task_owner_id" : task_owner_id,
-                "tags" : tags,
-                "price.price_type" : price_type,
-                "task_type" : task_type,
-                "price.floor_price" : floor_price,
-                "price.ceiling_price" : ceiling_price,
-                "location" : location
-            };
-            var result = await task.create(taskDocs);
-            if(result){
-                return 'success';
-            }else{
-                return 'failed';
-            }
+        var taskDocs = {
+            "task_title" : task_title,
+            "task_description" : task_description,
+            "task_owner_id" : task_owner_id,
+            "tags" : tags,
+            "price.price_type" : price_type,
+            "task_type" : task_type,
+            "price.floor_price" : floor_price,
+            "price.ceiling_price" : ceiling_price,
+            "location" : location,
+            "task_owner_first_name" : task_owner_first_name,
+            "task_owner_last_name" : task_owner_last_name,
+            "task_owner_avatar" : task_owner_avatar
+        };
+        var result = await task.create(taskDocs);
+        if(result){
+            return {"success" : true, "data" : result};
+        }else{
+            return {"success" : false};
         }
     }catch(e){
         console.log(e);
@@ -227,15 +230,16 @@ async function getAppliedJobs(user_id){
 }
 
 async function testviewJob(){
+    var result =  await addFreelanceTask("Tuyển thành viên tập đoàn đa cấp ","Lương tháng 7 tỉ", "Ti", "Phu",
+    "sdsdf",'freelance', "123", ["Lập Trình"], 76,445,"Vl", 'unextract');
     //var result = await viewTaskDetail("5f1c581dcde7010774853652");
     //var result = await viewTasks(10, 10);
     //var result = await getAppliedJobs("5f19a81b1cc2f7000458a566");
-    var result = await addApplicationJob("5f2ac25e8e857e00041dc2b8","5f1c581dcde7010774853652", "Hddd",34, 65);
+    //var result = await addApplicationJob("5f2ac25e8e857e00041dc2b8","5f1c581dcde7010774853652", "Hddd",34, 65);
     console.log(result);
 }
 
-
-testviewJob();
+//testviewJob();
 module.exports.getAppliedJobs = getAppliedJobs;
 module.exports.getApplyList = getApplyList;
 module.exports.updateApplicationJob = updateApplicationJob;

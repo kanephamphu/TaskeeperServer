@@ -12,11 +12,11 @@ var tasksController = require('./controllers/TaskController');
 var searchqueryController = require('./controllers/SearchQueryController');
 const niv = require('node-input-validator');
 const { match } = require("assert");
-const searchquery = require("./models/SearchQueryModel");
 const searchController = require('./controllers/SearchController');
+const newsController = require('./controllers/NewsController');
 const messageController = require('./controllers/MessageController');
-const user = require("./models/UsersModel");
-
+const wallController = require('./controllers/WallController');
+const { SSL_OP_COOKIE_EXCHANGE } = require("constants");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -48,8 +48,7 @@ io.sockets.on('connection',function(socket){
 					const tokenInformation = {
 						"_id" : ID,
 						"username" : INFORMATION.login_information.username,
-						"email" : INFORMATION.email.current_email,
-						"phone_number" : INFORMATION.phone_number.current_phone_number,
+						"avatar" : INFORMATION.avatar,
 						"first_name" : INFORMATION.first_name,
 						"last_name" : INFORMATION.last_name
 					};
@@ -178,13 +177,11 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					//If token error, cancel transaction
-					console.log(data);
 					if(err){
 						console.log(err);
 						socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						console.log(data)
 						//Check price_type, if it difference with undefined format, continue handle transaction 
 						if(typeof data.price_type !== 'undefined'){
 							if(data.price_type == 'unextract'){
@@ -197,10 +194,15 @@ io.sockets.on('connection',function(socket){
 									if(data.floor_price >= data.ceiling_price){
 										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 									}else{
-										var result = await tasksController.addFreelanceTask(data.task_title,data.task_description,data.task_type,decoded._id,
+										var result = await tasksController.addTask(data.task_title,data.task_description,decoded.first_name,decoded.last_name,decoded.avatar,decdata.task_type,decoded._id,
 											data.tags,data.floor_price, data.ceiling_price, data.location, data.price_type);
 										if(typeof result !== 'undefined'){
-											socket.emit("sv-new-tasks",{"success" : true});
+											socket.emit("sv-new-tasks",result);
+											// Add tasks to news feed of followers, and add to wall
+											if(result.success = true){
+												newsController.addNewsToFollowers(decoded._id, result.data._id);
+												wallController.addWall(decoded._id, result.data._id);
+											}
 										}else{
 											socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
 										}
@@ -208,10 +210,15 @@ io.sockets.on('connection',function(socket){
 								}
 							//Handle the dealing price type 
 							}else if(data.price_type == 'dealing'){
-								var result = await tasksController.addTask(data.task_title,data.task_description,data.task_type,decoded._id,
+								var result = await tasksController.addTask(data.task_title,data.task_description,decoded.first_name,decoded.last_name,decoded.avatar,data.task_type,decoded._id,
 									data.tags,null, null, data.location, data.price_type);
 								if(typeof result !== 'undefined'){
-									socket.emit("sv-new-tasks",{"success" : true});
+									socket.emit("sv-new-tasks",result);
+									// Add tasks to news feed of followers
+									if(result.success = true){
+										newsController.addNewsToFollowers(decoded._id, result.data._id);
+										wallController.addWall(decoded._id, result.data._id);
+									}
 								}else{
 									socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
 								}
@@ -909,6 +916,39 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	
+	// Get top search trend
+	socket.on("cl-get-search-trend", async(data)=>{
+		try{
+			let result = await searchController.getSearchTrend();
+			if(result)
+				socket.emit("sv-get-search-trend", {"success" : true, "data" : result});
+			else
+				socket.emit("sv-get-search-trend", {"success" : false});
+		}catch(e){
+			socket.emit("sv-get-search-trend", {"success" : false, "errors" : {"message" : "Undefined error"}})
+		}
+	});
+
+	// Get search history 
+	socket.on("cl-get-search-history",async(data)=>{
+		try{
+			if(data.secret_key){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-search-history",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.getSearchHistory(decoded._id);
+						socket.emit("sv-get-search-history", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-search-history", {"success" : true, "data" : {}});
+			}
+		}catch(e){
+			socket.emit("sv-get-search-history", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");

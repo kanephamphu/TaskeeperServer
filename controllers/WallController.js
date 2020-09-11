@@ -15,7 +15,8 @@ async function addWall(user_id, task_id){
             let result = await wall.update({"user_id" : user_id}, {
                 $push : {
                     "wall" : {
-                        "task_id" : task_id
+                        $each : [{"task_id" : task_id}],
+                        $position : 0
                     }
                 }
             });
@@ -29,5 +30,6 @@ async function addWall(user_id, task_id){
         throw(e);
     }
 }
+
 
 module.exports.addWall = addWall;

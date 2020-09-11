@@ -148,7 +148,9 @@ var UserChema = new mongoose.Schema({
             type: String
         }
     }],
-    email_annoucement_permited: Boolean,
+    email_annoucement_permited: {
+        type: Boolean
+    },
     group: [{
         group_id: {
             type: String

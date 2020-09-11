@@ -449,26 +449,33 @@ async function addSearchHistory(user_id, query_string){
         let result = await user.findOne({"_id" : user_id, "search_queries.search_query" : query_string}, ["search_queries.search_count", "search_queries._id"]);
         let search_count = await result.search_queries[0].search_count + 1;
         let search_id = await result.search_queries[0]._id;
-        let edited = await user.updateOne({"_id" : user_id, "search_queries._id" : search_id}, {
-            $set : {
+        let deleted = await user.updateOne({"_id" : user_id},{
+            $pull : {
                 "search_queries" : {
-                    "_id" : search_id,
-                    "search_query" : query_string,
-                    "search_count" : search_count,
-                    "last_time" : Date.now()
-                }  
+                    "_id" : search_id
+                }
             }
         });
-        if(edited){
-            return {"success" : true}
+        if(deleted){
+            let added = await user.updateOne({"_id" : user_id}, {$push : {
+                "search_queries" : {
+                    $each : [{"search_query" : query_string, "search_count" : search_count}],
+                    $position : 0
+                }
+            }});
+            if(added){
+                return {"success" : true}
+            }else{
+                return {"success" : false}
+            }
         }else{
             return {"success" : false}
         }
     }else{
         let added = await user.updateOne({"_id" : user_id},{$push : {
             "search_queries" : {
-                "search_query" : query_string,
-                "search_count" : 1
+                $each : [{"search_query" : query_string,"search_count" : 1}],
+                $position : 0
             }
         }})
         if(added){
@@ -481,11 +488,15 @@ async function addSearchHistory(user_id, query_string){
 
 // Get search history
 async function getSearchHistory(user_id){
-    let searchHistory = await user.findOne({"_id" : user_id}, "search_queries");
-    console.log(searchHistory);
+    let searchHistory = await user.findOne({"_id" : user_id}, "search_queries.search_query");  
+    if(searchHistory){
+        return {"success" : true, "data" : searchHistory};
+    }else{
+        return {"success" : false};
+    }
 }
 //getSearchHistory("5f15dee66d224e19dcbf6bbf");
-//addSearchHistory("5f15dee66d224e19dcbf6bbf", "Lập trình Unity")
+addSearchHistory("5f15dee66d224e19dcbf6bbf", "Lập trình Unity")
 async function testviewJob(){
     //var result = await getAllDetail("5f2546def9ca2b000466c467");
     //var result = await addNewWorkingInformation("5f17ea80959405207c09f752", "Xin caho", "Tai")
@@ -501,6 +512,7 @@ async function testviewJob(){
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");
 //testviewJob();
 
+module.exports.getSearchHistory = getSearchHistory;
 module.exports.addSearchHistory = addSearchHistory;
 module.exports.getFollowerList = getFollowerList;
 module.exports.editPersonalInfo = editPersonalInfo;

@@ -1,28 +1,19 @@
 const news = require('../models/NewsModel');
-
+const user = require('../models/UsersModel');
 // Add task to news
-async function addNews(user_id, task_owner_id, task_id, title, description, location,price_type,floor_price, ceiling_price,task_type,task_owner_avatar,created_time){
+async function addNews(user_id, task_id){
     try{
         let isExist = await news.findOne({"user_id" : user_id});
-        console.log(isExist);
         // If user id is exist in database then update new news item else create new user news
         if(isExist){
-            console.log("heher");
             let result = await news.update({"user_id" : user_id}, 
                 {
                     $push : {
                         "task_news" : {
-                            "task_id" : task_id,
-                            "task_news" : title,
-                            "task_owner_id" : task_owner_id,
-                            "description" : description,
-                            "location" : location,
-                            "price.price_type" : price_type,
-                            "price.floor_price" : floor_price,
-                            "price.ceiling_price" : ceiling_price,
-                            "task_type" : task_type,
-                            "task_owner_avatar" : task_owner_avatar,
-                            "created_time" : created_time
+                            $each : [{
+                                "task_id" : task_id
+                            }],                       
+                            $position : 0
                     }
                 }
             });
@@ -36,20 +27,9 @@ async function addNews(user_id, task_owner_id, task_id, title, description, loca
                 {
                     "user_id" : user_id,
                     "task_news" : {
-                        "task_id" : task_id,
-                        "task_news" : title,
-                        "task_owner_id" : task_owner_id,
-                        "description" : description,
-                        "location" : location,
-                        "price.price_type" : price_type,
-                        "price.floor_price" : floor_price,
-                        "price.ceiling_price" : ceiling_price,
-                        "task_type" : task_type,
-                        "task_owner_avatar" : task_owner_avatar,
-                        "created_time" : created_time
+                        "task_id" : task_id
                     } 
                 });
-            console.log(result);
             if(result){
                 return {"success" : true};
             }else{
@@ -86,12 +66,24 @@ async function deleteNews(user_id,task_id){
     }
 }
 
-async function test(){
-    let te = await addNews("123","3443","2342346","Tai", "sdfsf", "Thanh An", "unextract", 34, 67, "freelance", "Taa", 123123);
-    console.log(te);
-    let t = await deleteNews("123","234234");
-    console.log(t);
-}
+// Add news to followers
+async function addNewsToFollowers(user_id, task_id){
+    let listFollowers = await user.findOne({"_id" : user_id}, "followers.follower_id");
+    for(let i =0;i < listFollowers.followers.length; i++){
+        addNews(listFollowers.followers[i].follower_id, task_id)
+    }
+} 
+
+
+//addFollowers("5f15dee66d224e19dcbf6bbf","5f1c5df095199238c4282655");
+
+/*async function test(){
+    //let te = await addNews("123","3443","2342346","Tai", "sdfsf", "Thanh An", "unextract", 34, 67, "freelance", "Taa", 123123);
+    //console.log(te);
+    //let t = await deleteNews("123","234234");
+    //console.log(t);
+}*/
 
 module.exports.addNews = addNews;
-module.export.deleteNews = deleteNews;
+module.exports.addNewsToFollowers = addNewsToFollowers;
+module.exports.deleteNews = deleteNews;
