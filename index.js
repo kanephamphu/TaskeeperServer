@@ -171,7 +171,6 @@ io.sockets.on('connection',function(socket){
 				task_description : 'required',
 				task_type : 'required',
 				price_type : 'required',
-				
 			});
 			const matched = await v.check();
 			if(matched){
@@ -999,7 +998,6 @@ io.sockets.on('connection',function(socket){
 	});
 	
 	// Client load message 
-	socket.on("cl-get-")
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
