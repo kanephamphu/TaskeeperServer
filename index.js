@@ -178,22 +178,22 @@ io.sockets.on('connection',function(socket){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					//If token error, cancel transaction
 					if(err){
-						console.log(err);
 						socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
 						//Check price_type, if it difference with undefined format, continue handle transaction 
 						if(typeof data.price_type !== 'undefined'){
 							if(data.price_type == 'unextract'){
-								const v= new niv.Validator(data,{
+								const p= new niv.Validator(data,{
 									floor_price : 'required',
 									ceiling_price : 'required'
 								});
-								const matched = await v.check();
-								if(matched){
+								const matched1 = await p.check();
+								if(matched1){
 									if(data.floor_price >= data.ceiling_price){
 										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 									}else{
+										console.log(result)
 										var result = await tasksController.addTask(data.task_title,data.task_description,decoded.first_name,decoded.last_name,decoded.avatar,decdata.task_type,decoded._id,
 											data.tags,data.floor_price, data.ceiling_price, data.location, data.price_type);
 										if(typeof result !== 'undefined'){
@@ -207,6 +207,8 @@ io.sockets.on('connection',function(socket){
 											socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
 										}
 									}
+								}else{
+									socket.emit("sv-new-tasks", {"success": false, "errors": p.errors})
 								}
 							//Handle the dealing price type 
 							}else if(data.price_type == 'dealing'){
@@ -228,13 +230,12 @@ io.sockets.on('connection',function(socket){
 						}else{
 							socket.emit("sv-new-tasks",{"success":false, "errors": {"message" : "Miss price data type", "rule": "price_type"}})
 						}
-					}else{
-						socket.emit("sv-new-tasks", {"success": false, "errors": v.errors})
 					}
 						
 				});
+			}else{
+				socket.emit("sv-new-tasks", {"success": false, "errors": v.errors})
 			}
-			console.log(data.secret_key);
 			
 		} catch (e) {
 			socket.emit("sv-new-tasks",{"success" : false, "errors" : {"message" : "Undefined error"}});
@@ -635,10 +636,7 @@ io.sockets.on('connection',function(socket){
 		try{
 			const v = new niv.Validator(data,{
 				secret_key : 'required',
-				task_id : 'required',
-				introduction : 'required',
-				floor_price : 'required',
-				ceiling_price : 'required' 
+				user_id : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
@@ -980,7 +978,7 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
-	// Get wall task 
+	// Get profile wall task 
 	socket.on("cl-get-wall-task", async(data)=>{
 		try{
 			const v=new niv.Validator(data, {
@@ -999,6 +997,9 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-get-wall-task", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
+	
+	// Client load message 
+	socket.on("cl-get-")
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
