@@ -192,10 +192,10 @@ io.sockets.on('connection',function(socket){
 									if(data.floor_price >= data.ceiling_price){
 										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 									}else{
-										console.log(result)
-										var result = await tasksController.addTask(data.task_title,data.task_description,decoded.first_name,decoded.last_name,decoded.avatar,decdata.task_type,decoded._id,
-											data.tags,data.floor_price, data.ceiling_price, data.location, data.price_type);
+										var result = await tasksController.addTask(data.task_title, data.task_description, decoded.first_name, decoded.last_name, decoded.avatar,
+											data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type);
 										if(typeof result !== 'undefined'){
+											console.log(result);
 											socket.emit("sv-new-tasks",result);
 											// Add tasks to news feed of followers, and add to wall
 											if(result.success = true){
