@@ -46,7 +46,7 @@ async function readMessage(sender_id, receiver_id, number_message, skip){
     }
 }
 
-//Set readed
+// Set readed
 async function setReaded(sender_id, receiver_id){
     let result = await message.updateMany({
         "sender_id" : sender_id,
@@ -59,8 +59,19 @@ async function setReaded(sender_id, receiver_id){
     }
 }
 
+// Get messager list
+async function getMessagerList(user_id, number_messager, skip){
+    let result = await message.aggregate([{$match : {"receiver_id" : user_id}},
+    {$group : {_id : { sender_id:"$sender_id"}}}, 
+    {$sort : {created_time : -1}}
+    ]);
+    console.log(result);
+}
 
-//addMessage("5f2ae09e8e857e00041dc2bf", "5f15dee66d224e19dcbf6bbf", "text", "Hi there", 'sdf');
+//getMessagerList("5f2546def9ca2b000466c467",10,10);
+//addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Heellooo", 'sdf');
+//addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Nghỉ học bán hàng đa cấp với anh em ơi", 'sdf');
+//addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Được Inbox", 'sdf');
 //setReaded("5f2ae09e8e857e00041dc2bf","5f15dee66d224e19dcbf6bbf");
 module.exports.readMessage = readMessage;
 module.exports.addMessage = addMessage;

@@ -18,7 +18,7 @@ var Message = new mongoose.Schema({
     message_link : {
         type: String
     },
-    create_time : {
+    created_time : {
         type: Number,
         default: Date.now()
     },

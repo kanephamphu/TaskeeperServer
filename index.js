@@ -17,6 +17,8 @@ const newsController = require('./controllers/NewsController');
 const messageController = require('./controllers/MessageController');
 const wallController = require('./controllers/WallController');
 const { SSL_OP_COOKIE_EXCHANGE } = require("constants");
+const notificationController = require("./controllers/NotificationController");
+const notification = require("./models/NotificationModel");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -163,7 +165,6 @@ io.sockets.on('connection',function(socket){
 	//Add new tasks
 	socket.on("cl-new-tasks",async (data)=>{
 		try {
-			console.log(data);
 			//Validate input of users
 			const v= new niv.Validator(data,{
 				secret_key : 'required',
@@ -951,6 +952,7 @@ io.sockets.on('connection',function(socket){
 	socket.on("cl-get-news-feed", async(data)=>{
 		try{
 			const v=new niv.Validator(data, {
+				secret_key : 'required',
 				number_task : 'required',
 				skip : 'required'
 			});
@@ -997,7 +999,138 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	
-	// Client load message 
+	// Client load message
+	socket.on("cl-load-message", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				user_id : 'required',
+				number_message : 'required',
+				skip : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-load-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await messageController.readMessage(decoded._id, data.user_id, data.number_message,
+							data.skip);
+						socket.emit("sv-load-message", result);
+					}
+				});
+			}else{
+				socket.emit("sv-load-message", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-load-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+	
+	// Client set readed message
+	socket.on("cl-set-readed-message", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				user_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-set-readed-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await messageController.setReaded(user_id, decoded._id);
+						socket.emit("sv-set-readed-message", result);
+					}
+				});
+			}else{
+				socket.emit("sv-set-readed-message", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-set-readed-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+	
+	// Client get notification
+	socket.on("cl-get-notification", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				number_notification : 'required',
+				skip : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-read-notification",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await notificationController.getNotification(decoded._id, data.number_notification, data.skip);
+						socket.emit("sv-read-notification", result);
+					}
+				});
+			}else{
+				socket.emit("sv-read-notification", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-read-notification", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+	
+	// Client set notification is readed
+	socket.on("cl-readed-notification", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				notifcation_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-readed-notification",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await notificationController.setReaded(decoded._id, data.notification_id);
+						socket.emit("sv-readed-notification", result);
+					}
+				});
+			}else{
+				socket.emit("sv-readed-notification", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-readed-notification", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+	
+	// Client set all notification readed
+	socket.on("cl-readed-all-notification", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-readed-all-notification",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await notificationController.setReadedAll(decoded._id);
+						socket.emit("sv-readed-all-notification", result);
+					}
+				});
+			}else{
+				socket.emit("sv-readed-all-notification", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-readed-all-notification", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
