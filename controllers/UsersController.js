@@ -496,7 +496,7 @@ async function getSearchHistory(user_id){
     }
 }
 //getSearchHistory("5f15dee66d224e19dcbf6bbf");
-addSearchHistory("5f15dee66d224e19dcbf6bbf", "Lập trình Unity")
+//addSearchHistory("5f15dee66d224e19dcbf6bbf", "Lập trình Unity")
 async function testviewJob(){
     //var result = await getAllDetail("5f2546def9ca2b000466c467");
     //var result = await addNewWorkingInformation("5f17ea80959405207c09f752", "Xin caho", "Tai")
@@ -508,7 +508,7 @@ async function testviewJob(){
 }
 
 
-//addFollower("5f15dee66d224e19dcbf6bbf","5f17ea80959405207c09f752");
+//addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");
 //testviewJob();
 
