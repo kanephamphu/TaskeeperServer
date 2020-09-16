@@ -200,6 +200,27 @@ var UserChema = new mongoose.Schema({
             type : Number,
             default : Date.now()
         }
+    }],
+    task_saved : [{
+        task_id : {
+            type : String
+        },
+        task_owner_id : {
+            type : String
+        },
+        task_owner_avatar : {
+            type : String
+        },
+        task_owner_first_name : {
+            type : String
+        },
+        task_title : {
+            type : String
+        },
+        saved_time : {
+            type : Number,
+            default : Date.now()
+        }
     }]
 });
 

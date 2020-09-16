@@ -1,7 +1,7 @@
 var validator = require('validator');
 var checker= require('./Check');
 const user = require('../models/UsersModel');
-
+var taskController = require('./TaskController');
 //Check login
 async function checkLoginQuery(loginquery){
     if(validator.isEmail(loginquery) || validator.isMobilePhone(loginquery)){
@@ -123,7 +123,7 @@ async function  getFunction(_id) {
 async function getInformation(_id){
     try{
         var information = await user.findOne({"_id":_id},["login_information.username"
-        ,"email.current_email","phone_number.current_phone_number","first_name","last_name"]);
+        ,"avatar","first_name","last_name"]);
         return information;
     }catch(e){
         console.log(e);
@@ -495,6 +495,60 @@ async function getSearchHistory(user_id){
         return {"success" : false};
     }
 }
+
+// Save task
+async function saveTask(user_id, task_id){
+    let detail = await taskController.getSavedDetail(task_id);
+    if(detail==null){
+        return {"success" : false}
+    }else{
+        let inseted =await user.updateOne({"_id" : user_id}, {
+            $push : {
+                "task_saved" : {
+                    "task_id" : task_id,
+                    "task_owner_id" : detail.task_owner_id,
+                    "task_owner_avatar" : detail.task_owner_first_name,
+                    "task_owner_last_name" : detail.task_owner_last_name,
+                    "task_owner_first_name" : detail.task_owner_first_name,
+                    "task_title" : detail.task_title
+                }
+            }
+        });
+        if(inseted){
+            return {"success" : true}
+        }else{
+            return {"success" : false}
+        }
+    }
+}
+
+// Get saved task
+async function getSavedTask(user_id, number_task, skip){
+    let result = await user.findOne({"_id" : user_id}, {"task_saved" : { $slice : [skip,number_task]}});
+    if(result){
+        console.log(result.task_saved);
+        return {"success" : true, "data" : result.task_saved}
+    }else{
+        return {"success" : false}
+    }
+}
+
+// Delete saved task
+async function deleteSavedTask(user_id, task_saved_id){
+    let result = await news.updateOne({"user_id" : user_id}, 
+            {
+                $pull : {
+                    "task_saved" : {
+                        "_id" : task_saved_id
+                    }
+                }
+            }
+        );
+    if(result){
+        return {"success" : true};
+    }
+    return {"success" : false};
+}
 //getSearchHistory("5f15dee66d224e19dcbf6bbf");
 //addSearchHistory("5f15dee66d224e19dcbf6bbf", "Lập trình Unity")
 async function testviewJob(){
@@ -506,11 +560,14 @@ async function testviewJob(){
     console.log(result.data.followers);
     console.log(result);
 }
-
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");
 //testviewJob();
-
+//saveTask("5f2546def9ca2b000466c467","5f61f36cda3a730340a423d2")
+//getSavedTask("5f2546def9ca2b000466c467",1,0)
+module.exports.deleteSavedTask = deleteSavedTask;
+module.exports.getSavedTask = getSavedTask;
+module.exports.saveTask = saveTask;
 module.exports.getSearchHistory = getSearchHistory;
 module.exports.addSearchHistory = addSearchHistory;
 module.exports.getFollowerList = getFollowerList;

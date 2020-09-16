@@ -1131,6 +1131,85 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-readed-all-notification", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
+	
+	// Client save task
+	socket.on("cl-save-task", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				task_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-save-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.saveTask(decoded._id, task_id);
+						socket.emit("sv-save-task", result);
+					}
+				});
+			}else{
+				socket.emit("sv-save-task", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-save-task", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+	
+	// Client get saved task
+	socket.on("cl-get-saved-task", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				number_task : 'required',
+				skip : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-saved-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.getSavedTask(decoded._id,data.number_task, data.skip);
+						socket.emit("sv-get-saved-task", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-saved-task", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-saved-task", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
+	// Client remove saved task
+	socket.on("cl-remove-saved-task", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				task_saved_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-remove-saved-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.deleteSavedTask(decoded._id, task_saved_id);
+						socket.emit("sv-remove-saved-task", result);
+					}
+				});
+			}else{
+				socket.emit("sv-remove-saved-task", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-remove-saved-task", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");

@@ -218,6 +218,11 @@ async function getApplyList(task_id){
     }   
 }
 
+// Get job saved detail
+async function getSavedDetail(task_id){
+    let detail = await task.findOne({"_id" : task_id}, ["task_owner_id","task_owner_avatar", "task_owner_first_name", "task_owner_last_name", "task_title"]);
+    return detail;
+}
 // Get list job which a client applied
 async function getAppliedJobs(user_id){
     let listJobs = await task.find({
@@ -241,6 +246,7 @@ async function testviewJob(){
 }
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
+module.exports.getSavedDetail = getSavedDetail; 
 module.exports.getAppliedJobs = getAppliedJobs;
 module.exports.getApplyList = getApplyList;
 module.exports.updateApplicationJob = updateApplicationJob;
