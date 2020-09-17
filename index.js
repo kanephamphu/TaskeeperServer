@@ -1201,7 +1201,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-remove-saved-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await userController.deleteSavedTask(decoded._id, task_saved_id);
+						let result = await userController.deleteSavedTask(decoded._id, data.task_saved_id);
 						socket.emit("sv-remove-saved-task", result);
 					}
 				});
