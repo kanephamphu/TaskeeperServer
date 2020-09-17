@@ -1139,7 +1139,9 @@ io.sockets.on('connection',function(socket){
 				secret_key : 'required',
 				task_id : 'required'
 			});
+			console.log(data)
 			const matched = await v.check();
+			console.log(matched)
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
