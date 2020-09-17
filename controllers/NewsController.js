@@ -82,19 +82,23 @@ async function getNewsData(user_id, number_task, skip){
             $slice : [skip,number_task]
         }
     });
-    let task_id = tasknews.task_news;
-    let list_task_id = [];
-    for(let i in task_id){
-        list_task_id.push(task_id[i].task_id)
+    if(tasknews){
+        let task_id = tasknews.task_news;
+        let list_task_id = [];
+        for(let i in task_id){
+            list_task_id.push(task_id[i].task_id)
+        }
+        let result = await task.find({"_id": {
+            $in : list_task_id
+        }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", "task_owner_first_name", "task_owner_last_name", "task_owner_avatar"]);
+        if(result){
+            return {"success" : true, "data" : result};
+        }else{
+            return {"success" : false};
+        }
     }
-    let result = await task.find({"_id": {
-        $in : list_task_id
-    }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", "task_owner_first_name", "task_owner_last_name", "task_owner_avatar"]);
-    if(result){
-        return {"success" : true, "data" : result};
-    }else{
-        return {"success" : false};
-    }
+    return {"success" : true, "data" : [{}]};
+    
 }
 
 //addFollowers("5f15dee66d224e19dcbf6bbf","5f1c5df095199238c4282655");
