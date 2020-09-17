@@ -96,8 +96,9 @@ async function getNewsData(user_id, number_task, skip){
         return {"success" : false};
     }
 }
+
 //addFollowers("5f15dee66d224e19dcbf6bbf","5f1c5df095199238c4282655");
-//getNewsData("5f19a01bb989ab4374ab6c09",2,0)
+//getNewsData("5f19a01bb989ab4374ab6c09",5,5)
 /*async function test(){
     //let te = await addNews("123","3443","2342346","Tai", "sdfsf", "Thanh An", "unextract", 34, 67, "freelance", "Taa", 123123);
     //console.log(te);
