@@ -64,9 +64,9 @@ var Tasks= new mongoose.Schema({
         type: Number,
         default: Date.now()
     },
-    languages : [{
+    languages : {
         type: String
-    }],
+    },
     industry: {
         type: String
     },
