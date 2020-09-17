@@ -964,7 +964,7 @@ io.sockets.on('connection',function(socket){
 							socket.emit("sv-get-news-feed",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 						}
 						if(decoded){
-							let result = await newsController.getNewsData(decoded._id, number_task, skip);
+							let result = await newsController.getNewsData(decoded._id, data.number_task, data.skip);
 							socket.emit("sv-get-news-feed", result);
 						}
 					});
@@ -989,7 +989,7 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = await v.check();
 			if(matched){
-				let result = await wallController.getWallData(user_id, number_task, skip);
+				let result = await wallController.getWallData(data.user_id, data.number_task, data.skip);
 				socket.emit("sv-get-wall-task", result);
 			}else{
 				socket.emit("sv-get-news-feed", {"success": false, "errors" : v.errors});
