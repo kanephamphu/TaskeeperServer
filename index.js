@@ -1148,7 +1148,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-save-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await userController.saveTask(decoded._id, task_id);
+						let result = await userController.saveTask(decoded._id, data.task_id);
 						socket.emit("sv-save-task", result);
 					}
 				});
