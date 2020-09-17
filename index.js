@@ -1042,7 +1042,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-set-readed-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await messageController.setReaded(user_id, decoded._id);
+						let result = await messageController.setReaded(data.user_id, decoded._id);
 						socket.emit("sv-set-readed-message", result);
 					}
 				});
