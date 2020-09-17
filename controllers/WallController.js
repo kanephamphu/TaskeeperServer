@@ -49,19 +49,22 @@ async function getWallData(user_id, number_task, skip){
             $slice : [skip,number_task]
         }
     });
-    let task_id = taskwall.wall;
-    let list_task_id = [];
-    for(let i in task_id){
-        list_task_id.push(task_id[i].task_id)
+    if(taskwall){
+        let task_id = taskwall.wall;
+        let list_task_id = [];
+        for(let i in task_id){
+            list_task_id.push(task_id[i].task_id)
+        }
+        let result = await task.find({"_id": {
+            $in : list_task_id
+        }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price"]);
+        if(result){
+            return {"success" : true, "data" : result};
+        }else{
+            return {"success" : false, "data" : {}};
+        }
     }
-    let result = await task.find({"_id": {
-        $in : list_task_id
-    }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price"]);
-    if(result){
-        return {"success" : true, "data" : result};
-    }else{
-        return {"success" : false, "data" : {}};
-    }
+    return {"success" : true, "data" : [{}]};
 }
 
 //getWallData("5f15dee66d224e19dcbf6bbf",2,0);

@@ -42,6 +42,8 @@ async function addNews(user_id, task_id){
     }
 }
 
+//addNews("5f2546def9ca2b000466c467", "5f1c581dcde7010774853652")
+//addNews("5f2546def9ca2b000466c467", "5f1c5da395199238c4282654")
 //Remove news from task_news for one user
 async function deleteNews(user_id,task_id){
     try{
