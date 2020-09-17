@@ -505,12 +505,15 @@ async function saveTask(user_id, task_id){
         let inseted =await user.updateOne({"_id" : user_id}, {
             $push : {
                 "task_saved" : {
-                    "task_id" : task_id,
-                    "task_owner_id" : detail.task_owner_id,
-                    "task_owner_avatar" : detail.task_owner_first_name,
-                    "task_owner_last_name" : detail.task_owner_last_name,
-                    "task_owner_first_name" : detail.task_owner_first_name,
-                    "task_title" : detail.task_title
+                    $each :[{
+                        "task_id" : task_id,
+                        "task_owner_id" : detail.task_owner_id,
+                        "task_owner_avatar" : detail.task_owner_first_name,
+                        "task_owner_last_name" : detail.task_owner_last_name,
+                        "task_owner_first_name" : detail.task_owner_first_name,
+                        "task_title" : detail.task_title
+                    }],
+                    $position : 0
                 }
             }
         });
@@ -535,7 +538,7 @@ async function getSavedTask(user_id, number_task, skip){
 
 // Delete saved task
 async function deleteSavedTask(user_id, task_saved_id){
-    let result = await news.updateOne({"user_id" : user_id}, 
+    let result = await user.updateOne({"_id" : user_id}, 
             {
                 $pull : {
                     "task_saved" : {
@@ -549,6 +552,7 @@ async function deleteSavedTask(user_id, task_saved_id){
     }
     return {"success" : false};
 }
+//deleteSavedTask("5f2546def9ca2b000466c467","5f6211b8db0d8214b465f89c")
 //getSearchHistory("5f15dee66d224e19dcbf6bbf");
 //addSearchHistory("5f15dee66d224e19dcbf6bbf", "Lập trình Unity")
 async function testviewJob(){
@@ -563,7 +567,7 @@ async function testviewJob(){
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");
 //testviewJob();
-//saveTask("5f2546def9ca2b000466c467","5f61f36cda3a730340a423d2")
+//saveTask("5f2546def9ca2b000466c467","5f3629d61e62e1000425540e")
 //getSavedTask("5f2546def9ca2b000466c467",1,0)
 module.exports.deleteSavedTask = deleteSavedTask;
 module.exports.getSavedTask = getSavedTask;
