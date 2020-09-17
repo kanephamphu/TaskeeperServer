@@ -958,19 +958,15 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = await v.check();
 			if(matched){
-				if(data.secret_key){
-					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
-						if(err){
-							socket.emit("sv-get-news-feed",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
-						}
-						if(decoded){
-							let result = await newsController.getNewsData(decoded._id, data.number_task, data.skip);
-							socket.emit("sv-get-news-feed", result);
-						}
-					});
-				}else{
-					socket.emit("sv-get-news-feed", {"success" : true, "data" : {}});
-				}
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-news-feed",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await newsController.getNewsData(decoded._id, data.number_task, data.skip);
+						socket.emit("sv-get-news-feed", result);
+					}
+				});
 			}else{
 				socket.emit("sv-get-news-feed", {"success": false, "errors" : v.errors});
 			}
