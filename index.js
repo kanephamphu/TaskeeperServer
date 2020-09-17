@@ -957,14 +957,15 @@ io.sockets.on('connection',function(socket){
 				skip : 'required'
 			});
 			console.log(data)
-			const matched = await v.check();
-			console.log(matched)
+			const matched = await v.check();		
 			if(matched){
+				console.log(matched)
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
 						socket.emit("sv-get-news-feed",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						console.log("He")
 						let result = await newsController.getNewsData(decoded._id, data.number_task, data.skip);
 						socket.emit("sv-get-news-feed", result);
 					}
