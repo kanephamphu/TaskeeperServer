@@ -1,11 +1,13 @@
 const notification = require('../models/NotificationModel');
 
 // Add new notification 
-async function addNotification(user_id, description, task_id){
+async function addNotification(user_id, description, type ,task_id, related_user_id){
     let result = await notification.create({
         "user_id" : user_id,
         "description" :description,
-        "task_id" : task_id
+        "type" : type,
+        "task_id" : task_id,
+        "related_user_id" : related_user_id
     })
     if(result){
         return {"success" : true}
@@ -13,12 +15,14 @@ async function addNotification(user_id, description, task_id){
         return {"success" : false}
     }
 };
+//addNotification("5f2546def9ca2b000466c467", "Đã follow bạn", null, "5f59fd269a3b8500045c8375")
 
 // Get notifications
 async function getNotification(user_id, number_notification, skip){
     let result = await notification.find({
-        "user_id" : user_id}, {limit : number_notification, skip: skip});
-    if(result){
+        "user_id" : user_id},{}, {limit : number_notification, skip: skip});
+    console.log(result)
+        if(result){
         return {"success" : true, "data" : result};
     }else{
         return {"success" : false};
@@ -45,6 +49,7 @@ async function setReadedAll(user_id){
     }
 }
 
+//getNotification("5f2546def9ca2b000466c467",1,0)
 module.exports.getNotification = getNotification;
 module.exports.setReaded = setReaded;
 module.exports.setReadedAll = setReadedAll;

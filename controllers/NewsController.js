@@ -41,8 +41,13 @@ async function addNews(user_id, task_id){
         throw(e);
     }
 }
-
-//addNews("5f2546def9ca2b000466c467", "5f1c581dcde7010774853652")
+/*
+addNews("5f2546def9ca2b000466c467", "5f61f36cda3a730340a423d2")
+addNews("5f2546def9ca2b000466c467", "5f618e749fabd20004c8c075")
+addNews("5f2546def9ca2b000466c467", "5f6187f65d48042c58e34af3")
+addNews("5f2546def9ca2b000466c467", "5f5afac86b581d2f50cb5f50")
+addNews("5f2546def9ca2b000466c467", "5f5a2c7913fff935cc539cda")
+*/
 //addNews("5f2546def9ca2b000466c467", "5f1c5da395199238c4282654")
 //Remove news from task_news for one user
 async function deleteNews(user_id,task_id){

@@ -545,6 +545,8 @@ io.sockets.on('connection',function(socket){
 					if(decoded){
 						let result = await tasksController.addApplicationJob(decoded._id,data.task_id,data.introduction,data.floor_price,data.ceiling_price);
 						socket.emit("sv-apply-job",result);
+						let task_owner_id = await tasksController.getTaskOwnerId(data.task_id);
+						notificationController.addNotification(task_owner_id, "applied you to work", "applied", data.task_id, decoded._id);
 					}
 				});
 			}else{
@@ -647,6 +649,7 @@ io.sockets.on('connection',function(socket){
 					if(decoded){
 						let result = await userController.addFollower(data.user_id, decoded._id);
 						socket.emit("sv-follow-user",result);
+						notificationController.addNotification(data.user_id, "followed you", "followed", decoded._id, null);
 					}
 				});
 			}else{

@@ -235,6 +235,17 @@ async function getAppliedJobs(user_id){
     }
 }
 
+// Get task owner id
+async function getTaskOwnerId(task_id){
+    let owner_id = await task.findOne({
+        "_id" : task_id
+    },["task_owner_id"]).exec();
+    if(owner_id){
+        return owner_id.task_owner_id;
+    }else{
+        return null
+    }
+}
 async function testviewJob(){
     var result =  await addFreelanceTask("Tuyển thành viên tập đoàn đa cấp ","Lương tháng 7 tỉ", "Ti", "Phu",
     "sdsdf",'freelance', "123", ["Lập Trình"], 76,445,"Vl", 'unextract');
@@ -246,6 +257,8 @@ async function testviewJob(){
 }
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
+
+module.exports.getTaskOwnerId = getTaskOwnerId;
 module.exports.getSavedDetail = getSavedDetail; 
 module.exports.getAppliedJobs = getAppliedJobs;
 module.exports.getApplyList = getApplyList;

@@ -21,6 +21,9 @@ var Notification= new mongoose.Schema({
     },
     task_id : {
         type : String
+    },
+    related_user_id : {
+        type : String
     }
 });
 
