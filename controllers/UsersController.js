@@ -498,29 +498,34 @@ async function getSearchHistory(user_id){
 
 // Save task
 async function saveTask(user_id, task_id){
-    let detail = await taskController.getSavedDetail(task_id);
-    if(detail==null){
-        return {"success" : false}
+    let isExist = await user.findOne({"task_saved.task_id" : task_id, "_id" : user_id});
+    if(isExist){
+        return {"success" : false, "errors" : {"message" : "Already saved"}};
     }else{
-        let inseted =await user.updateOne({"_id" : user_id}, {
-            $push : {
-                "task_saved" : {
-                    $each :[{
-                        "task_id" : task_id,
-                        "task_owner_id" : detail.task_owner_id,
-                        "task_owner_avatar" : detail.task_owner_first_name,
-                        "task_owner_last_name" : detail.task_owner_last_name,
-                        "task_owner_first_name" : detail.task_owner_first_name,
-                        "task_title" : detail.task_title
-                    }],
-                    $position : 0
-                }
-            }
-        });
-        if(inseted){
-            return {"success" : true}
-        }else{
+        let detail = await taskController.getSavedDetail(task_id);
+        if(detail==null){
             return {"success" : false}
+        }else{
+            let inseted =await user.updateOne({"_id" : user_id}, {
+                $push : {
+                    "task_saved" : {
+                        $each :[{
+                            "task_id" : task_id,
+                            "task_owner_id" : detail.task_owner_id,
+                            "task_owner_avatar" : detail.task_owner_first_name,
+                            "task_owner_last_name" : detail.task_owner_last_name,
+                            "task_owner_first_name" : detail.task_owner_first_name,
+                            "task_title" : detail.task_title
+                        }],
+                        $position : 0
+                    }
+                }
+            });
+            if(inseted){
+                return {"success" : true}
+            }else{
+                return {"success" : false}
+            }
         }
     }
 }
