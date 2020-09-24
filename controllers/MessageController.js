@@ -32,13 +32,14 @@ async function addMessage(sender_id, receiver_id, message_type, message_text, me
 //Read message 
 async function readMessage(sender_id, receiver_id, number_message, skip){
     let result = await message.find({
-        $or :{
+        $or :[{
             "sender_id" : sender_id,
-            "receiver_id" : receiver_id,
-            "sender_id" : receiver_id,
-            "receiver_id" : sender_id
-        }
-    }, {limit : number_message, skip: skip}).sort({'created_time' : -1});
+            "receiver_id" : receiver_id},
+            {
+                "sender_id" : receiver_id,
+                "receiver_id" : sender_id
+            }
+        ]}, {limit : number_message, skip: skip}).sort({'created_time' : -1});
     if(result){
         return {"success" : true, "data" : result};
     }else{
