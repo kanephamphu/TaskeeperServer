@@ -1094,7 +1094,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-total-unread-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await messageController.getTotalUnreadMessage(secret_key._id);
+						let result = await messageController.getTotalUnreadMessage(decoded._id);
 						socket.emit("sv-get-total-unread-message", result);
 					}
 				});
