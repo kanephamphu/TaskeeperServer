@@ -54,7 +54,8 @@ async function readMessage(sender_id, receiver_id, number_message, skip){
 async function setReaded(sender_id, receiver_id){
     let result = await message.updateMany({
         "sender_id" : sender_id,
-        "receiver_id" : receiver_id
+        "receiver_id" : receiver_id,
+        "is_readed" : false
     }, {"is_readed" : true});
     if(result){
         return {"success" : true};
