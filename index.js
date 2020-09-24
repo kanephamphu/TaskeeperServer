@@ -1088,14 +1088,12 @@ io.sockets.on('connection',function(socket){
 				secret_key : 'required'
 			});
 			const matched = await v.check();
-			console.log(data.secret_key);
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
 						socket.emit("sv-get-total-unread-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						console.log(decoded._id);
 						let result = await messageController.getTotalUnreadMessage(decoded._id);
 						socket.emit("sv-get-total-unread-message", result);
 					}
