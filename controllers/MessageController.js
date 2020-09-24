@@ -92,8 +92,15 @@ async function getLastMessageData(receiver_id, sender_id){
     return result;
 }
 
+//
 async function getUnreadNumber(receiver_id, sender_id){
     let unread_number = await message.find({"sender_id" : sender_id, "receiver_id" : receiver_id, "is_readed" : false},{}).count();
+    return unread_number;
+}
+
+// Get Total Unread Message
+async function getTotalUnreadMessage(receiver_id){
+    let unread_number = await message.find({"receiver_id" : receiver_id, "is_readed" : false},{}).count();
     return unread_number;
 }
 //getMessagerList("5f2546def9ca2b000466c467",10,10);
@@ -106,3 +113,4 @@ module.exports.readMessage = readMessage;
 module.exports.addMessage = addMessage;
 module.exports.setReaded = setReaded;
 module.exports.getMessagerList = getMessagerList;
+module.exports.getTotalUnreadMessage = getTotalUnreadMessage;

@@ -1080,6 +1080,31 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-get-messager-list", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
+
+	// Client get total unread message
+	socket.on("cl-get-total-unread-message", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-total-unread-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await messageController.getTotalUnreadMessage(secret_key._id);
+						socket.emit("sv-get-total-unread-message", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-total-unread-message", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-total-unread-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	// Client get notification
 	socket.on("cl-get-notification", async(data)=>{
 		try{
