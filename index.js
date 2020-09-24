@@ -1011,19 +1011,19 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
-						socket.emit("sv-load-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						socket.emit("sv-get-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
 						let result = await messageController.readMessage(decoded._id, data.user_id, data.number_message,
 							data.skip);
-						socket.emit("sv-load-message", result);
+						socket.emit("sv-get-message", result);
 					}
 				});
 			}else{
-				socket.emit("sv-load-message", {"success": false, "errors" : v.errors});
+				socket.emit("sv-get-message", {"success": false, "errors" : v.errors});
 			}
 		}catch(e){
-			socket.emit("sv-load-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+			socket.emit("sv-get-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
 	
@@ -1053,6 +1053,7 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	
+	// Client send 
 	// Client get notification
 	socket.on("cl-get-notification", async(data)=>{
 		try{
