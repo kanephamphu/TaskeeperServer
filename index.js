@@ -1014,7 +1014,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await messageController.readMessage(decoded._id, data.user_id, data.number_message,
+						let result = await messageController.readMessage(decoded._id, data.receiver_id, data.number_message,
 							data.skip);
 						socket.emit("sv-get-message", result);
 					}
@@ -1041,7 +1041,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-set-readed-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await messageController.setReaded(data.user_id, decoded._id);
+						let result = await messageController.setReaded(data.receiver_id, decoded._id);
 						socket.emit("sv-set-readed-message", result);
 					}
 				});
