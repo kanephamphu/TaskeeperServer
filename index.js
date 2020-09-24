@@ -999,7 +999,7 @@ io.sockets.on('connection',function(socket){
 	});
 	
 	// Client load message
-	socket.on("cl-load-message", async(data)=>{
+	socket.on("cl-get-message", async(data)=>{
 		try{
 			const v= new niv.Validator(data, {
 				secret_key : 'required',
