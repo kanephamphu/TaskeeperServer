@@ -100,8 +100,13 @@ async function getUnreadNumber(receiver_id, sender_id){
 
 // Get Total Unread Message
 async function getTotalUnreadMessage(receiver_id){
-    let unread_number = await message.find({"receiver_id" : receiver_id, "is_readed" : false},{}).count();
-    return unread_number;
+    try{
+        let unread_number = await message.find({"receiver_id" : receiver_id, "is_readed" : false},{}).count();
+        return unread_number;
+    }catch(e){
+        throw(e);
+    }
+    
 }
 //getMessagerList("5f2546def9ca2b000466c467",10,10);
 //getUnreadNumber("5f2ae09e8e857e00041dc2bf","5f15dee66d224e19dcbf6bbf");
