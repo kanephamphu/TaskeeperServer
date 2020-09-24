@@ -71,20 +71,20 @@ async function getMessagerList(user_id, number_messager, skip){
     {$sort : {created_time : -1}}
     ]);
     if(result){
-        return {"success" : false};
+        let data = [];
+        for(let index in result){
+            let receiver_data = await user.getMessagerData(result[index]._id.sender_id); 
+            let lastmessagedata = await getLastMessageData(user_id, result[index]._id.sender_id);
+            let unReadNumber = await getUnreadNumber(user_id, result[index]._id.sender_id);
+            data.push({
+                "receiver_data" :receiver_data,
+                "last_message_data" : lastmessagedata,
+                "un_readed_number" : unReadNumber
+            });
+        }
+        return {"success" : true, "data" : data};
     }
-    let data = [];
-    for(let index in result){
-        let receiver_data = await user.getMessagerData(result[index]._id.sender_id); 
-        let lastmessagedata = await getLastMessageData(user_id, result[index]._id.sender_id);
-        let unReadNumber = await getUnreadNumber(user_id, result[index]._id.sender_id);
-        data.push({
-            "receiver_data" :receiver_data,
-            "last_message_data" : lastmessagedata,
-            "un_readed_number" : unReadNumber
-        });
-    }
-    return {"success" : true, "data" : data};
+    return {"success" : false};
 }
 async function getLastMessageData(receiver_id, sender_id){
     let result = await message.findOne({"sender_id" : sender_id, "receiver_id" : receiver_id}, 
