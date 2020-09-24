@@ -1003,7 +1003,7 @@ io.sockets.on('connection',function(socket){
 		try{
 			const v= new niv.Validator(data, {
 				secret_key : 'required',
-				user_id : 'required',
+				receiver_id : 'required',
 				number_message : 'required',
 				skip : 'required'
 			});
@@ -1032,7 +1032,7 @@ io.sockets.on('connection',function(socket){
 		try{
 			const v= new niv.Validator(data, {
 				secret_key : 'required',
-				user_id : 'required'
+				receiver_id : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
