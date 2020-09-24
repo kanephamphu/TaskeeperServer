@@ -557,6 +557,18 @@ async function deleteSavedTask(user_id, task_saved_id){
     }
     return {"success" : false};
 }
+
+// Get message user data
+async function getMessagerData(user_id){
+    try{
+        var information = await user.findOne({"_id":user_id},["avatar","first_name","last_name"]);
+        return information;
+    }catch(e){
+        console.log(e);
+        throw(e);
+    }
+}
+//getMessagerData("5f15dee66d224e19dcbf6bbf")
 //deleteSavedTask("5f2546def9ca2b000466c467","5f6211b8db0d8214b465f89c")
 //getSearchHistory("5f15dee66d224e19dcbf6bbf");
 //addSearchHistory("5f15dee66d224e19dcbf6bbf", "Lập trình Unity")
@@ -574,6 +586,7 @@ async function testviewJob(){
 //testviewJob();
 //saveTask("5f2546def9ca2b000466c467","5f3629d61e62e1000425540e")
 //getSavedTask("5f2546def9ca2b000466c467",1,0)
+module.exports.getMessagerData = getMessagerData;
 module.exports.deleteSavedTask = deleteSavedTask;
 module.exports.getSavedTask = getSavedTask;
 module.exports.saveTask = saveTask;

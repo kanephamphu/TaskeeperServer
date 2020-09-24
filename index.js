@@ -19,6 +19,7 @@ const wallController = require('./controllers/WallController');
 const { SSL_OP_COOKIE_EXCHANGE } = require("constants");
 const notificationController = require("./controllers/NotificationController");
 const notification = require("./models/NotificationModel");
+const message = require("./models/MessageModel");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -1053,7 +1054,32 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	
-	// Client send 
+	// Client get messsager list
+	socket.on("cl-get-messager-list", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				number_messager : 'required',
+				skip : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-messager-list",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await messageController.getMessagerList(decoded._id, data.number_messager, data.skip);
+						socket.emit("sv-get-messager-list", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-messager-list", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-messager-list", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	// Client get notification
 	socket.on("cl-get-notification", async(data)=>{
 		try{
