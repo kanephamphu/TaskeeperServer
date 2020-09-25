@@ -1184,6 +1184,29 @@ io.sockets.on('connection',function(socket){
 	});
 	
 	// Client get total unread notification
+	socket.on("cl-get-total-unread-notification", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-total-unread-notification",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await notificationController.getTotalUnreadNotification(decoded._id)
+						socket.emit("sv-get-total-unread-notification", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-total-unread-notification", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-total-unread-notification", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 
 	// Client save task
 	socket.on("cl-save-task", async(data)=>{

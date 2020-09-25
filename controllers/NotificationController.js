@@ -49,8 +49,23 @@ async function setReadedAll(user_id){
     }
 }
 
+// Get unread notification 
+async function getTotalUnreadNotification(user_id){
+    try{
+        let unread_number = await notification.find({"_id" : user_id, "is_readed" : false},{}).count();
+        if(unread_number){
+            return {"success" : true, "data" : unread_number}
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){
+        throw(e);
+    }
+}
+//getTotalUnreadNotification("5f2546def9ca2b000466c467");
 //getNotification("5f2546def9ca2b000466c467",1,0)
 module.exports.getNotification = getNotification;
 module.exports.setReaded = setReaded;
 module.exports.setReadedAll = setReadedAll;
 module.exports.addNotification = addNotification;
+module.exports.getTotalUnreadNotification = getTotalUnreadNotification;
