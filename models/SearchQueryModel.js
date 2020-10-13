@@ -11,6 +11,10 @@ var SearchQuery= new mongoose.Schema({
     },
     search_count_recently : {
         type : Number
+    },
+    created_time : {
+        type: Number,
+        default: Date.now()
     }
 });
 

@@ -733,6 +733,7 @@ io.sockets.on('connection',function(socket){
 					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 						if(decoded){
 							userController.addSearchHistory(decoded._id, data.search_string);
+							searchqueryController.addSearchQuery(data.search_string);
 						}
 					});
 				}
@@ -765,6 +766,7 @@ io.sockets.on('connection',function(socket){
 					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 						if(decoded){
 							userController.addSearchHistory(decoded._id, data.search_string);
+							searchqueryController.addSearchQuery(data.search_string);
 						}
 					});
 				}
