@@ -77,11 +77,14 @@ async function getMessagerList(user_id, number_messager, skip){
             let lastmessagedata = await getLastMessageData(user_id, result[index]._id.sender_id);
             let unReadNumber = await getUnreadNumber(user_id, result[index]._id.sender_id);
             data.push({
-                "receiver_data" :receiver_data,
-                "last_message_data" : lastmessagedata,
-                "un_readed_number" : unReadNumber
+                "_id" : lastmessagedata._id,
+                "user" :receiver_data,
+                "text" : lastmessagedata.message_text,
+                "un_readed_number" : unReadNumber,
+                "createdAt" : lastmessagedata.created_time 
             });
         }
+        console.log(data)
         return {"success" : true, "data" : data};
     }
     return {"success" : false};
@@ -111,7 +114,7 @@ async function getTotalUnreadMessage(receiver_id){
         throw(e);
     } 
 }
-//getMessagerList("5f2546def9ca2b000466c467",10,10);
+getMessagerList("5f2546def9ca2b000466c467",10,10);
 //getUnreadNumber("5f2ae09e8e857e00041dc2bf","5f15dee66d224e19dcbf6bbf");
 //addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Heellooo", 'sdf');
 //addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Nghỉ học bán hàng đa cấp với anh em ơi", 'sdf');

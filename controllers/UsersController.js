@@ -562,6 +562,11 @@ async function deleteSavedTask(user_id, task_saved_id){
 async function getMessagerData(user_id){
     try{
         var information = await user.findOne({"_id":user_id},["avatar","first_name","last_name"]);
+        information = {
+            "_id" : information.id,
+            "name" : information.first_name+ " "+information.last_name,
+            "avatar" : information.avatar
+        }
         return information;
     }catch(e){
         console.log(e);
