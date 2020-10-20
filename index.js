@@ -20,6 +20,7 @@ const { SSL_OP_COOKIE_EXCHANGE } = require("constants");
 const notificationController = require("./controllers/NotificationController");
 const notification = require("./models/NotificationModel");
 const message = require("./models/MessageModel");
+var paypal = require('paypal-rest-sdk');
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -27,6 +28,11 @@ const limiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
 	max: 200 // limit each IP to 200 requests per windowMs
   });
+paypal.configure({
+'mode': 'sandbox', //sandbox or live
+'client_id': 'Afvagy3K8uNO8fYSClGwAHAFappphFHDj6lVF8oGXPmdLKaCEznJ1aqo-mxViqTaOlLBQSbrwDfi6DnI',
+'client_secret': 'EIiD5OOwLKPMNsnJrn4TXSgfAKo0-13JyjK5HjOr0Kpn0iCVhp2y7LBI7Od-qo6krrEI4-AOz9wC15qi'
+});
 app.use(bodyparser.json());
 app.use(limiter);
 app.use(helmet())
@@ -66,7 +72,7 @@ io.sockets.on('connection',function(socket){
 								"secret_key" : token
 							}
 							socket.emit("sv-send-login-res",loginresult);
-							socket.user_id = ID;
+							socket.id = ID;
 					});
 				}else{
 					var loginresult = {
@@ -548,6 +554,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-apply-job",result);
 						let task_owner_id = await tasksController.getTaskOwnerId(data.task_id);
 						notificationController.addNotification(task_owner_id, "applied you to work", "applied", data.task_id, decoded._id);
+						io.to(task_owner_id).emit("sv-send-notification", {"success" : true, data : {"type" : "applied", "follower_id" : decoded._id}});
 					}
 				});
 			}else{
@@ -651,6 +658,7 @@ io.sockets.on('connection',function(socket){
 						let result = await userController.addFollower(data.user_id, decoded._id);
 						socket.emit("sv-follow-user",result);
 						notificationController.addNotification(data.user_id, "followed you", "followed", decoded._id, null);
+						io.to(data.user_id).emit("sv-send-notification", {"success" : true, data : {"type" : "followed", "follower_id" : data.user_id}});
 					}
 				});
 			}else{
@@ -1290,6 +1298,63 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-remove-saved-task", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
+	
+	// Client add fund
+	socket.on("cl-add-fund", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				total : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-remove-saved-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						var create_payment_json = {
+							"intent": "sale",
+							"payer": {
+								"payment_method": "paypal"
+							},
+							"redirect_urls": {
+								"return_url": "https://taskeepererver.herokuapp.com/payment-success",
+								"cancel_url": "https://taskeepererver.herokuapp.com/payment-failure"
+							},
+							"transactions": [{
+								"item_list": {
+									"items": [{
+										"name": "Add fund to ",
+										"sku": "item",
+										"price": "1.00",
+										"currency": "USD",
+										"quantity": 1
+									}]
+								},
+								"amount": {
+									"currency": "USD",
+									"total": data.total
+								},
+								"description": "This is the payment description."
+							}]
+						};
+						paypal.payment.create(create_payment_json, function (error, payment) {
+							if (error) {
+								throw error;
+							} else {
+								socket.emit("sv-add-fund", {"success" : true, "data" : {"redirect_href" : payment.links[1].href}});
+							}
+						});
+					}
+				});
+			}else{
+				socket.emit("sv-add-fund", {"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-add-fund", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+		}
+	}); 
 	//Disconnect
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
@@ -1299,6 +1364,13 @@ io.sockets.on('connection',function(socket){
 app.get('/',(req,res)=>
 	res.send('Server Thoy Mey Ben Oyyy')
 );
+app.get('/payment-success',(req,res)=>
+	res.send('Success')
+);
+app.get('/payment-failure',(req,res)=>
+	res.send('Failure')
+);
+
 
 
 

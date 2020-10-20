@@ -19,6 +19,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.10",
     "node-input-validator": "^4.2.1",
+    "paypal-rest-sdk": "^1.8.1",
     "random-token": "0.0.8",
     "socket.io": "^2.3.0",
     "validator": "^13.1.1"
