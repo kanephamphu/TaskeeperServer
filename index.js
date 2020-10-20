@@ -61,12 +61,12 @@ io.sockets.on('connection',function(socket){
 								console.log(err);
 							}
 							socket.auth = true;
-							console.log(token);
 							var loginresult = {
 								"success" : true,
 								"secret_key" : token
 							}
 							socket.emit("sv-send-login-res",loginresult);
+							socket.user_id = ID;
 					});
 				}else{
 					var loginresult = {

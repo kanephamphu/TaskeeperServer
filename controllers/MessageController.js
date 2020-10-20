@@ -84,7 +84,6 @@ async function getMessagerList(user_id, number_messager, skip){
                 "createdAt" : lastmessagedata.created_time 
             });
         }
-        console.log(data)
         return {"success" : true, "data" : data};
     }
     return {"success" : false};
@@ -114,12 +113,13 @@ async function getTotalUnreadMessage(receiver_id){
         throw(e);
     } 
 }
-getMessagerList("5f2546def9ca2b000466c467",10,10);
+//getMessagerList("5f2546def9ca2b000466c467",10,10);
 //getUnreadNumber("5f2ae09e8e857e00041dc2bf","5f15dee66d224e19dcbf6bbf");
 //addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Heellooo", 'sdf');
 //addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Nghỉ học bán hàng đa cấp với anh em ơi", 'sdf');
 //addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Được Inbox", 'sdf');
 //setReaded("5f2ae09e8e857e00041dc2bf","5f15dee66d224e19dcbf6bbf");
+//readMessage("5f15dee66d224e19dcbf6bbf","5f2ae09e8e857e00041dc2bf", 10,0)
 module.exports.readMessage = readMessage;
 module.exports.addMessage = addMessage;
 module.exports.setReaded = setReaded;
