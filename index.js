@@ -1380,6 +1380,7 @@ io.sockets.on('connection',function(socket){
 	}); 
 	//Disconnect
 	socket.on('disconnect', function () {
+		removeFromList(socket.id);
 		console.log(socket.id+" disconnected");
 	});
 	/*
