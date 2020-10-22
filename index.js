@@ -829,12 +829,12 @@ io.sockets.on('connection',function(socket){
 	});
 
 	// Add new message
-	socket.on("cl-new-text-message", async(data)=>{
+	socket.on("cl-send-message", async(data)=>{
 		try{
 			const v=new niv.Validator(data, {
 				secret_key : 'required',
 				receiver_id : 'required',
-				message_text : 'required'
+				text : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
@@ -843,7 +843,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-new-text-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await messageController.addMessage(decoded._id,data.receiver_id, 'text', data.message_text, null);
+						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, data.image, data.video, data.audio);
 						socket.emit("sv-new-text-message", result);
 					}
 				})

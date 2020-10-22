@@ -6,7 +6,6 @@ const { mode } = require("crypto-js");
 // Add new message 
 async function addMessage(sender_id,receiver_id, text, image, video, audio){
     let sender_info = await users_controller.getMessagerData(sender_id);
-    console.log(sender_info);
     let result = await user.updateOne({"_id" : receiver_id}, {
         $push : {
             "message" : {
