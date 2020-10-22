@@ -38,7 +38,7 @@ app.use(bodyparser.json());
 app.use(limiter);
 app.use(helmet())
 app.use(express.json({ limit: '300kb' })); // body-parser defaults to a body size limit of 300kb
-
+var clients = [];
 io.sockets.on('connection',function(socket){
 	socket.token='';
 	console.log(socket.id+" is connecting");
@@ -843,9 +843,6 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-send-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						socket.id = decoded._id;
-						socket.join(socket.id);
-						console.log(socket.id);
 						io.to(socket.id).emit("sv-send-notification", {"success" : true});
 						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, null, null, null);
 						socket.emit("sv-send-message", result);
@@ -1434,6 +1431,9 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-get-total-unread-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});*/
+	async function isAready(){
+		
+	}
 });
 app.get('/',(req,res)=>
 	res.send('Server Thoy Mey Ben Oyyy')
