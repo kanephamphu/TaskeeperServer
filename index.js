@@ -844,6 +844,7 @@ io.sockets.on('connection',function(socket){
 					}
 					if(decoded){
 						socket.id = decoded._id;
+						socket.join(socket.id);
 						console.log(socket.id);
 						io.to(socket.id).emit("sv-send-notification", {"success" : true});
 						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, null, null, null);
