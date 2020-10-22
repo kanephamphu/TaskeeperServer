@@ -67,13 +67,11 @@ io.sockets.on('connection',function(socket){
 							if(err){
 								console.log(err);
 							}
-							socket.auth = true;
 							var loginresult = {
 								"success" : true,
 								"secret_key" : token
 							}
 							socket.emit("sv-send-login-res",loginresult);
-							socket.id = ID;
 					});
 				}else{
 					var loginresult = {
@@ -843,7 +841,11 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-send-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						io.to(socket.id).emit("sv-send-notification", {"success" : true});
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						console.log(clients);
+						//io.to(socket.id).emit("sv-send-notification", {"success" : true});
 						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, null, null, null);
 						socket.emit("sv-send-message", result);
 					}
@@ -1431,9 +1433,7 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-get-total-unread-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});*/
-	async function isAready(){
-		
-	}
+	
 });
 app.get('/',(req,res)=>
 	res.send('Server Thoy Mey Ben Oyyy')
@@ -1445,6 +1445,32 @@ app.get('/payment-success',(req,res)=>{
 app.get('/payment-failure',(req,res)=>
 	res.send('Failure')
 );
+async function checkExist(userId){
+	
+	let id = await clients.find(el => el.userId == userId);
+	if(id){
+		return true;
+	}
+	return false;
+}
+async function addToList(userId, socketId){
+	var clientInfo = new Object(); 
+	clientInfo.userId   = userId; 
+	clientInfo.socketId  = socketId; 
+	clients.push(clientInfo); 
+}
+
+async function removeFromList(socketId){
+	for(var i=0, len=clients.length; i<len; ++i){ 
+		var c = clients[i]; 
+ 
+		if(c.socketId == socketId){ 
+			clients.splice(i,1); 
+			break; 
+		} 
+	} 
+}
+
 
 
 

@@ -1,8 +1,10 @@
 //const message = require("../models/MessageModel");
 const users_controller = require("./UsersController");
 const user = require("../models/UsersModel");
-const message = require("../models/MessageModel");
 const { mode } = require("crypto-js");
+
+
+
 // Add new message 
 async function addMessage(sender_id,receiver_id, text, image, video, audio){
     let sender_info = await users_controller.getMessagerData(sender_id);
