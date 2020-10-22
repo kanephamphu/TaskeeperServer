@@ -14,7 +14,6 @@ async function addSearchQuery(query_string){
     let isExist = await searchquery.findOne({"query_string" : query_string});
     if(isExist){
         let search_query = await searchquery.findOne({"query_string" : query_string},["search_count","search_count_recently"]);
-        console.log(search_query);
         let updated = await searchquery.update({"query_string" : query_string},{
             "search_count" : search_query.search_count + 1,
             "search_count_recently" : search_query.search_count_recently +1
@@ -51,10 +50,10 @@ async function searchAutoComplete(search_string){
 async function test(){
     /*let t = await addSearchQuery("Phu Tai Chat Vl");
     console.log(t);*/
-    let te = await addSearchQuery("Lập Trình NodeJS");
+    let te = await addSearchQuery("Lập Trình NodeJSs");
     console.log(te);
-    let t = await searchAutoComplete("Trinh");
-    console.log(t);
+    /*let t = await searchAutoComplete("Trinh");
+    console.log(t);*/
 }
 
 //test();
