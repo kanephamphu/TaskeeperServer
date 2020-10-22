@@ -6,9 +6,7 @@ var MoneyTransaction= new mongoose.Schema({
         type: String
     },
     receiver_id : {
-        task_id : {
-            type : String
-        }
+        type : String
     },
     money_amount : {
         type : {
@@ -21,8 +19,13 @@ var MoneyTransaction= new mongoose.Schema({
     },
     description : {
         type: String
+    },
+    type : {
+        type : String, 
+        enum : ['server','user'],
+        default : 'user'
     }
 });
 
-const news = mongoose.model("News",News);
-module.exports = news;
+const moneytransaction = mongoose.model("MoneyTransaction",MoneyTransaction);
+module.exports = moneytransaction;

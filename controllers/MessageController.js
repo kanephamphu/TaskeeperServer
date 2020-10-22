@@ -1,5 +1,76 @@
+//const message = require("../models/MessageModel");
+const users_controller = require("./UsersController");
+const user = require("../models/UsersModel");
 const message = require("../models/MessageModel");
-const user = require("./UsersController");
+const { mode } = require("crypto-js");
+// Add new message 
+async function addMessage(sender_id,receiver_id, text, image, video, audio){
+    let sender_info = await users_controller.getMessagerData(sender_id);
+    console.log(sender_info);
+    let result = await user.updateOne({"_id" : receiver_id}, {
+        $push : {
+            "message" : {
+                "user" : sender_info,
+                "text" : text,
+                "image" : image,
+                "video" : video,
+                "audio" : audio
+            }
+        }
+    });
+    if(result){
+        return {"success" : true}
+    }else{
+        return {"success" : false}
+    }   
+}
+//addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","Hi lại luôn ne", null, null, null);
+
+//Read message 
+async function readMessage(user_id,number_message, skip){
+    let result = await user.find({
+        $or : [
+            {"_id" : user_id},
+            {"message.user._id" : user_id}
+        ]
+    },"message",{limit : number_message, skip: skip});
+    if(result){
+        message_list = [];
+        for(i in result){
+            for(j in result[i].message){
+                message_list.push(result[i].message[j]);
+            }
+        }
+        return {"success" : true, "data" : message_list};
+    }else{
+        return {"success" : false};
+    }
+}
+
+//Load message from user 
+async function readUserMessage(user_id, sender_id, number_message, skip){
+    let result = await user.find({
+        $or : [
+            {"_id" : user_id,"message.user._id" : sender_id},
+            {"message.user._id" : sender_id, "_id" : user_id}
+        ]
+    },"message",{limit : number_message, skip: skip});
+    if(result){
+        message_list = [];
+        for(i in result){
+            for(j in result[i].message){
+                message_list.push(result[i].message[j]);
+            }
+        }
+        console.log(message_list)
+        return {"success" : true, "data" : message_list};
+    }else{
+        return {"success" : false};
+    }
+}
+//readMessage("5f2546def9ca2b000466c467",100,0);
+//readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
+/*
 //Add new message 
 async function addMessage(sender_id, receiver_id, message_type, message_text, message_link){
     if(message_type == "text"){
@@ -120,8 +191,9 @@ async function getTotalUnreadMessage(receiver_id){
 //addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Được Inbox", 'sdf');
 //setReaded("5f2ae09e8e857e00041dc2bf","5f15dee66d224e19dcbf6bbf");
 //readMessage("5f15dee66d224e19dcbf6bbf","5f2ae09e8e857e00041dc2bf", 10,0)
-module.exports.readMessage = readMessage;
-module.exports.addMessage = addMessage;
 module.exports.setReaded = setReaded;
 module.exports.getMessagerList = getMessagerList;
-module.exports.getTotalUnreadMessage = getTotalUnreadMessage;
+module.exports.getTotalUnreadMessage = getTotalUnreadMessage;*/
+module.exports.readMessage = readMessage;
+module.exports.addMessage = addMessage;
+module.exports.readUserMessage = readUserMessage;

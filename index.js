@@ -21,6 +21,7 @@ const notificationController = require("./controllers/NotificationController");
 const notification = require("./models/NotificationModel");
 const message = require("./models/MessageModel");
 var paypal = require('paypal-rest-sdk');
+const { json } = require("body-parser");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -1010,34 +1011,32 @@ io.sockets.on('connection',function(socket){
 	});
 	
 	// Client load message
-	socket.on("cl-get-message", async(data)=>{
+	socket.on("cl-get-private-message", async(data)=>{
 		try{
 			const v= new niv.Validator(data, {
 				secret_key : 'required',
 				receiver_id : 'required',
-				number_message : 'required',
 				skip : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
-						socket.emit("sv-get-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						socket.emit("sv-get-private-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await messageController.readMessage(decoded._id, data.receiver_id, data.number_message,
-							data.skip);
-						socket.emit("sv-get-message", result);
+						let result = await messageController.readMessage(decoded._id, data.receiver_id, 10, data.skip);
+						socket.emit("sv-get-private-message", result);
 					}
 				});
 			}else{
-				socket.emit("sv-get-message", {"success": false, "errors" : v.errors});
+				socket.emit("sv-get-private-message", {"success": false, "errors" : v.errors});
 			}
 		}catch(e){
-			socket.emit("sv-get-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+			socket.emit("sv-get-private-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
-	
+	/*
 	// Client set readed message
 	socket.on("cl-set-readed-message", async(data)=>{
 		try{
@@ -1062,10 +1061,10 @@ io.sockets.on('connection',function(socket){
 		}catch(e){
 			socket.emit("sv-set-readed-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
-	});
+	});*/
 	
 	// Client get messsager list
-	socket.on("cl-get-messager-list", async(data)=>{
+	socket.on("cl-get-message-list", async(data)=>{
 		try{
 			const v= new niv.Validator(data, {
 				secret_key : 'required',
@@ -1076,21 +1075,21 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
-						socket.emit("sv-get-messager-list",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						socket.emit("sv-get-message-list",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await messageController.getMessagerList(decoded._id, data.number_messager, data.skip);
-						socket.emit("sv-get-messager-list", result);
+						let result = await messageController.readMessage(decoded._id,100,data.skip);
+						socket.emit("sv-get-message-list", result);
 					}
 				});
 			}else{
-				socket.emit("sv-get-messager-list", {"success": false, "errors" : v.errors});
+				socket.emit("sv-get-message-list", {"success": false, "errors" : v.errors});
 			}
 		}catch(e){
-			socket.emit("sv-get-messager-list", {"success" : false, "errors" : {"message" : "Undefined error"}});
+			socket.emit("sv-get-message-list", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
-
+	/*
 	// Client get total unread message
 	socket.on("cl-get-total-unread-message", async(data)=>{
 		try{
@@ -1114,7 +1113,7 @@ io.sockets.on('connection',function(socket){
 		}catch(e){
 			socket.emit("sv-get-total-unread-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
-	});
+	});*/
 	// Client get notification
 	socket.on("cl-get-notification", async(data)=>{
 		try{
@@ -1364,12 +1363,16 @@ io.sockets.on('connection',function(socket){
 app.get('/',(req,res)=>
 	res.send('Server Thoy Mey Ben Oyyy')
 );
-app.get('/payment-success',(req,res)=>
-	res.send('Success')
+app.get('/payment-success',(req,res)=>{
+	res.send(req.query.paymentId);
+}
 );
 app.get('/payment-failure',(req,res)=>
 	res.send('Failure')
 );
+
+
+
 
 
 

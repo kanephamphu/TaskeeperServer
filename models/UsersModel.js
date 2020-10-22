@@ -221,6 +221,93 @@ var UserChema = new mongoose.Schema({
             type : Number,
             default : Date.now()
         }
+    }],
+    payment_history : [{
+        payer_name : {
+            type : String,
+            enum : ['paypal','visa']
+        },
+        payer_payment_id : {
+            type : String,
+            index: true,
+            required: true
+        },
+        created_time : {
+            type: Number,
+            default : Date.now()
+        },
+        updated_time : {
+            type: Number
+        },
+        amount : {
+            currency : {
+                type : String
+            },
+            total : {
+                type: Number
+            }
+        },
+        success : {
+            type : Boolean,
+            default : false
+        },
+        is_money_updated : {
+            type : Boolean,
+            default : false
+        }
+    }],
+    withdrawal_history : [{
+        withdrawal_id : {
+            type: mongoose.Schema.Types.ObjectId,
+            index: true,
+            required: true,
+            auto: true,
+        },
+    }],
+    wallet : {
+        amount : {
+            type: Number,
+            default : 0
+        }
+    },
+    message : [{
+        text : {
+            type : String
+        },
+        createdAt : {
+            type : Number,
+            default : Date.now()
+        },
+        user : {
+            _id : {
+                type : String,
+                index : true   
+            },
+            name : {
+                type : String
+            },
+            avatar : {
+                type : String
+            }
+        },
+        image : {
+            type : String
+        },
+        video : {
+            type : String
+        },
+        audio : {
+            type : String
+        },
+        sent : {
+            type : Boolean,
+            default : true
+        },
+        received : {
+            type : Boolean,
+            default : false
+        },
+        
     }]
 });
 
