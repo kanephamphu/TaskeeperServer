@@ -71,6 +71,7 @@ io.sockets.on('connection',function(socket){
 								"success" : true,
 								"secret_key" : token
 							}
+							addToList(decoded._id, socket.id);
 							socket.emit("sv-send-login-res",loginresult);
 					});
 				}else{
@@ -140,6 +141,9 @@ io.sockets.on('connection',function(socket){
 					socket.emit("sv-change-password",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 				if(decoded)
 				{
+					if(await checkExist(decoded._id) == false){
+						addToList(decoded._id, socket.id);
+					}
 					const v= new niv.Validator(data,{
 						old_password : 'required|minLength:8',
 						new_password : 'required|minLength:8|same:confirm_password',
@@ -187,6 +191,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						//Check price_type, if it difference with undefined format, continue handle transaction 
 						if(typeof data.price_type !== 'undefined'){
 							if(data.price_type == 'unextract'){
@@ -263,6 +270,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-new-working",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.addNewWorkingInformation(decoded._id,data.specialize,data.level);
 						socket.emit("sv-new-working",result);
 					}
@@ -293,6 +303,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-edit-working",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.addNewEducationInformation(decoded._id,data.working_id,data.specialize,data.required);
 						socket.emit("sv-edit-working",result);
 					}
@@ -325,6 +338,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-delete-working",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.deleteWorkingInformation(decoded._id,data.working_id);
 						socket.emit("sv-delete-working",result);
 					}
@@ -353,6 +369,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-new-edu",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.addNewEducationInformation(decoded._id,data.education_name,data.education_description);
 						socket.emit("sv-new-edu",result);
 					}
@@ -391,6 +410,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-edit-edu",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.editEducationInformation(decoded._id,data.education_id,data.education_name,data.education_description);
 						socket.emit("sv-edit-edu",result);
 					}
@@ -423,6 +445,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-delete-edu",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.deleteEducationInformation(decoded._id,data.education_id);
 						socket.emit("sv-delete-edu",result);
 					}
@@ -549,6 +574,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await tasksController.addApplicationJob(decoded._id,data.task_id,data.introduction,data.floor_price,data.ceiling_price);
 						socket.emit("sv-apply-job",result);
 						let task_owner_id = await tasksController.getTaskOwnerId(data.task_id);
@@ -584,6 +612,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-delete-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await tasksController.deleteApplicationJob(decoded._id, data.task_id);
 						socket.emit("sv-delete-apply-job",result);
 					}
@@ -622,6 +653,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-update-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await tasksController.updateApplicationJob(decoded._id,data._task_id,data.introduction,data.floor_price,data.ceiling_price);
 						socket.emit("sv-update-apply-job",result);
 					}
@@ -654,6 +688,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-follow-user",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.addFollower(data.user_id, decoded._id);
 						socket.emit("sv-follow-user",result);
 						notificationController.addNotification(data.user_id, "followed you", "followed", decoded._id, null);
@@ -709,7 +746,6 @@ io.sockets.on('connection',function(socket){
 			const matched = await v.check();
 			if(matched){
 				let result = await searchqueryController.searchAutoComplete(data.search_string);
-				console.log(result);
 				socket.emit("sv-search-autocomplete", {"success" : true, "data" : result});
 			}else{
 				socket.emit("sv-search-autocomplete", {"success": false, "errors" : v.errors})
@@ -811,7 +847,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-edit-info",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						console.log("Ok")
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.editPersonalInfo(decoded._id,data.first_name, data.last_name, data.email,
 							data.phone_number, data.gender, data.day_of_birth, data.month_of_birth, data.year_of_birth);
 						socket.emit("sv-edit-info", result);
@@ -844,7 +882,6 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						console.log(clients);
 						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, null, null, null);
 						socket.emit("sv-send-message", result);
 					}
@@ -871,6 +908,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-recommend-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						socket.emit("sv-get-recommend-task", {"success" : true, "data" : [{
 							"_id" : "5f1c581dcde7010774853652",
 							"task_owner_first_name" : "FPT",
@@ -937,6 +977,9 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = await v.check();
 			if(matched){
+				if(await checkExist(decoded._id) == false){
+					addToList(decoded._id, socket.id);
+				}
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
 						socket.emit("sv-get-followers",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
@@ -966,6 +1009,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-candidate-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await tasksController.getApplyList(data.task_id);
 						socket.emit("sv-get-candidate-apply-job", result);
 					}
@@ -991,6 +1037,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-applied-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await tasksController.getAppliedJobs(decoded._id);
 						socket.emit("sv-get-applied-job", result);
 					}
@@ -1025,6 +1074,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-search-history",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.getSearchHistory(decoded._id);
 						socket.emit("sv-get-search-history", result);
 					}
@@ -1052,6 +1104,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-news-feed",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await newsController.getNewsData(decoded._id, data.number_task, data.skip);
 						socket.emit("sv-get-news-feed", result);
 					}
@@ -1099,6 +1154,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-private-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await messageController.readUserMessage(decoded._id, data.receiver_id, 10, data.skip);
 						socket.emit("sv-get-private-message", result);
 					}
@@ -1125,6 +1183,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-message-list",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await messageController.readMessage(decoded._id,100,data.skip);
 						socket.emit("sv-get-message-list", result);
 					}
@@ -1152,6 +1213,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-read-notification",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await notificationController.getNotification(decoded._id, data.number_notification, data.skip);
 						socket.emit("sv-read-notification", result);
 					}
@@ -1178,6 +1242,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-readed-notification",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await notificationController.setReaded(decoded._id, data.notification_id);
 						socket.emit("sv-readed-notification", result);
 					}
@@ -1203,6 +1270,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-readed-all-notification",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await notificationController.setReadedAll(decoded._id);
 						socket.emit("sv-readed-all-notification", result);
 					}
@@ -1228,6 +1298,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-total-unread-notification",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await notificationController.getTotalUnreadNotification(decoded._id)
 						socket.emit("sv-get-total-unread-notification", result);
 					}
@@ -1256,6 +1329,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-save-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.saveTask(decoded._id, data.task_id);
 						socket.emit("sv-save-task", result);
 					}
@@ -1283,6 +1359,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-saved-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.getSavedTask(decoded._id,data.number_task, data.skip);
 						socket.emit("sv-get-saved-task", result);
 					}
@@ -1309,6 +1388,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-remove-saved-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						let result = await userController.deleteSavedTask(decoded._id, data.task_saved_id);
 						socket.emit("sv-remove-saved-task", result);
 					}
@@ -1335,6 +1417,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-remove-saved-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
 						var create_payment_json = {
 							"intent": "sale",
 							"payer": {
@@ -1380,7 +1465,6 @@ io.sockets.on('connection',function(socket){
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);
-		console.log(clients);
 		console.log(socket.id+" disconnected");
 	});
 	/*
