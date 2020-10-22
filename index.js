@@ -828,7 +828,7 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
-	// Add new message
+	// Add new message, client send message
 	socket.on("cl-send-message", async(data)=>{
 		try{
 			const v=new niv.Validator(data, {
@@ -857,12 +857,75 @@ io.sockets.on('connection',function(socket){
 
 	// Get list recommend 
 	socket.on("cl-get-recommend-task", async(data)=>{
-		const v=new niv.Validator(data, {
-			secret_key : 'required',
-			receiver_id : 'required',
-			text : 'required'
-		});
-		const matched = await v.check();
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required',
+				skip : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-recommend-task",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						socket.emit("sv-get-recommend-task", {"success" : true, "data" : [{
+							"_id" : "5f1c581dcde7010774853652",
+							"task_owner_first_name" : "FPT",
+							"task_owner_last_name" : "Software",
+							"location" : "Da Nang",
+							"task_title" : "Tuyển nhân sự",
+							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
+						},
+						{
+							"_id" : "5f1c581dcde7010774853652",
+							"task_owner_first_name" : "FPT",
+							"task_owner_last_name" : "Software",
+							"location" : "Da Nang",
+							"task_title" : "Tuyển nhân sự",
+							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
+						},
+						{
+							"_id" : "5f1c581dcde7010774853652",
+							"task_owner_first_name" : "FPT",
+							"task_owner_last_name" : "Software",
+							"location" : "Da Nang",
+							"task_title" : "Tuyển nhân sự",
+							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
+						},
+						{
+							"_id" : "5f1c581dcde7010774853652",
+							"task_owner_first_name" : "FPT",
+							"task_owner_last_name" : "Software",
+							"location" : "Da Nang",
+							"task_title" : "Tuyển nhân sự",
+							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
+						},
+						{
+							"_id" : "5f1c581dcde7010774853652",
+							"task_owner_first_name" : "FPT",
+							"task_owner_last_name" : "Software",
+							"location" : "Da Nang",
+							"task_title" : "Tuyển nhân sự",
+							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
+						},
+						{
+							"_id" : "5f1c581dcde7010774853652",
+							"task_owner_first_name" : "FPT",
+							"task_owner_last_name" : "Software",
+							"location" : "Da Nang",
+							"task_title" : "Tuyển nhân sự",
+							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
+						}
+					]});
+					}
+				})
+			}else{
+				socket.emit("sv-get-recommend-task", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-recommend-task", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
 	});
 	// Get follower list
 	socket.on("cl-get-followers", async(data)=>{
