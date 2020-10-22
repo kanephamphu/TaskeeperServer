@@ -843,7 +843,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-send-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, data.image, data.video, data.audio);
+						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, null, null, null);
 						socket.emit("sv-send-message", result);
 					}
 				})
@@ -855,6 +855,15 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
+	// Get list recommend 
+	socket.on("cl-get-recommend-task", async(data)=>{
+		const v=new niv.Validator(data, {
+			secret_key : 'required',
+			receiver_id : 'required',
+			text : 'required'
+		});
+		const matched = await v.check();
+	});
 	// Get follower list
 	socket.on("cl-get-followers", async(data)=>{
 		try {
