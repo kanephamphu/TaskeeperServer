@@ -845,7 +845,6 @@ io.sockets.on('connection',function(socket){
 							addToList(decoded._id, socket.id);
 						}
 						console.log(clients);
-						//io.to(socket.id).emit("sv-send-notification", {"success" : true});
 						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, null, null, null);
 						socket.emit("sv-send-message", result);
 					}
@@ -1381,6 +1380,7 @@ io.sockets.on('connection',function(socket){
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);
+		console.log(clients);
 		console.log(socket.id+" disconnected");
 	});
 	/*
