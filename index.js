@@ -1025,7 +1025,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-private-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await messageController.readMessage(decoded._id, data.receiver_id, 10, data.skip);
+						let result = await messageController.readUserMessage(decoded._id, data.receiver_id, 10, data.skip);
 						socket.emit("sv-get-private-message", result);
 					}
 				});
@@ -1036,39 +1036,12 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-get-private-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
-	/*
-	// Client set readed message
-	socket.on("cl-set-readed-message", async(data)=>{
-		try{
-			const v= new niv.Validator(data, {
-				secret_key : 'required',
-				receiver_id : 'required'
-			});
-			const matched = await v.check();
-			if(matched){
-				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
-					if(err){
-						socket.emit("sv-set-readed-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
-					}
-					if(decoded){
-						let result = await messageController.setReaded(data.receiver_id, decoded._id);
-						socket.emit("sv-set-readed-message", result);
-					}
-				});
-			}else{
-				socket.emit("sv-set-readed-message", {"success": false, "errors" : v.errors});
-			}
-		}catch(e){
-			socket.emit("sv-set-readed-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
-		}
-	});*/
 	
 	// Client get messsager list
 	socket.on("cl-get-message-list", async(data)=>{
 		try{
 			const v= new niv.Validator(data, {
 				secret_key : 'required',
-				number_messager : 'required',
 				skip : 'required'
 			});
 			const matched = await v.check();
@@ -1089,31 +1062,7 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-get-message-list", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
-	/*
-	// Client get total unread message
-	socket.on("cl-get-total-unread-message", async(data)=>{
-		try{
-			const v= new niv.Validator(data, {
-				secret_key : 'required'
-			});
-			const matched = await v.check();
-			if(matched){
-				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
-					if(err){
-						socket.emit("sv-get-total-unread-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
-					}
-					if(decoded){
-						let result = await messageController.getTotalUnreadMessage(decoded._id);
-						socket.emit("sv-get-total-unread-message", result);
-					}
-				});
-			}else{
-				socket.emit("sv-get-total-unread-message", {"success": false, "errors" : v.errors});
-			}
-		}catch(e){
-			socket.emit("sv-get-total-unread-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
-		}
-	});*/
+	
 	// Client get notification
 	socket.on("cl-get-notification", async(data)=>{
 		try{
@@ -1358,7 +1307,57 @@ io.sockets.on('connection',function(socket){
 	socket.on('disconnect', function () {
 		console.log(socket.id+" disconnected");
 	});
-	
+	/*
+	// Client set readed message
+	socket.on("cl-set-readed-message", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				receiver_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-set-readed-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await messageController.setReaded(data.receiver_id, decoded._id);
+						socket.emit("sv-set-readed-message", result);
+					}
+				});
+			}else{
+				socket.emit("sv-set-readed-message", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-set-readed-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});*/
+	/*
+	// Client get total unread message
+	socket.on("cl-get-total-unread-message", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-total-unread-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await messageController.getTotalUnreadMessage(decoded._id);
+						socket.emit("sv-get-total-unread-message", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-total-unread-message", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-total-unread-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});*/
 });
 app.get('/',(req,res)=>
 	res.send('Server Thoy Mey Ben Oyyy')
