@@ -844,8 +844,7 @@ io.sockets.on('connection',function(socket){
 					}
 					if(decoded){
 						socket.id = decoded._id;
-						console.log(socket.id);
-						console.log(decoded._id);
+						io.to(socket.id).emit("sv-send-notification", {"success" : true, data : {"type" : "followed", "follower_id" : data.user_id}});
 						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, null, null, null);
 						socket.emit("sv-send-message", result);
 					}
