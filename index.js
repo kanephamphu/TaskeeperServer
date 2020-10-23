@@ -20,8 +20,10 @@ const { SSL_OP_COOKIE_EXCHANGE } = require("constants");
 const notificationController = require("./controllers/NotificationController");
 const notification = require("./models/NotificationModel");
 const message = require("./models/MessageModel");
+const moneytransactionController = require("./controllers/MoneyTransactionController");
 var paypal = require('paypal-rest-sdk');
 const { json } = require("body-parser");
+const moneytransaction = require("./models/MoneyTransactionModel");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -581,7 +583,10 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-apply-job",result);
 						let task_owner_id = await tasksController.getTaskOwnerId(data.task_id);
 						notificationController.addNotification(task_owner_id, "applied you to work", "applied", data.task_id, decoded._id);
-						io.to(task_owner_id).emit("sv-send-notification", {"success" : true, data : {"type" : "applied", "follower_id" : decoded._id}});
+						if(checkExist(data.user_id)){
+							let socketUserId = await getSocketID(task_owner_id);
+							io.to(socketUserId).emit("sv-send-notification", {"success" : true, data : {"type" : "applied", "user_id" : decoded._id, "task_id" : data.task_id}});
+						}
 					}
 				});
 			}else{
@@ -694,7 +699,10 @@ io.sockets.on('connection',function(socket){
 						let result = await userController.addFollower(data.user_id, decoded._id);
 						socket.emit("sv-follow-user",result);
 						notificationController.addNotification(data.user_id, "followed you", "followed", decoded._id, null);
-						io.to(data.user_id).emit("sv-send-notification", {"success" : true, data : {"type" : "followed", "follower_id" : data.user_id}});
+						if(checkExist(data.user_id)){
+							let socketUserId = await getSocketID(data.user_id);
+							io.to(socketUserId).emit("sv-send-notification", {"success" : true, data : {"type" : "followed", "follower_id" : data.user_id}});
+						}	
 					}
 				});
 			}else{
@@ -772,11 +780,11 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				let result = await searchController.searchUser(data.search_string);
 				socket.emit("sv-search-user", {"success" : true, "data" : result});
+				searchqueryController.addSearchQuery(data.search_string);
 				if(data.secret_key){
 					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 						if(decoded){
 							userController.addSearchHistory(decoded._id, data.search_string);
-							searchqueryController.addSearchQuery(data.search_string);
 						}
 					});
 				}
@@ -805,6 +813,7 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				let result = await searchController.searchTask(data.search_string);
 				socket.emit("sv-search-task", {"success" : true, "data" : result});
+				searchqueryController.addSearchQuery(data.search_string);
 				if(data.secret_key){
 					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 						if(decoded){
@@ -1403,6 +1412,65 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	
+	// Client send money transaction request
+	socket.on("cl-money-transfer-request", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				receiver_id : 'required',
+				money_amount : 'required',
+				description : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-money-transfer-request",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await moneytransactionController.addMoneyTransaction(decoded._id, data.receiver_id, data.money_amount, data.description);
+						socket.emit("sv-money-transfer-request", result);
+					}
+				});
+			}else{
+				socket.emit("sv-money-transfer-request", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-money-transfer-request", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+	
+	//Client get money transaction 
+	socket.on("cl-get-money-transaction-history", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				skip : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-money-transaction-history",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await moneytransactionController.getTransactionData(decoded._id,20, data.skip);
+						socket.emit("sv-get-money-transaction-history", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-money-transaction-history", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-money-transaction-history", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	// Client add fund
 	socket.on("cl-add-fund", async(data)=>{
 		try{
@@ -1537,6 +1605,13 @@ async function checkExist(userId){
 		return true;
 	}
 	return false;
+}
+
+async function getSocketID(userId){
+	let id = await clients.find(el => el.userId == userId);
+	if(id){
+		return id["socketId"];
+	}
 }
 async function addToList(userId, socketId){
 	var clientInfo = new Object(); 
