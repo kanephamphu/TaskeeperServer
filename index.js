@@ -74,6 +74,7 @@ io.sockets.on('connection',function(socket){
 								"secret_key" : token
 							}
 							addToList(decoded._id, socket.id);
+							console.log(clients);
 							socket.emit("sv-send-login-res",loginresult);
 					});
 				}else{
