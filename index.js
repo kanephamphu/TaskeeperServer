@@ -72,6 +72,7 @@ io.sockets.on('connection',function(socket){
 								"success" : true,
 								"secret_key" : token
 							}
+							addToList(ID, socket.id);
 							console.log(clients);
 							socket.emit("sv-send-login-res",loginresult);
 					});
