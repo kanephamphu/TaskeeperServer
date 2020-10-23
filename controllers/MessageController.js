@@ -69,6 +69,35 @@ async function readUserMessage(user_id, sender_id, number_message, skip){
         return {"success" : false};
     }
 }
+
+//Client set readed message from specific user
+async function setReaded(user_id, sender_id){
+    let result = await user.update({"_id" : user_id, "message.user._id" : sender_id, "message.received" : false}, {
+        "$set" : {
+            "message.$.received" : true
+        }
+    });
+    if(result){
+        return {"success" : true};
+    }else{
+        return {"success" : false};
+    }
+}
+
+//Client set readed all message 
+async function setAllReaded(user_id){
+    let result = await user.update({"_id" : user_id, "message.received" : false}, {
+        "$set" : {
+            "message.$.received" : true
+        }
+    });
+    if(result){
+        return {"success" : true};
+    }else{
+        return {"success" : false};
+    }
+}
+//setReaded("5f2546def9ca2b000466c467","5f915297b7953d1910cb033b")
 //readMessage("5f2546def9ca2b000466c467",100,0);
 //readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
 /*
@@ -198,3 +227,5 @@ module.exports.getTotalUnreadMessage = getTotalUnreadMessage;*/
 module.exports.readMessage = readMessage;
 module.exports.addMessage = addMessage;
 module.exports.readUserMessage = readUserMessage;
+module.exports.setReaded = setReaded;
+module.exports.setAllReaded = setAllReaded;

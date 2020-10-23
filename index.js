@@ -903,6 +903,62 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
+	// Client set readed mesages
+	socket.on("cl-set-readed-message", async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required',
+				sender_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-set-readed-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await messageController.setReaded(decoded._id, data.sender_id);
+						socket.emit("sv-set-readed-message", result);
+					}
+				})
+			}else{
+				socket.emit("sv-set-readed-message", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-set-readed-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
+	// Client set readed mesages
+	socket.on("cl-set-readed-all-message", async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-set-readed-all-message",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await messageController.setAllReaded(decoded._id);
+						socket.emit("sv-set-readed-all-message", result);
+					}
+				})
+			}else{
+				socket.emit("sv-set-readed-all-message", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-set-readed-all-message", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	// Get list recommend 
 	socket.on("cl-get-recommend-task", async(data)=>{
 		try{
