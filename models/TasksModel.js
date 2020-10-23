@@ -26,7 +26,8 @@ var Tasks= new mongoose.Schema({
         default: 'freelance'
     },
     task_owner_id: {
-        type: String
+        type: String,
+        index : true
     },
     task_owner_first_name : {
         type: String
@@ -38,7 +39,7 @@ var Tasks= new mongoose.Schema({
         type : String
     },
     task_candidate_apply_list: [{
-        _id_candidate: {
+        candidate_id: {
             type: String
         },
         introduction: {
@@ -48,11 +49,8 @@ var Tasks= new mongoose.Schema({
         ceiling_price : Number
     }],
     work_employee: [{
-        _id_employee: {
+        employee_id: {
             type: String
-        },
-        price: {
-            type: Number
         }
     }],
     tags: [
@@ -90,9 +88,6 @@ var Tasks= new mongoose.Schema({
     },
     impression : {
         type : Number
-    },
-    isMatched : {
-        type: Boolean
     }
 });
 

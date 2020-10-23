@@ -566,8 +566,7 @@ io.sockets.on('connection',function(socket){
 				secret_key : 'required',
 				task_id : 'required',
 				introduction : 'required',
-				floor_price : 'required',
-				ceiling_price : 'required' 
+				price : 'required' 
 			});
 			const matched = await v.check();
 			if(matched){
@@ -579,7 +578,7 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await tasksController.addApplicationJob(decoded._id,data.task_id,data.introduction,data.floor_price,data.ceiling_price);
+						let result = await tasksController.addApplicationJob(decoded._id,data.task_id,data.introduction,data.price);
 						socket.emit("sv-apply-job",result);
 						let task_owner_id = await tasksController.getTaskOwnerId(data.task_id);
 						notificationController.addNotification(task_owner_id, "applied you to work", "applied", data.task_id, decoded._id);
@@ -1586,6 +1585,36 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-add-fund", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	}); 
+	
+	// Set task is done 
+	socket.on("cl-set-task-done", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				task_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("cl-set-task-done",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await tasksController.setTaskDone(decoded._id, data.task_id);
+						socket.emit("cl-set-task-done", result);
+					}
+				});
+			}else{
+				socket.emit("cl-set-task-done", {"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("cl-set-task-done", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+		}
+	});
+	
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);

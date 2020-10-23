@@ -105,11 +105,11 @@ async function test() {
 }
 
 // Employee apply to the task
-async function addApplicationJob(user_id,task_id, introduction,floor_price,ceiling_price){
+async function addApplicationJob(user_id,task_id, introduction,price){
     try{
         let isApplied = await task.findOne({
             "_id" : task_id,
-            "task_candidate_apply_list._id_candidate" : user_id
+            "task_candidate_apply_list.candidate_id" : user_id
         },"_id");
 
         if(isApplied == null){
@@ -117,10 +117,9 @@ async function addApplicationJob(user_id,task_id, introduction,floor_price,ceili
             {
                 $push : {
                     "task_candidate_apply_list" : {
-                        "_id_candidate" : user_id,
+                        "candidate_id" : user_id,
                         "introduction" : introduction,
-                        "floor_price" : floor_price,
-                        "ceiling_price" : ceiling_price
+                        "price" : price
                     }
                 }
             });
@@ -144,7 +143,7 @@ async function deleteApplicationJob(user_id, task_id){
     try{
         let isApplied = await task.findOne({
             "_id" : task_id,
-            "task_candidate_apply_list._id_candidate" : user_id
+            "task_candidate_apply_list.candidate_id" : user_id
         });
         
         if(isApplied){
@@ -152,7 +151,7 @@ async function deleteApplicationJob(user_id, task_id){
             {
                 $pull : {
                     "task_candidate_apply_list" : {
-                        "_id_candidate" : user_id
+                        "candidate_id" : user_id
                     }
                 }
             });
@@ -171,23 +170,22 @@ async function deleteApplicationJob(user_id, task_id){
 }
 
 // Update job application of job
-async function updateApplicationJob(user_id,task_id, introduction,floor_price,ceiling_price){
+async function updateApplicationJob(user_id,task_id, introduction,price){
     try{
         let isApplied = task.findOne({
             "_id" : task_id,
-            "task_candidate_apply_list._id_candidate" : user_id
+            "task_candidate_apply_list.candidate_id" : user_id
         }).exec();
         if(isApplied){
             let applyTask = task.update({
                 "_id" : task_id,
-                "task_candidate_apply_list._id_candidate" : user_id},
+                "task_candidate_apply_list.candidate_id" : user_id},
             {
                 $set : {
                     "task_candidate_apply_list" : {
-                        "_id_candidate" : user_id,
+                        "candidate_id" : user_id,
                         "introduction" : introduction,
-                        "floor_price" : floor_price,
-                        "ceiling_price" : ceiling_price
+                        "price" : price
                     }
                 }
             }).exec();
@@ -218,6 +216,7 @@ async function getApplyList(task_id){
     }   
 }
 
+
 // Get job saved detail
 async function getSavedDetail(task_id){
     let detail = await task.findOne({"_id" : task_id}, ["task_owner_id","task_owner_avatar", "task_owner_first_name", "task_owner_last_name", "task_title"]);
@@ -226,7 +225,7 @@ async function getSavedDetail(task_id){
 // Get list job which a client applied
 async function getAppliedJobs(user_id){
     let listJobs = await task.find({
-        "task_candidate_apply_list._id_candidate" : user_id
+        "task_candidate_apply_list.candidate_id" : user_id
     },["task_title", "task_type", "position"]).exec();
     if(listJobs){
         return {"success" : true, "data" : listJobs}
@@ -235,6 +234,26 @@ async function getAppliedJobs(user_id){
     }
 }
 
+// Set task done 
+async function setTaskDone(task_owner_id, task_id){
+    let result = task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id}, {"isDone" : true});
+    if(result){
+        return {"sucess" : true}
+    }else{
+        return {"success" : false}
+    }
+}
+
+// Client send approve work 
+async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
+    let result = task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_list.candidate_id" : employee_id},
+    {
+        $push :{
+        "work_employee" : {
+            ""
+        }
+    }})
+}
 // Get task owner id
 async function getTaskOwnerId(task_id){
     let owner_id = await task.findOne({
@@ -255,6 +274,8 @@ async function testviewJob(){
     //var result = await addApplicationJob("5f2ac25e8e857e00041dc2b8","5f1c581dcde7010774853652", "Hddd",34, 65);
     console.log(result);
 }
+
+
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
 
@@ -270,3 +291,4 @@ module.exports.viewTaskHistoryList = viewTaskHistoryList;
 module.exports.addFreelanceTask = addFreelanceTask;
 module.exports.addTask = addTask;
 module.exports.getTasks = getTasks;
+module.exports.setTaskDone = setTaskDone;
