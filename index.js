@@ -42,7 +42,6 @@ app.use(helmet())
 app.use(express.json({ limit: '300kb' })); // body-parser defaults to a body size limit of 300kb
 var clients = [];
 io.sockets.on('connection',function(socket){
-	socket.token='';
 	console.log(socket.id+" is connecting");
 	//Login server listener, if the account status is unActive send result unActive to client
 	socket.on("cl-send-login-req", async function(data){
@@ -73,7 +72,6 @@ io.sockets.on('connection',function(socket){
 								"success" : true,
 								"secret_key" : token
 							}
-							addToList(decoded._id, socket.id);
 							console.log(clients);
 							socket.emit("sv-send-login-res",loginresult);
 					});
