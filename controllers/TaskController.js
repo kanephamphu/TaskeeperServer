@@ -248,11 +248,12 @@ async function setTaskDone(task_owner_id, task_id){
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
     let result = task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_list.candidate_id" : employee_id},
     {
-        $push :{
-        "work_employee" : {
-            ""
+        $push : {
+            "work_employee_list" : {
+                "employee_id" : employee_id
+            }
         }
-    }})
+    });
 }
 // Get task owner id
 async function getTaskOwnerId(task_id){

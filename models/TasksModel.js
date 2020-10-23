@@ -45,10 +45,9 @@ var Tasks= new mongoose.Schema({
         introduction: {
             type: String
         },
-        floor_price : Number,
-        ceiling_price : Number
+        price : Number
     }],
-    work_employee: [{
+    work_employee_list: [{
         employee_id: {
             type: String
         }
