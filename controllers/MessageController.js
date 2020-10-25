@@ -25,6 +25,8 @@ async function addMessage(sender_id,receiver_id, text, image, video, audio){
     }   
 }
 
+
+
 // Get newest message 
 async function getNewestMessage(sender_id, receiver_id){
     let newestmessage = await user.findOne({"_id" : receiver_id, "message.user._id" : sender_id},{"message" : {'$slice':-1}} );
@@ -61,7 +63,7 @@ async function readUserMessage(user_id, sender_id, number_message, skip){
             {"_id" : user_id,"message.user._id" : sender_id},
             {"message.user._id" : user_id, "_id" : sender_id}
         ]
-    },"message",{limit : number_message, skip: skip});
+    },"message",{limit : number_message, skip: skip}).sort({'message.createdAt' : 1});
     if(result){
         message_list = [];
         for(i in result){
@@ -104,7 +106,7 @@ async function setAllReaded(user_id){
 }
 //setReaded("5f2546def9ca2b000466c467","5f915297b7953d1910cb033b")
 //readMessage("5f2546def9ca2b000466c467",100,0);
-readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
+//readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
 /*
 //Add new message 
 async function addMessage(sender_id, receiver_id, message_type, message_text, message_link){

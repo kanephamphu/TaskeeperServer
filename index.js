@@ -892,6 +892,12 @@ io.sockets.on('connection',function(socket){
 						}
 						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, null, null, null);
 						socket.emit("sv-send-message", result);
+						if(checkExist(data.receiver_id)){
+							let socketUserId = await getSocketID(data.user_id);
+							let newestMessage = await messageController.getNewestMessage(decoded._id,data.receiver_id);
+							io.to(socketUserId).emit("sv-get-private-message", {"success" : true, data : newestMessage});
+						}	
+						socket.emit("sv-get-private-message", result);
 					}
 				})
 			}else{
@@ -1223,6 +1229,7 @@ io.sockets.on('connection',function(socket){
 						}
 						let result = await messageController.readUserMessage(decoded._id, data.receiver_id, 10, data.skip);
 						socket.emit("sv-get-private-message", result);
+						//socket.emit("sv-get-private-message", result);
 					}
 				});
 			}else{
