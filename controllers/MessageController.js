@@ -69,7 +69,6 @@ async function readUserMessage(user_id, sender_id, number_message, skip){
                 message_list.push(result[i].message[j]);
             }
         }
-        console.log(message_list)
         return {"success" : true, "data" : message_list};
     }else{
         return {"success" : false};
