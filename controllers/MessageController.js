@@ -30,7 +30,10 @@ async function addMessage(sender_id,receiver_id, text, image, video, audio){
 // Get newest message 
 async function getNewestMessage(sender_id, receiver_id){
     let newestmessage = await user.findOne({"_id" : receiver_id, "message.user._id" : sender_id},{"message" : {'$slice':-1}} );
-    console.log(newestmessage.message[0]); 
+    if(newestmessage){
+        return newestmessage;
+    }
+    return null;
 }
 //getNewestMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9");
 //addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","He lo", null, null, null);
