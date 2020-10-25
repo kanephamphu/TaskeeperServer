@@ -244,6 +244,11 @@ async function setTaskDone(task_owner_id, task_id){
     }
 }
 
+
+// Get task manage
+async function getTaskManage(task_owner_id, number_task, skip){
+    
+}
 // Client send approve work 
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
     let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list.price"]);
