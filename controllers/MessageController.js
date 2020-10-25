@@ -1,7 +1,6 @@
 //const message = require("../models/MessageModel");
 const users_controller = require("./UsersController");
 const user = require("../models/UsersModel");
-const { mode } = require("crypto-js");
 
 
 
@@ -25,7 +24,14 @@ async function addMessage(sender_id,receiver_id, text, image, video, audio){
         return {"success" : false}
     }   
 }
-//addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","Hi lại luôn ne", null, null, null);
+
+// Get newest message 
+async function getNewestMessage(sender_id, receiver_id){
+    let newestmessage = await user.findOne({"_id" : receiver_id, "message.user._id" : sender_id},{"message" : {'$slice':-1}} );
+    console.log(newestmessage.message[0]); 
+}
+//getNewestMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9");
+//addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","Sao rồi", null, null, null);
 
 //Read message 
 async function readMessage(user_id,number_message, skip){
@@ -53,7 +59,7 @@ async function readUserMessage(user_id, sender_id, number_message, skip){
     let result = await user.find({
         $or : [
             {"_id" : user_id,"message.user._id" : sender_id},
-            {"message.user._id" : sender_id, "_id" : user_id}
+            {"message.user._id" : user_id, "_id" : sender_id}
         ]
     },"message",{limit : number_message, skip: skip});
     if(result){
@@ -99,7 +105,7 @@ async function setAllReaded(user_id){
 }
 //setReaded("5f2546def9ca2b000466c467","5f915297b7953d1910cb033b")
 //readMessage("5f2546def9ca2b000466c467",100,0);
-//readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
+readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
 /*
 //Add new message 
 async function addMessage(sender_id, receiver_id, message_type, message_text, message_link){
@@ -216,7 +222,7 @@ async function getTotalUnreadMessage(receiver_id){
 }
 //getMessagerList("5f2546def9ca2b000466c467",10,10);
 //getUnreadNumber("5f2ae09e8e857e00041dc2bf","5f15dee66d224e19dcbf6bbf");
-//addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Heellooo", 'sdf');
+addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Heellooo", 'sdf');
 //addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Nghỉ học bán hàng đa cấp với anh em ơi", 'sdf');
 //addMessage("5f2ac6648e857e00041dc2b9", "5f2546def9ca2b000466c467", "text", "Được Inbox", 'sdf');
 //setReaded("5f2ae09e8e857e00041dc2bf","5f15dee66d224e19dcbf6bbf");
@@ -229,3 +235,4 @@ module.exports.addMessage = addMessage;
 module.exports.readUserMessage = readUserMessage;
 module.exports.setReaded = setReaded;
 module.exports.setAllReaded = setAllReaded;
+module.exports.getNewestMessage = getNewestMessage;

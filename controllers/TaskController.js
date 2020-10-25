@@ -246,14 +246,22 @@ async function setTaskDone(task_owner_id, task_id){
 
 // Client send approve work 
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
-    let result = task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_list.candidate_id" : employee_id},
+    let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list.price"]);
+    let price = pricelist.task_candidate_apply_list[0].price;
+    let result = await task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_list.candidate_id" : employee_id},
     {
         $push : {
             "work_employee_list" : {
-                "employee_id" : employee_id
+                "employee_id" : employee_id,
+                "price" : price
             }
         }
     });
+    if(result){
+        return {"success" : true};
+    }else{
+        return {"success" : false};
+    }
 }
 // Get task owner id
 async function getTaskOwnerId(task_id){
@@ -293,3 +301,4 @@ module.exports.addFreelanceTask = addFreelanceTask;
 module.exports.addTask = addTask;
 module.exports.getTasks = getTasks;
 module.exports.setTaskDone = setTaskDone;
+module.exports.approveEmployeeToWork = approveEmployeeToWork;
