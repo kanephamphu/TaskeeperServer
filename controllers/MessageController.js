@@ -33,7 +33,7 @@ async function getNewestMessage(sender_id, receiver_id){
     console.log(newestmessage.message[0]); 
 }
 //getNewestMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9");
-//addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","Sao rồi", null, null, null);
+//addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","He lo", null, null, null);
 
 //Read message 
 async function readMessage(user_id,number_message, skip){
