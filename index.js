@@ -892,12 +892,13 @@ io.sockets.on('connection',function(socket){
 						}
 						let result = await messageController.addMessage(decoded._id,data.receiver_id, data.text, null, null, null);
 						socket.emit("sv-send-message", result);
+						console.log(result);
 						if(checkExist(data.receiver_id)){
 							let socketUserId = await getSocketID(data.user_id);
 							let newestMessage = await messageController.getNewestMessage(decoded._id,data.receiver_id);
+							console.log(newestMessage);
 							io.to(socketUserId).emit("sv-get-private-message", {"success" : true, data : newestMessage});
 						}	
-						socket.emit("sv-get-private-message", result);
 					}
 				})
 			}else{
