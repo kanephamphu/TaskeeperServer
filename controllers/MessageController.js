@@ -1,59 +1,101 @@
-//const message = require("../models/MessageModel");
-const users_controller = require("./UsersController");
+const message = require("../models/MessageModel");
 const user = require("../models/UsersModel");
-
+const users_controller = require("./UsersController");
+const mongoose = require('mongoose')
 
 
 // Add new message 
 async function addMessage(sender_id,receiver_id, text, image, video, audio){
     let sender_info = await users_controller.getMessagerData(sender_id);
-    let result = await user.updateOne({"_id" : receiver_id}, {
-        $push : {
-            "message" : {
+    let room = await message.findOne({
+        $or : [
+        {
+        "user._id" : sender_id,
+        "receiver_id" : receiver_id
+        },
+        {
+            "user._id" : receiver_id,
+            "receiver_id" : sender_id
+        }
+        ]}, ["room"]);
+    if(room){
+        let result = await message.create(
+            {
                 "user" : sender_info,
                 "text" : text,
                 "image" : image,
                 "video" : video,
-                "audio" : audio
-            }
-        }
-    });
-    if(result){
-        return {"success" : true}
+                "audio" : audio,
+                "receiver_id" : receiver_id,
+                "room" : room.room
+            });
+        if(result){
+            return {"success" : true}
+        }else{
+            return {"success" : false}
+        }   
     }else{
-        return {"success" : false}
-    }   
+        let result = await message.create(
+            {
+                "user" : sender_info,
+                "text" : text,
+                "image" : image,
+                "video" : video,
+                "audio" : audio,
+                "receiver_id" : receiver_id
+            });
+        if(result){
+            return {"success" : true}
+        }else{
+            return {"success" : false}
+        }   
+    }
+    
 }
 
 
 
 // Get newest message 
 async function getNewestMessage(sender_id, receiver_id){
-    let newestmessage = await user.findOne({"_id" : receiver_id, "message.user._id" : sender_id},{"message" : {'$slice':-1}} );
+    let newestmessage = await message.findOne( {"participants.user_id" : {$in : [sender_id, receiver_id]}},{},{limit: 1});
     if(newestmessage){
         return newestmessage;
     }
     return null;
 }
 //getNewestMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9");
-//addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","He lo", null, null, null);
-
+//addMessage("5f2ac6648e857e00041dc2b9","5f2546def9ca2b000466c467","He lô lại", null, null, null);
+//addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","He lô lại", null, null, null);
 //Read message 
 async function readMessage(user_id,number_message, skip){
-    let result = await user.find({
-        $or : [
-            {"_id" : user_id},
-            {"message.user._id" : user_id}
-        ]
-    },"message",{limit : number_message, skip: skip});
-    if(result){
-        message_list = [];
-        for(i in result){
-            for(j in result[i].message){
-                message_list.push(result[i].message[j]);
+    /*$or : [
+        {
+            "user._id" : { $eq : user_id}
+        },{
+            "receiver_id" : { $eq : user_id}
+        }
+    ]*/
+    let result = await message.aggregate([
+        {
+            $match : {
+                $or : [
+                    {
+                        "user._id" : mongoose.Types.ObjectId(user_id)
+                    },{
+                        "receiver_id" : mongoose.Types.ObjectId(user_id)
+                    }
+                ]
+            }
+        },
+        {
+            $group : {
+                _id : {"room" : "$room"}
             }
         }
-        return {"success" : true, "data" : message_list};
+    ]);
+    console.log(result)
+    if(result){
+        return {"success" : true, "data" : result};
     }else{
         return {"success" : false};
     }
@@ -61,24 +103,17 @@ async function readMessage(user_id,number_message, skip){
 
 //Load message from user 
 async function readUserMessage(user_id, sender_id, number_message, skip){
-    let result = await user.find({
-        $or : [
-            {"_id" : user_id,"message.user._id" : sender_id},
-            {"message.user._id" : user_id, "_id" : sender_id}
-        ]
-    },"message",{limit : number_message, skip: skip}).sort({'message.createdAt' : 1});
+    let result = await message.find(
+            {"user._id" : {$in : [user_id, sender_id]}},
+    {},{limit : number_message, skip: skip});
+    console.log(result)
     if(result){
-        message_list = [];
-        for(i in result){
-            for(j in result[i].message){
-                message_list.push(result[i].message[j]);
-            }
-        }
-        return {"success" : true, "data" : message_list};
+        return {"success" : true, "data" : result};
     }else{
         return {"success" : false};
     }
 }
+
 
 //Client set readed message from specific user
 async function setReaded(user_id, sender_id){
@@ -108,7 +143,7 @@ async function setAllReaded(user_id){
     }
 }
 //setReaded("5f2546def9ca2b000466c467","5f915297b7953d1910cb033b")
-//readMessage("5f2546def9ca2b000466c467",100,0);
+//readMessage("5f2546def9ca2b000466c467",10,0);
 //readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
 /*
 //Add new message 

@@ -269,46 +269,7 @@ var UserChema = new mongoose.Schema({
             type: Number,
             default : 0
         }
-    },
-    message : [{
-        text : {
-            type : String
-        },
-        createdAt : {
-            type : Number,
-            default : Date.now()
-        },
-        user : {
-            _id : {
-                type : String,
-                index : true   
-            },
-            name : {
-                type : String
-            },
-            avatar : {
-                type : String
-            }
-        },
-        image : {
-            type : String
-        },
-        video : {
-            type : String
-        },
-        audio : {
-            type : String
-        },
-        sent : {
-            type : Boolean,
-            default : true
-        },
-        received : {
-            type : Boolean,
-            default : false
-        },
-        
-    }]
+    }
 });
 
 
