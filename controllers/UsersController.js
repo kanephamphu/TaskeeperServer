@@ -75,7 +75,7 @@ async function editPersonalInfo(user_id,first_name, last_name, email, phone_numb
             "month_of_birth" : month_of_birth,
             "year_of_birth" : year_of_birth
         }
-        let result = user.update({"_id" : user_id}, userDocs).exec();
+        let result = await user.update({"_id" : user_id}, userDocs);
         if(result){
             return {"success" : true};
         }else{

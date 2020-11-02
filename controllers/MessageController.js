@@ -63,6 +63,7 @@ async function getNewestMessage(sender_id, receiver_id){
     }
     return null;
 }
+
 //getNewestMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9");
 //addMessage("5f2ac6648e857e00041dc2b9","5f2546def9ca2b000466c467","He lô lại", null, null, null);
 //addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","He lô lại", null, null, null);
@@ -91,6 +92,10 @@ async function readMessage(user_id,number_message, skip){
             $group : {
                 _id : {"room" : "$room"}
             }
+        }, {
+            $limit : 10
+        },{
+            "createdAt" : -1
         }
     ]);
     console.log(result)
@@ -143,7 +148,7 @@ async function setAllReaded(user_id){
     }
 }
 //setReaded("5f2546def9ca2b000466c467","5f915297b7953d1910cb033b")
-//readMessage("5f2546def9ca2b000466c467",10,0);
+readMessage("5f2546def9ca2b000466c467",10,0);
 //readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
 /*
 //Add new message 
