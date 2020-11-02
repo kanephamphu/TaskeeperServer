@@ -75,7 +75,7 @@ async function editPersonalInfo(user_id,first_name, last_name, email, phone_numb
             "month_of_birth" : month_of_birth,
             "year_of_birth" : year_of_birth
         }
-        let result = await user.update({"_id" : user_id}, userDocs);
+        let result = await user.updateOne({"_id" : user_id}, userDocs);
         if(result){
             return {"success" : true};
         }else{
@@ -85,6 +85,7 @@ async function editPersonalInfo(user_id,first_name, last_name, email, phone_numb
         throw(e);
     }
 }
+
 //Get ID by email or phone number or username
 async function getUserID(loginquery){
     try{
@@ -581,14 +582,14 @@ async function testviewJob(){
     //var result = await getAllDetail("5f2546def9ca2b000466c467");
     //var result = await addNewWorkingInformation("5f17ea80959405207c09f752", "Xin caho", "Tai")
     //var result1 = await editWorkingInformation("5f17ea80959405207c09f752", "5f3f87226d44ed2e346cd6e2", "Sdf Tai", "level");
-    //var result = await editPersonalInfo("5f17ea80959405207c09f752","Te","Phem","123123","123132","male",16,08,1999);
-    var result = await getFollowerList("5f15dee66d224e19dcbf6bbf");
-    console.log(result.data.followers);
+    var result = await editPersonalInfo("5f17ea80959405207c09f752","Tes","Phem","123123","123132","male",16,08,1998);
+    //var result = await getFollowerList("5f15dee66d224e19dcbf6bbf");
+    //console.log(result.data.followers);
     console.log(result);
 }
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");
-//testviewJob();
+testviewJob();
 //saveTask("5f2546def9ca2b000466c467","5f3629d61e62e1000425540e")
 //getSavedTask("5f2546def9ca2b000466c467",1,0)
 module.exports.getMessagerData = getMessagerData;
