@@ -859,8 +859,8 @@ io.sockets.on('connection',function(socket){
 							addToList(decoded._id, socket.id);
 						}
 						console.log("dsdf")
-						let result = await userController.editPersonalInfo(decoded._id,data.first_name, data.last_name, data.email,
-							data.phone_number, data.gender, data.day_of_birth, data.month_of_birth, data.year_of_birth);
+						let result = await userController.editPersonalInfo(decoded._id,data.first_name, data.last_name, data.email,data.phone_number, data.gender, data.day_of_birth, data.month_of_birth, data.year_of_birth);
+						console.log(result)
 						socket.emit("sv-edit-info", result);
 					}
 				})
