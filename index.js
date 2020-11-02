@@ -848,7 +848,6 @@ io.sockets.on('connection',function(socket){
 				year_of_birth : 'required'
 			});
 			const matched = await v.check();
-			console.log(matched);
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
@@ -858,14 +857,12 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						console.log("dsdf")
 						let result = await userController.editPersonalInfo(decoded._id,data.first_name, data.last_name, data.email,data.phone_number, data.gender, data.day_of_birth, data.month_of_birth, data.year_of_birth);
 						console.log(result)
 						socket.emit("sv-edit-info", result);
 					}
 				})
 			}else{
-				console.log("Khong duoc");
 				socket.emit("sv-edit-info", {"success": false, "errors" : v.errors})
 			}
 		}catch(e){
