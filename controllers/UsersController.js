@@ -82,7 +82,7 @@ async function editPersonalInfo(user_id,first_name, last_name, email, phone_numb
             return {"success" : false};
         }
     }catch(e){
-        throw(e);
+        return e;
     }
 }
 
