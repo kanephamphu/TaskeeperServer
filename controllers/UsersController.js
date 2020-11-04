@@ -178,15 +178,16 @@ async function addNewGroup(_id,_groupid) {
 //Add new working detail
 async function addNewWorkingInformation(_id,specialize,level) {
     try{
-        var result=await user.findOne(
-            {
-                "_id" : _id
-            },"working_information.working_details");
-        result = result.working_information.working_details;
-        result.push({"specialize" : specialize, "level" : level});
-        console.log(result);
-        var result1 = await user.update({"_id": _id},{"working_information.working_details": result});
-        if(result1)
+        var workDocs = {
+            "specialize" : specialize,
+            "level" : level
+        };
+        let result = await user.updateOne({"_id" : _id},{
+            $push : {
+                "working_information.working_details" : workDocs
+            }
+        })
+        if(result)
             return {"success" : true};
         else
             return {"success" : false, "errors" : {"message" : "Undefined errors"}};
@@ -237,17 +238,16 @@ async function deleteWorkingInformation(_id, workingid){
 //Add new education detail
 async function addNewEducationInformation(_id,education_name,education_description) {
     try{
-        var result=await user.findOne(
-            {
-                "_id" : _id
-            },"education_information.education");
-            console.log(result);
-        result = result.education_information;
-        console.log(result);
-        result.push({"education_name" : education_name, "education_description" : education_description});
-        console.log(result);
-        var result1 = await user.update({"_id": _id},{"education_information": result});
-        if(result1)
+        var eduDocs = {
+            "education_name" : education_name,
+            "education_description" : education_description
+        };
+        let result = await user.updateOne({"_id" : _id},{
+            $push : {
+                "education_information" : eduDocs
+            }
+        })
+        if(result)
             return {"success" : true};
         else
             return {"success" : true, "errors" : {"message" : "Undefined errors"}};
@@ -580,12 +580,12 @@ async function getMessagerData(user_id){
 //addSearchHistory("5f15dee66d224e19dcbf6bbf", "Lập trình Unity")
 async function testviewJob(){
     //var result = await getAllDetail("5f2546def9ca2b000466c467");
-    //var result = await addNewWorkingInformation("5f17ea80959405207c09f752", "Xin caho", "Tai")
+    var result = await addNewWorkingInformation("5f2546def9ca2b000466c467", "IT", "master")
     //var result1 = await editWorkingInformation("5f17ea80959405207c09f752", "5f3f87226d44ed2e346cd6e2", "Sdf Tai", "level");
-    var result = await editPersonalInfo("5f17ea80959405207c09f752","Tes","Phem","123123","123132","male",16,08,1998);
+    //var result = await editPersonalInfo("5f17ea80959405207c09f752","Tes","Phem","123123","123132","male",16,08,1998);
     //var result = await getFollowerList("5f15dee66d224e19dcbf6bbf");
     //console.log(result.data.followers);
-    console.log(result);
+    //console.log(result.education_information[0]);
 }
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");

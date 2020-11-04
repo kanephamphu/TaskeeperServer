@@ -94,6 +94,7 @@ var UserChema = new mongoose.Schema({
             type: String
         },
         working_details: [{
+            _id : false,
             working_id: {
                 type: mongoose.Schema.Types.ObjectId,
                 index: true,
@@ -109,6 +110,7 @@ var UserChema = new mongoose.Schema({
         }]
     },
     education_information: [{
+        _id : false,
         education_id: {
             type: mongoose.Schema.Types.ObjectId,
             index: true,
@@ -123,6 +125,7 @@ var UserChema = new mongoose.Schema({
         }
     }],
     payment_information: [{
+        _id : false,
         payment_id: {
             type: mongoose.Schema.Types.ObjectId,
             index: true,
