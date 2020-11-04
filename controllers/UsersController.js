@@ -132,6 +132,7 @@ async function getInformation(_id){
     }
 }
 
+
 //Change password 
 async function changePassword(_id, password){
     try{
@@ -338,6 +339,33 @@ async function getAllDetail(_id){
     }
 }
 
+// Get all detail of user
+async function getWorkingInfo(_id){
+    try{
+        let works = await user.findOne({"_id": _id}, ["working_information.working_details"]).exec();
+        if(works){
+            return {"success" : true, "data" : works.working_information.working_details};
+        }
+        return {"success" : false}
+    }catch(e){
+        return {"success" : false}
+    }
+}
+
+// Get all detail of user
+async function getEduInfo(_id){
+    try{
+        let edu = await user.findOne({"_id": _id}, ["education_information"]).exec();
+        if(edu){
+            return {"success" : true, "data" : edu.education_information};
+        }
+        return {"success" : false}
+    }catch(e){
+        return {"success" : false}
+    }
+}
+
+//getWorkingInfo("5f2546def9ca2b000466c467")
 // Add follower to follower_list
 async function addFollower(user_id, follower_id){
     try{
@@ -430,6 +458,7 @@ async function voteUser(user_id, voter_id, vote_point){
         throw(e);
     }
 }
+
 
 // Get follower list
 async function getFollowerList(user_id){
@@ -592,6 +621,8 @@ async function testviewJob(){
 //testviewJob();
 //saveTask("5f2546def9ca2b000466c467","5f3629d61e62e1000425540e")
 //getSavedTask("5f2546def9ca2b000466c467",1,0)
+module.exports.getWorkingInfo = getWorkingInfo;
+module.exports.getEduInfo = getEduInfo;
 module.exports.getMessagerData = getMessagerData;
 module.exports.deleteSavedTask = deleteSavedTask;
 module.exports.getSavedTask = getSavedTask;

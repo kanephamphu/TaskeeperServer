@@ -529,6 +529,54 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
+	//Get all user infromation  detail
+	socket.on("cl-working-info-detail", async(data)=>{
+		/* 	Args:
+				_id: user id
+			Returns:
+				All information of user. For instance, first_name, last_name, phone_number ...
+		*/
+		try{
+			const v= new niv.Validator(data, {
+				_user_id : 'required'
+			});
+			const matched = await v.check();
+			if(!matched){
+				socket.emit("sv-working-info-detail", {"success" : false, "errors" : v.errors});
+			}else{
+				let workingInfo = await userController.getWorkingInfo(data._user_id);
+				socket.emit("sv-working-info-detail", workingInfo);
+			}
+		}catch(e){
+			console.log(e);
+			socket.emit("sv-working-info-detail", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
+	//Get all user infromation  detail
+	socket.on("cl-edu-info-detail", async(data)=>{
+		/* 	Args:
+				_id: user id
+			Returns:
+				All information of user. For instance, first_name, last_name, phone_number ...
+		*/
+		try{
+			const v= new niv.Validator(data, {
+				_user_id : 'required'
+			});
+			const matched = await v.check();
+			if(!matched){
+				socket.emit("sv-edu-info-detail", {"success" : false, "errors" : v.errors});
+			}else{
+				let eduInfo = await userController.getEduInfo(data._user_id);
+				socket.emit("sv-edu-info-detail", eduInfo);
+			}
+		}catch(e){
+			console.log(e);
+			socket.emit("sv-edu-info-detail", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
 	//View Task Detail 
 	socket.on("cl-task-detail", async(data)=>{
 		/* Args: 
