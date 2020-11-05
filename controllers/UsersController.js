@@ -364,7 +364,7 @@ async function getEduInfo(_id){
         return {"success" : false}
     }
 }
-
+//getEduInfo("5f2546def9ca2b000466c467")
 //getWorkingInfo("5f2546def9ca2b000466c467")
 // Add follower to follower_list
 async function addFollower(user_id, follower_id){
@@ -609,7 +609,7 @@ async function getMessagerData(user_id){
 //addSearchHistory("5f15dee66d224e19dcbf6bbf", "Lập trình Unity")
 async function testviewJob(){
     //var result = await getAllDetail("5f2546def9ca2b000466c467");
-    var result = await addNewWorkingInformation("5f2546def9ca2b000466c467", "IT", "master")
+    //var result = await addNewWorkingInformation("5f2546def9ca2b000466c467", "IT", "master")
     //var result1 = await editWorkingInformation("5f17ea80959405207c09f752", "5f3f87226d44ed2e346cd6e2", "Sdf Tai", "level");
     //var result = await editPersonalInfo("5f17ea80959405207c09f752","Tes","Phem","123123","123132","male",16,08,1998);
     //var result = await getFollowerList("5f15dee66d224e19dcbf6bbf");
