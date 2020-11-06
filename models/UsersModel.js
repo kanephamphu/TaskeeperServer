@@ -89,40 +89,51 @@ var UserChema = new mongoose.Schema({
             }
         }
     },
-    working_information: {
-        main_skills: {
+    working_information: [{
+        company_name : {
+            type : String
+        },
+        position : {
+            type : String
+        },
+        location : {
+            type : String
+        },
+        description: {
             type: String
         },
-        working_details: [{
-            _id : false,
-            working_id: {
-                type: mongoose.Schema.Types.ObjectId,
-                index: true,
-                required: true,
-                auto: true,
+        time_period: {
+            type : {
+                type : String,
+                enum : ['present','past']
             },
-            specialize: {
-                type: String
+            from_time : {
+                type : Number
             },
-            level: {
-                type: String
-            }  
-        }]
-    },
+            to_time : {
+                type : Number
+            }
+        }  
+    }],
     education_information: [{
-        _id : false,
-        education_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            index: true,
-            required: true,
-            auto: true,
-            },
-        education_name: {
+        school_name: {
             type: String
         },
-        education_description: {
+        description: {
             type: String
-        }
+        },
+        time_period: {
+            type : {
+                type : String,
+                enum : ['present','past']
+            },
+            from_time : {
+                type : Number
+            },
+            to_time : {
+                type : Number
+            }
+        }  
     }],
     payment_information: [{
         _id : false,

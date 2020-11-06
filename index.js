@@ -262,8 +262,10 @@ io.sockets.on('connection',function(socket){
 		try{
 			const v= new niv.Validator(data,{
 				secret_key : 'required',
-				specialize : 'required',
-				level : 'required'
+				company_name : 'required',
+				position : 'required',
+				time_type : 'required',
+				from_time : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
@@ -275,8 +277,21 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await userController.addNewWorkingInformation(decoded._id,data.specialize,data.level);
-						socket.emit("sv-new-working",result);
+						if(data.time_type=="past"){
+							const v1= new niv.Validator(data,{
+								to_time : "required"
+							});
+							const matched1 = await v1.check();
+							if(!matched1){
+								socket.emit("sv-new-working",{"success" : false, "errors" : v1.errors});
+							}else{
+								let result = await userController.addNewWorkingInformation(decoded._id,data.company_name, data.position, data.description, data.time_type, data.from_time, data.to_time);
+								socket.emit("sv-new-working",result);
+							}
+						}else{
+							let result = await userController.addNewWorkingInformation(decoded._id,data.company_name, data.position, data.description, data.time_type, data.from_time, null);
+							socket.emit("sv-new-working",result);
+						}
 					}
 				})
 			}else{
@@ -294,9 +309,11 @@ io.sockets.on('connection',function(socket){
 		try{
 			const v = new niv.Validator(data,{
 				secret_key : 'required',
-				working_id : 'required',
-				specialize : 'required',
-				level : 'required'
+				work_id : 'required',
+				company_name : 'required',
+				position : 'required',
+				time_type : 'required',
+				from_time : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
@@ -308,8 +325,21 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await userController.addNewEducationInformation(decoded._id,data.working_id,data.specialize,data.required);
-						socket.emit("sv-edit-working",result);
+						if(data.time_type=="past"){
+							const v1= new niv.Validator(data,{
+								to_time : "required"
+							});
+							const matched1 = await v1.check();
+							if(!matched1){
+								socket.emit("sv-edit-working",{"success" : false, "errors" : v1.errors});
+							}else{
+								let result = await userController.editWorkingInformation(decoded._id,data.work_id, company_name, data.position, data.description, data.time_type, data.from_time, data.to_time);
+								socket.emit("sv-edit-working",result);
+							}
+						}else{
+							let result = await userController.editWorkingInformation(decoded._id, data.work_id, data.company_name, data.position, data.description, data.time_type, data.from_time, null);
+							socket.emit("sv-edit-working",result);
+						}
 					}
 				})
 			}else{
@@ -331,7 +361,7 @@ io.sockets.on('connection',function(socket){
 		try{
 			const v= new niv.Validator(data,{
 				secret_key : 'required',
-				working_id : 'required' 
+				work_id : 'required' 
 			});
 			const matched = await v.check();
 			if(matched){
@@ -343,7 +373,7 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await userController.deleteWorkingInformation(decoded._id,data.working_id);
+						let result = await userController.deleteWorkingInformation(decoded._id,data.work_id);
 						socket.emit("sv-delete-working",result);
 					}
 				})
@@ -361,8 +391,10 @@ io.sockets.on('connection',function(socket){
 		try{
 			const v= new niv.Validator(data,{
 				secret_key : 'required',
-				education_name : 'required',
-				education_description : 'required'
+				school_name : 'required',
+				description : 'required',
+				time_type : 'required',
+				from_time : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
@@ -374,8 +406,21 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await userController.addNewEducationInformation(decoded._id,data.education_name,data.education_description);
-						socket.emit("sv-new-edu",result);
+						if(data.time_type=="past"){
+							const v1= new niv.Validator(data,{
+								to_time : "required"
+							});
+							const matched1 = await v1.check();
+							if(!matched1){
+								socket.emit("sv-new-edu",{"success" : false, "errors" : v1.errors});
+							}else{
+								let result = await userController.addNewEducationInformation(decoded._id,data.school_name, data.description, data.time_type, data.from_time, data.to_time);
+								socket.emit("sv-new-edu",result);
+							}
+						}else{
+							let result = await userController.addNewEducationInformation(decoded._id,data.school_name, data.description, data.time_type, data.from_time, null);
+							socket.emit("sv-new-edu",result);
+						}
 					}
 				})
 			}else{
@@ -401,9 +446,11 @@ io.sockets.on('connection',function(socket){
 		try{
 			const v= niv.Validator(data, {
 				secret_key : 'required',
-				education_id : 'required',
-				education_name : 'required',
-				education_description : 'required'
+				edu_id : 'required',
+				school_name : 'required',
+				description : 'required',
+				time_type : 'required',
+				from_time : 'required'
 			});
 			const matched = v.check();
 			if(matched){
@@ -415,8 +462,21 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await userController.editEducationInformation(decoded._id,data.education_id,data.education_name,data.education_description);
-						socket.emit("sv-edit-edu",result);
+						if(data.time_type=="past"){
+							const v1= new niv.Validator(data,{
+								to_time : "required"
+							});
+							const matched1 = await v1.check();
+							if(!matched1){
+								socket.emit("sv-new-edu",{"success" : false, "errors" : v1.errors});
+							}else{
+								let result = await userController.editEducationInformation(decoded._id, data.edu_id, data.school_name, data.description, data.time_type, data.from_time, data.to_time);
+								socket.emit("sv-new-edu",result);
+							}
+						}else{
+							let result = await userController.editEducationInformation(decoded._id, data.edu_id, data.school_name, data.description, data.time_type, data.from_time, null);
+							socket.emit("sv-edit-edu",result);
+						}
 					}
 				})
 			}else{

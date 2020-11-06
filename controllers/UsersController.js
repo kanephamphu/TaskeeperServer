@@ -177,15 +177,31 @@ async function addNewGroup(_id,_groupid) {
 }
 
 //Add new working detail
-async function addNewWorkingInformation(_id,specialize,level) {
+async function addNewWorkingInformation(user_id,company_name, position, description, time_type, from_time, to_time) {
     try{
-        var workDocs = {
-            "specialize" : specialize,
-            "level" : level
-        };
-        let result = await user.updateOne({"_id" : _id},{
+        var workDocs;
+        if(time_type == 'past'){
+            workDocs = {
+                "company_name" : company_name,
+                "position" : position,
+                "description" : description,
+                "time_period.time_type" : time_type,
+                "time_period.from_time" : from_time,
+                "time_period.to_time" : to_time
+            };
+        }else{
+            workDocs = {
+                "company_name" : company_name,
+                "position" : position,
+                "description" : description,
+                "time_period.time_type" : "present",
+                "time_period.from_time" : from_time
+            };
+        }
+        
+        let result = await user.updateOne({"_id" : user_id},{
             $push : {
-                "working_information.working_details" : workDocs
+                "working_information" : workDocs
             }
         })
         if(result)
@@ -198,17 +214,37 @@ async function addNewWorkingInformation(_id,specialize,level) {
 }
 
 //Edit working detail
-async function editWorkingInformation(_id, workingid, specialize, level){
+async function editWorkingInformation(user_id,work_id, company_name, position, description, time_type, from_time, to_time){
     try{
-        var result = await user.update(
-            {
-                "_id" : _id,
-                "working_information.working_details.working_id" : workingid
-            }, {"$set" : {
-                "working_information.working_details.$.specialize" : specialize,
-                "working_information.working_details.$.level" : level
-            }}
-        );
+        if(time_type=="past"){
+            var result = await user.updateOne(
+                {
+                    "_id" : user_id,
+                    "working_information._id" : work_id
+                }, {"$set" : {
+                    "working_information.$.company_name" : company_name,
+                    "working_information.$.position" : position,
+                    "working_information.$.description" : description,
+                    "working_information.$.time_period.time_type" : time_type,
+                    "working_information.$.time_period.from_time" : from_time,
+                    "working_information.$.time_period.to_time" : to_time,
+                }}
+            );
+        }else{
+            var result = await user.updateOne(
+                {
+                    "_id" : user_id,
+                    "working_information._id" : work_id
+                }, {"$set" : {
+                    "working_information.$.company_name" : company_name,
+                    "working_information.$.position" : position,
+                    "working_information.$.description" : description,
+                    "working_information.$.time_period.time_type" : "present",
+                    "working_information.$.time_period.from_time" : from_time
+                }}
+            );
+        }
+        
         if(result)
             return {"success" : true};
         else
@@ -219,13 +255,13 @@ async function editWorkingInformation(_id, workingid, specialize, level){
 }
 
 //Delete working detail
-async function deleteWorkingInformation(_id, workingid){
+async function deleteWorkingInformation(_id, work_id){
     try{
-        var result = await user.update({
+        var result = await user.updateOne({
             "_id" : _id
         },{
             $pull : {
-                "working_information.working_details" : { "working_id" : workingid}
+                "working_information" : { "_id" : work_id}
             }
         });
         if(result)
@@ -237,12 +273,25 @@ async function deleteWorkingInformation(_id, workingid){
     }
 }
 //Add new education detail
-async function addNewEducationInformation(_id,education_name,education_description) {
+async function addNewEducationInformation(_id, school_name, description, time_type, from_time, to_time) {
     try{
-        var eduDocs = {
-            "education_name" : education_name,
-            "education_description" : education_description
-        };
+        let eduDocs;
+        if(time_type == 'past'){
+            eduDocs = {
+                "school_name" : school_name,
+                "description" : description,
+                "time_period.time_type" : time_type,
+                "time_period.from_time" : from_time,
+                "time_period.to_time" : to_time
+            };
+        }else{
+            workDocs = {
+                "company_name" : school_name,
+                "description" : description,
+                "time_period.time_type" : "present",
+                "time_period.from_time" : from_time
+            };
+        }
         let result = await user.updateOne({"_id" : _id},{
             $push : {
                 "education_information" : eduDocs
@@ -259,17 +308,34 @@ async function addNewEducationInformation(_id,education_name,education_descripti
 }
 
 //Edit education 
-async function editEducationInformation(_id, education_id, education_name, education_description){
+async function editEducationInformation(_id, school_name, description, time_type, from_time, to_time){
     try{
-        var result = await user.update(
-            {
-                "_id" : _id,
-                "education_information.education_id" : education_id
-            }, {"$set" : {
-                "education_information.$.education_name" : education_name,
-                "education_information.$.education_description" : education_description
-            }}
-        );
+        if(time_type=="past"){
+            var result = await user.update(
+                {
+                    "_id" : _id,
+                    "education_information._id" : education_id
+                }, {"$set" : {
+                    "education_information.$.school_name" : school_name,
+                    "education_information.$.description" : description,
+                    "time_period.time_type" : time_type,
+                    "time_period.from_time" : from_time,
+                    "time_period.to_time" : to_time
+                }}
+            );
+        }else{
+            var result = await user.update(
+                {
+                    "_id" : _id,
+                    "education_information._id" : education_id
+                }, {"$set" : {
+                    "education_information.$.school_name" : school_name,
+                    "education_information.$.description" : description,
+                    "time_period.time_type" : "present",
+                    "time_period.from_time" : from_time
+                }}
+            );
+        }
         if(result)
             return {"success" : true};
         else
@@ -286,7 +352,7 @@ async function deleteEducationInformation(_id, education_id){
             "_id" : _id
         },{
             $pull : {
-                "education_information" : { "education_id" : education_id}
+                "education_information" : { "_id" : education_id}
             }
         });
         if(result)
@@ -344,7 +410,7 @@ async function getWorkingInfo(_id){
     try{
         let works = await user.findOne({"_id": _id}, ["working_information.working_details"]).exec();
         if(works){
-            return {"success" : true, "data" : works.working_information.working_details};
+            return {"success" : true, "data" : works.working_information};
         }
         return {"success" : false}
     }catch(e){
