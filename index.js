@@ -569,6 +569,7 @@ io.sockets.on('connection',function(socket){
 				socket.emit("sv-edu-info-detail", {"success" : false, "errors" : v.errors});
 			}else{
 				let eduInfo = await userController.getEduInfo(data._user_id);
+				print(eduInfo)
 				socket.emit("sv-edu-info-detail", eduInfo);
 			}
 		}catch(e){
