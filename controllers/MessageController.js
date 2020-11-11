@@ -148,7 +148,7 @@ async function setAllReaded(user_id){
     }
 }
 //setReaded("5f2546def9ca2b000466c467","5f915297b7953d1910cb033b")
-readMessage("5f2546def9ca2b000466c467",10,0);
+//readMessage("5f2546def9ca2b000466c467",10,0);
 //readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
 /*
 //Add new message 
