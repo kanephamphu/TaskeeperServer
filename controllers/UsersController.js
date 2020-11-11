@@ -285,8 +285,8 @@ async function addNewEducationInformation(_id, school_name, description, time_ty
                 "time_period.to_time" : to_time
             };
         }else{
-            workDocs = {
-                "company_name" : school_name,
+            eduDocs = {
+                "school_name" : school_name,
                 "description" : description,
                 "time_period.time_type" : "present",
                 "time_period.from_time" : from_time
