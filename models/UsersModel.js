@@ -103,7 +103,7 @@ var UserChema = new mongoose.Schema({
             type: String
         },
         time_period: {
-            type : {
+            time_type : {
                 type : String,
                 enum : ['present','past']
             },
@@ -123,7 +123,7 @@ var UserChema = new mongoose.Schema({
             type: String
         },
         time_period: {
-            type : {
+            time_type : {
                 type : String,
                 enum : ['present','past']
             },
