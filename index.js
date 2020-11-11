@@ -411,6 +411,7 @@ io.sockets.on('connection',function(socket){
 								to_time : "required"
 							});
 							const matched1 = await v1.check();
+							console.log(data);
 							if(!matched1){
 								socket.emit("sv-new-edu",{"success" : false, "errors" : v1.errors});
 							}else{
@@ -418,6 +419,7 @@ io.sockets.on('connection',function(socket){
 								socket.emit("sv-new-edu",result);
 							}
 						}else{
+							console.log(data);
 							let result = await userController.addNewEducationInformation(decoded._id,data.school_name, data.description, data.time_type, data.from_time, null);
 							socket.emit("sv-new-edu",result);
 						}
