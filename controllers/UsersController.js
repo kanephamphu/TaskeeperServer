@@ -292,7 +292,6 @@ async function addNewEducationInformation(_id, school_name, description, time_ty
                 "time_period.from_time" : from_time
             };
         }
-        console.log(eduDocs)
         let result = await user.updateOne({"_id" : _id},{
             $push : {
                 "education_information" : eduDocs
