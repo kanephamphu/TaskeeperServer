@@ -1,6 +1,20 @@
 const news = require('../models/NewsModel');
 const user = require('../models/UsersModel');
 const task = require('../models/TasksModel');
+// Add new news 
+async function addNewNews(user_id){
+    let result = await news.create(
+        {
+            "user_id" : user_id,
+            "task_news" : []
+        });
+    if(result){
+        return {"success" : true};
+    }else{
+        return {"success" : false};
+    }
+}
+
 // Add task to news
 async function addNews(user_id, task_id){
     try{
@@ -115,7 +129,7 @@ async function getNewsData(user_id, number_task, skip){
     //let t = await deleteNews("123","234234");
     //console.log(t);
 }*/
-
+module.exports.addNewNews = addNewNews;
 module.exports.getNewsData = getNewsData;
 module.exports.addNews = addNews;
 module.exports.addNewsToFollowers = addNewsToFollowers;

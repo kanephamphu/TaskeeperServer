@@ -37,9 +37,8 @@ async function register(first_name, last_name, email, phone_number, password, da
                             "phone_number.current_phone_number": phone_number,
                             "email.current_email": email
                         }
-                        
                         const result = user.create(userdocs);
-                        
+                        console.log(result);
                         if(result)
                             return {"success" : true};
                         else

@@ -1,6 +1,17 @@
 const user = require('../models/UsersModel');
 const wall = require('../models/WallModel');
 const task = require('../models/TasksModel');
+
+async function addNewWall(user_id){
+    let result = await wall.create({"user_id" : user_id, "wall" : []});
+            if(result){
+                return {"success" : true};
+            }else{
+                return {"success" : false};
+            }
+}
+
+//addNewWall("5face7aa00675d00046a1914")
 //Add new task to wall
 async function addWall(user_id, task_id){
     try{
@@ -71,3 +82,4 @@ async function getWallData(user_id, number_task, skip){
 //addWall("5f15dee66d224e19dcbf6bbf","5f1c5da395199238c4282654")
 module.exports.addWall = addWall;
 module.exports.getWallData = getWallData;
+module.exports.addNewWall = addNewWall;
