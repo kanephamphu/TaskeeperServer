@@ -73,12 +73,12 @@ var Tasks= new mongoose.Schema({
         type: Number,
         default: Date.now()
     },
-    languages : {
+    languages : [{
         type: String
-    },
-    industry: {
+    }],
+    industry: [{
         type: String
-    },
+    }],
     position : {
         type: String
     },

@@ -24,6 +24,7 @@ const moneytransactionController = require("./controllers/MoneyTransactionContro
 var paypal = require('paypal-rest-sdk');
 const { json } = require("body-parser");
 const moneytransaction = require("./models/MoneyTransactionModel");
+const industriesController = require("./controllers/IndustriesController");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -209,7 +210,7 @@ io.sockets.on('connection',function(socket){
 										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 									}else{
 										var result = await tasksController.addTask(data.task_title, data.task_description, decoded.first_name, decoded.last_name, decoded.avatar,
-											data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type);
+											data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type, data.language, data.industry, data.skills);
 										if(typeof result !== 'undefined'){
 											console.log(result);
 											socket.emit("sv-new-tasks",result);
@@ -228,7 +229,7 @@ io.sockets.on('connection',function(socket){
 							//Handle the dealing price type 
 							}else if(data.price_type == 'dealing'){
 								var result = await tasksController.addTask(data.task_title,data.task_description,decoded.first_name,decoded.last_name,decoded.avatar,data.task_type,decoded._id,
-									data.tags,null, null, data.location, data.price_type);
+									data.tags,null, null, data.location, data.price_type, data.language, data.industry, data.skills);
 								if(typeof result !== 'undefined'){
 									socket.emit("sv-new-tasks",result);
 									// Add tasks to news feed of followers
@@ -1729,6 +1730,23 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	
+	// Get Industries
+	socketl.on("cl-get-industry-list", async(data)=>{{
+		try{
+			const v= new niv.Validator(data, {
+				language : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				let result = await industriesController.getIndustries(data.language);
+				socket.emit("sv-get-industry-list", result);
+			}else{
+				socket.emit("sv-get-industry-list", {"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-industry-list", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+		}
+	}});
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);
