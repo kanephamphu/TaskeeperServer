@@ -1,13 +1,18 @@
 const industry = require("../models/IndustriesModel");
 
 async function addNewCareer(industryName, careerName, language){
-    let industryDocs = {
-        "industry_name" : industryName,
-        "career_name" : careerName,
-        "language" : language
+    let isExist = await industry.findOne({"name" : industryName}, ["_id"]);
+    if(isExist==null){
+        industry.create({"name" : industryName, "language" : language});
+    }
+    let careerDocs = {
+        "name" : careerName
     };
-    
-    let result = await industry.create(industryDocs);
+    let result = await industry.updateOne({"name" : industryName, "language" : language}, {
+        $push : {
+            "detail" : careerDocs
+        }
+    });
     if(result){
         return {"success" : true};
     }else{
@@ -16,7 +21,7 @@ async function addNewCareer(industryName, careerName, language){
 }
 
 async function getIndustries(language){
-    let result = await industry.find({"language" : language});
+    let result = await industry.findOne({"language" : language});
     if(result){
         return {"success" : true, "data" : result};
     }else{
