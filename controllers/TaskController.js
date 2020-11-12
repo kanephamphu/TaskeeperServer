@@ -32,7 +32,9 @@ async function addFreelanceTask(task_title,task_description,task_owner_first_nam
 }
 
 //Add Freelancer Task
-async function addTask(task_title,task_description,task_owner_first_name, task_owner_last_name, task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type) {
+async function addTask(task_title,task_description,task_owner_first_name, task_owner_last_name, 
+    task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type, 
+    language, industry, skills) {
     try{
         var taskDocs = {
             "task_title" : task_title,
@@ -46,7 +48,11 @@ async function addTask(task_title,task_description,task_owner_first_name, task_o
             "location" : location,
             "task_owner_first_name" : task_owner_first_name,
             "task_owner_last_name" : task_owner_last_name,
-            "task_owner_avatar" : task_owner_avatar
+            "task_owner_avatar" : task_owner_avatar,
+            "language" : language,
+            "industry" : industry,
+            "skills" : skills
+
         };
         var result = await task.create(taskDocs);
         if(result){
