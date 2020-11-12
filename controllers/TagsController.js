@@ -41,6 +41,6 @@ async function searchTags(tag_query){
     return tagList;
 }
 //addNewTag("tik tok");
-searchTags("ti");
+//searchTags("ti");
 module.exports.addNewTag = addNewTag;
 module.exports.searchTags = searchTags;
