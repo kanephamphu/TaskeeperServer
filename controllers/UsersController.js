@@ -2,6 +2,8 @@ var validator = require('validator');
 var checker= require('./Check');
 const user = require('../models/UsersModel');
 var taskController = require('./TaskController');
+const news = require('../controllers/NewsController');
+const wall = require('../controllers/WallController');
 //Check login
 async function checkLoginQuery(loginquery){
     if(validator.isEmail(loginquery) || validator.isMobilePhone(loginquery)){
@@ -38,7 +40,8 @@ async function register(first_name, last_name, email, phone_number, password, da
                             "email.current_email": email
                         }
                         const result = await user.create(userdocs);
-                        console.log(result);
+                        news.addNewNews(result._id);
+                        wall.addNewWall(result._id);
                         if(result)
                             return {"success" : true};
                         else
