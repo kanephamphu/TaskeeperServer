@@ -25,6 +25,9 @@ var paypal = require('paypal-rest-sdk');
 const { json } = require("body-parser");
 const moneytransaction = require("./models/MoneyTransactionModel");
 const industriesController = require("./controllers/IndustriesController");
+const tagsController = require("./controllers/TagsController");
+const skillsController = require("./controllers/SkillsController");
+const skills = require("./models/SkillsModel");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -1731,7 +1734,7 @@ io.sockets.on('connection',function(socket){
 	});
 	
 	// Get Industries
-	socketl.on("cl-get-industry-list", async(data)=>{{
+	socket.on("cl-get-industry-list", async(data)=>{{
 		try{
 			const v= new niv.Validator(data, {
 				language : 'required'
@@ -1745,6 +1748,40 @@ io.sockets.on('connection',function(socket){
 			}
 		}catch(e){
 			socket.emit("sv-get-industry-list", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+		}
+	}});
+
+	socket.on("cl-get-tags-list", async(data)=>{{
+		try{
+			const v= new niv.Validator(data, {
+				tag_query : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				let result = await tagsController.searchTags(data.tag_query);
+				socket.emit("sv-get-tags-list", result);
+			}else{
+				socket.emit("sv-get-tags-list", {"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-tags-list", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+		}
+	}});
+
+	socket.on("cl-get-skills-list", async(data)=>{{
+		try{
+			const v= new niv.Validator(data, {
+				skill_query : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				let result = await skillsController.searchSkills(data.skill_query);
+				socket.emit("sv-get-skills-list", result);
+			}else{
+				socket.emit("sv-get-skills-list", {"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-skills-list", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	}});
 	//Disconnect
