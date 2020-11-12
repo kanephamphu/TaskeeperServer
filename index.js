@@ -491,7 +491,7 @@ io.sockets.on('connection',function(socket){
 	});	
 
 	//Delete The Education Infomation
-	socket.on("cl-delete-working", async(data)=>{
+	socket.on("cl-delete-edu", async(data)=>{
 		/*
 		Args:
 			secret_key: Jwt token key

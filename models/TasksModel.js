@@ -18,7 +18,19 @@ var Tasks= new mongoose.Schema({
         ceiling_price : Number
     },
     location : {
-        type: String
+        formatted_address : {
+            type : String
+        },
+        geometry : {
+            location : {
+                lat : {
+                    type : String
+                },
+                lng : {
+                    type : String
+                }
+            }
+        }
     },
     task_type : {
         type: String,
