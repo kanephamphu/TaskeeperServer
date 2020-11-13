@@ -310,7 +310,7 @@ async function addNewEducationInformation(_id, school_name, description, time_ty
 }
 
 //Edit education 
-async function editEducationInformation(_id, school_name, description, time_type, from_time, to_time){
+async function editEducationInformation(_id, education_id, school_name, description, time_type, from_time, to_time){
     try{
         if(time_type=="past"){
             var result = await user.update(

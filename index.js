@@ -418,11 +418,11 @@ io.sockets.on('connection',function(socket){
 							if(!matched1){
 								socket.emit("sv-new-edu",{"success" : false, "errors" : v1.errors});
 							}else{
-								let result = await userController.addNewEducationInformation(decoded._id,data.school_name, data.description, data.time_type, data.from_time, data.to_time);
+								let result = await userController.addNewEducationInformation(decoded._id, data.edu_id, data.school_name, data.description, data.time_type, data.from_time, data.to_time);
 								socket.emit("sv-new-edu",result);
 							}
 						}else{
-							let result = await userController.addNewEducationInformation(decoded._id,data.school_name, data.description, data.time_type, data.from_time, null);
+							let result = await userController.addNewEducationInformation(decoded._id, data.edu_id, data.school_name, data.description, data.time_type, data.from_time, null);
 							socket.emit("sv-new-edu",result);
 						}
 					}
