@@ -411,7 +411,7 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						if(data.time_type=="past"){
+						if(data.time_type=='past'){
 							const v1= new niv.Validator(data,{
 								to_time : "required"
 							});
