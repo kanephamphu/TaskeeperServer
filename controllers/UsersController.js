@@ -278,6 +278,7 @@ async function deleteWorkingInformation(_id, work_id){
 async function addNewEducationInformation(_id, school_name, description, time_type, from_time, to_time) {
     try{
         let eduDocs;
+        console.log(eduDocs);
         if(time_type == 'past'){
             eduDocs = {
                 "school_name" : school_name,
