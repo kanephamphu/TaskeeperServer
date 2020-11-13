@@ -410,7 +410,7 @@ async function getAllDetail(_id){
 // Get all detail of user
 async function getWorkingInfo(_id){
     try{
-        let works = await user.findOne({"_id": _id}, ["working_information.working_details"]).exec();
+        let works = await user.findOne({"_id": _id}, ["working_information"]).exec();
         if(works){
             return {"success" : true, "data" : works.working_information};
         }
