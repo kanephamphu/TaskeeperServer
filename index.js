@@ -448,7 +448,7 @@ io.sockets.on('connection',function(socket){
 			Result of socket 
 		*/
 		try{
-			const v= niv.Validator(data, {
+			const v= new niv.Validator(data, {
 				secret_key : 'required',
 				edu_id : 'required',
 				school_name : 'required',
