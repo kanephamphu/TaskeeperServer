@@ -447,7 +447,6 @@ io.sockets.on('connection',function(socket){
 		Returns: 
 			Result of socket 
 		*/
-		console.log("Kiem tra 1");
 		try{
 			const v= niv.Validator(data, {
 				secret_key : 'required',
@@ -458,6 +457,7 @@ io.sockets.on('connection',function(socket){
 				from_time : 'required'
 			});
 			const matched = await v.check();
+			console.log(data);
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
