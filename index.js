@@ -468,16 +468,17 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
+
 						if(data.time_type=="past"){
 							const v1= new niv.Validator(data,{
 								to_time : "required"
 							});
 							const matched1 = await v1.check();
 							if(!matched1){
-								socket.emit("sv-new-edu",{"success" : false, "errors" : v1.errors});
+								socket.emit("sv-edit-edu",{"success" : false, "errors" : v1.errors});
 							}else{
 								let result = await userController.editEducationInformation(decoded._id, data.edu_id, data.school_name, data.description, data.time_type, data.from_time, data.to_time);
-								socket.emit("sv-new-edu",result);
+								socket.emit("sv-edit-edu",result);
 							}
 						}else{
 							let result = await userController.editEducationInformation(decoded._id, data.edu_id, data.school_name, data.description, data.time_type, data.from_time, null);
