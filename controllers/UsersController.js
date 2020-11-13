@@ -320,9 +320,9 @@ async function editEducationInformation(_id, school_name, description, time_type
                 }, {"$set" : {
                     "education_information.$.school_name" : school_name,
                     "education_information.$.description" : description,
-                    "time_period.time_type" : time_type,
-                    "time_period.from_time" : from_time,
-                    "time_period.to_time" : to_time
+                    "education_information.$.time_period.time_type" : time_type,
+                    "education_information.$.time_period.from_time" : from_time,
+                    "education_information.$.time_period.to_time" : to_time
                 }}
             );
         }else{
@@ -333,8 +333,8 @@ async function editEducationInformation(_id, school_name, description, time_type
                 }, {"$set" : {
                     "education_information.$.school_name" : school_name,
                     "education_information.$.description" : description,
-                    "time_period.time_type" : "present",
-                    "time_period.from_time" : from_time
+                    "education_information.$.time_period.time_type" : "present",
+                    "education_information.$.time_period.from_time" : from_time
                 }}
             );
         }
