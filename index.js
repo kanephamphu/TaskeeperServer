@@ -447,6 +447,7 @@ io.sockets.on('connection',function(socket){
 		Returns: 
 			Result of socket 
 		*/
+		console.log("Kiem tra 1");
 		try{
 			const v= niv.Validator(data, {
 				secret_key : 'required',
