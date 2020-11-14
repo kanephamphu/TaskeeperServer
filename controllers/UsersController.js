@@ -278,7 +278,6 @@ async function deleteWorkingInformation(_id, work_id){
 async function addNewEducationInformation(_id, school_name, description, time_type, from_time, to_time) {
     try{
         let eduDocs;
-        console.log(eduDocs);
         if(time_type == 'past'){
             eduDocs = {
                 "school_name" : school_name,
@@ -685,11 +684,39 @@ async function testviewJob(){
     //console.log(result.data.followers);
     //console.log(result.education_information[0]);
 }
+async function addNewLocationInformation(user_id, lat, lng){
+    try{
+        let result = await user.updateOne({"_id" : user_id},{
+            "location_history.last_location" :  {
+                "type" : 'Point',
+                "coordinates" : [lat,lng]
+            }
+        });
+        let result1 = await user.updateOne({"_id" : user_id}, {
+            
+            $push : {
+                "location_history.location_list" : {
+                    "coordinates" : [lat,lng]
+                }
+            }
+        });
+        if(result1){
+            return {"success" : true}
+        }
+        return {"success" : false}
+    }catch(e){
+        throw(e)
+    }
+    
+}
+
+//addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");
 //testviewJob();
 //saveTask("5f2546def9ca2b000466c467","5f3629d61e62e1000425540e")
 //getSavedTask("5f2546def9ca2b000466c467",1,0)
+module.exports.addNewLocationInformation = addNewLocationInformation;
 module.exports.getWorkingInfo = getWorkingInfo;
 module.exports.getEduInfo = getEduInfo;
 module.exports.getMessagerData = getMessagerData;

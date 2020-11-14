@@ -52,7 +52,6 @@ async function addTask(task_title,task_description,task_owner_first_name, task_o
             "language" : language,
             "industry" : industry,
             "skills" : skills
-
         };
         var result = await task.create(taskDocs);
         if(result){
