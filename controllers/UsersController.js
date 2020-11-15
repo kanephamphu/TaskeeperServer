@@ -122,6 +122,7 @@ async function setActivateByVerifyNumber(user_id, verifyNumber){
 async function setActivateByToken(user_id, token){
     try{
         let isValid = await checkToken(user_id, token);
+        console.log(isValid);
         if(isValid.success == true){
             let result = await setActive(user_id);
             return result;
@@ -132,7 +133,6 @@ async function setActivateByToken(user_id, token){
         return {"success" : false}
     }
 }
-
 
 // Check account status
 async function checkUserStatus(user_id){
