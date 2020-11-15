@@ -31,6 +31,7 @@ const skillsController = require("./controllers/SkillsController");
 const skills = require("./models/SkillsModel");
 const mediaController = require("./controllers/MediaController");
 const media = require("./models/MediaModel");
+const user = require("./models/UsersModel");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -1830,6 +1831,31 @@ io.sockets.on('connection',function(socket){
 			socket.emit("cl-send-vote", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	});
+	
+	//Client send get verify email request
+	socket.on("cl-send-vote", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("cl-send-vote",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.voteUser(data.user_id, decoded._id, data.vote_point)
+						socket.emit("cl-send-vote", result);
+					}
+				});
+			}else{
+				socket.emit("cl-send-vote", {"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("cl-send-vote", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+		}
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);
@@ -1937,6 +1963,22 @@ app.post('/avataruploader',(req,res)=>{
 		});
 	}else{
 		res.send({"success" : false, "error" : "Input data"});
+	}
+});
+
+app.get('/accountverify',async(req,res)=>{
+	if(req.query.userid && req.query.key){
+		let checkUser = await userController.checkUserStatus(req.query.userid);
+		if(checkUser.success == true){
+			if(checkUser.status == 'unActive'){
+				let result = await userController.setActivateByToken(req.query.userid, req.query.key);
+				res.send(result);
+			}else{
+				res.send("Account already verified")
+			}
+		}else{
+			res.send("Something wrong happen")
+		}
 	}
 });
 async function checkExist(userId){

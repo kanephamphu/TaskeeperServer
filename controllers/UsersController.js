@@ -4,6 +4,151 @@ const user = require('../models/UsersModel');
 var taskController = require('./TaskController');
 const news = require('../controllers/NewsController');
 const wall = require('../controllers/WallController');
+const rtg = require("random-token-generator")
+const fetch = require("node-fetch")
+const { URLSearchParams } = require('url');
+//Send verify account email 
+async function sendVerifyAccountEMail(user_id){
+    try{
+        verifyCreator(user_id);
+        let info = await getVerifyInfo(user_id);
+        if(info.success == true){
+            const params = new URLSearchParams();
+            params.append("first_name", info.data.first_name);
+            params.append("email", info.data.email.current_email);
+            params.append("verifylink", ("https://taskeepererver.herokuapp.com/accountverify?userid="+user_id+"&key="+info.data.verify_information.verify_token).toString())
+            params.append("verifynumber", info.data.verify_information.verify_code)
+            params.append("token", "PhutaI3434344")
+            fetch("https://taskeepermail.herokuapp.com/registermail",{
+                method : 'post',
+                body : params
+            })
+            .then(res => res.json())
+            .then(json => console.log(json));
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){
+        return {"success" : false}
+    }
+}
+sendVerifyAccountEMail("5f15dee66d224e19dcbf6bbf");
+//Get email verify info
+async function getVerifyInfo(user_id){
+    try{
+        let result = await user.findOne({"_id" : user_id}, ["first_name","email.current_email","verify_information.verify_token", "verify_information.verify_code"]);
+        if(result){
+            return {"success" : true, "data" : result};
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){
+        return {"success" : false}
+    }
+}
+//getVerifyInfo("5f15dee66d224e19dcbf6bbf");
+// Created verify token for user
+async function verifyCreator(user_id){
+    rtg.generateKey({
+        len : 32,
+        string : true,
+        strong : true,
+        retry : false
+    },async (err, key)=>{
+        let keyToken = key;
+        let verifyNumber = await Math.floor(Math.random()*(9999-1000)+1000);
+        user.updateOne({"_id" : user_id},
+        {
+            "verify_information.verify_code" : verifyNumber,
+            "verify_information.verify_token" : keyToken,
+            "verify_information.isUsed" : false
+        }).exec();    
+    });
+}
+
+// Check token for verify account
+async function checkToken(user_id, token){
+    try{
+        let result = await user.findOne({
+            "_id" : user_id,
+            "verify_information.verify_token" : token,
+            "verify_information.isUsed" : false
+        });
+        if(result){
+            return {"success" : true}
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){
+        return {"success" : false}
+    }
+}
+
+// Check verify number for verify account
+async function checkVerifyNumber(user_id, verifyNumber){
+    try{
+        let result = await user.findOne({
+            "_id" : user_id,
+            "verify_information.verify_code" : verifyNumber,
+            "verify_information.isUsed" : false
+        });
+        if(result){
+            return {"success" : true}
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){
+        return {"success" : false}
+    }
+}
+// Set activate by token
+async function setActivateByVerifyNumber(user_id, verifyNumber){
+    try{
+        let isValid = await checkVerifyNumber(user_id, verifyNumber);
+        if(isValid.success == true){
+            let result = await setActive(user_id);
+            return result;
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){
+        return {"success" : false}
+    }
+}
+//verifyCreator("5f15dee66d224e19dcbf6bbf")
+//setActivateByVerifyNumber("5f15dee66d224e19dcbf6bbf",9561)
+//setActivateByToken("5f15dee66d224e19dcbf6bbf","4fab53cad9a84b73da5a1c7e28cb5ad4");
+// Set activate by token
+async function setActivateByToken(user_id, token){
+    try{
+        let isValid = await checkToken(user_id, token);
+        if(isValid.success == true){
+            let result = await setActive(user_id);
+            return result;
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){
+        return {"success" : false}
+    }
+}
+
+
+// Check account status
+async function checkUserStatus(user_id){
+    try{
+        let result = await user.findOne({"_id" : user_id},["status"]);
+        if(result){
+            return {"success" : true , "status" : result.status}
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){  
+        return {"success" : false};
+    }
+}
+//checkUserStatus("5f15dee66d224e19dcbf6bbf");
+//verifyCreator("5f15dee66d224e19dcbf6bbf");
 //Check login
 async function checkLoginQuery(loginquery){
     if(validator.isEmail(loginquery) || validator.isMobilePhone(loginquery)){
@@ -366,9 +511,9 @@ async function deleteEducationInformation(_id, education_id){
     }
 }
 //Set active account
-async function setActive(_id) {
+async function setActive(user_id) {
     try{
-        var result = await user.update({"_id" : _id},{"status" : "isActive"});
+        var result = await user.update({"_id" : user_id},{"status" : "isActive", "verify_information.isUsed" : true});
         if(result)
             return {"success" : true};
         else
@@ -778,3 +923,7 @@ module.exports.getUserID = getUserID;
 module.exports.register=register;
 module.exports.checkLogin= checkLogin;
 module.exports.checkLoginQuery = checkLoginQuery;
+module.exports.verifyCreator = verifyCreator;
+module.exports.checkUserStatus = checkUserStatus;
+module.exports.setActivateByToken = setActivateByToken;
+module.exports.setActivateByVerifyNumber = setActivateByVerifyNumber;

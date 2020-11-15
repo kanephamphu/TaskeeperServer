@@ -322,6 +322,17 @@ var UserChema = new mongoose.Schema({
                 default : Date.now()
             }
         }] 
+    },
+    verify_information : {
+        verify_code : {
+            type : Number
+        },
+        verify_token : {
+            type : String
+        },
+        isUsed : {
+            type : Boolean
+        }
     }
 });
 
