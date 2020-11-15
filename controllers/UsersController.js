@@ -926,3 +926,4 @@ module.exports.verifyCreator = verifyCreator;
 module.exports.checkUserStatus = checkUserStatus;
 module.exports.setActivateByToken = setActivateByToken;
 module.exports.setActivateByVerifyNumber = setActivateByVerifyNumber;
+module.exports.sendVerifyAccountEMail = sendVerifyAccountEMail;
