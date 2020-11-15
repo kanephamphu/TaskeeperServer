@@ -163,7 +163,15 @@ async function checkLogin(loginquery, passwordquery){
         "login_information.password");
         if(password != null) {
             if(password.login_information.password==checker.encrypt(passwordquery)){
-                return 'success';
+                let status = await checkUserStatus(password._id).status;
+                if(status=='isActive'){
+                    return 'success';
+                }else if(status=='unActive'){
+                    return {"status": {"message": "Account is not verify","rule": 'unVefiy'}};
+                }else{
+                    return {"status": {"message": "Account is suspendd","rule": 'suspendd'}};
+                }
+                
             }else{
                 return {"password": {"message": "The password is not matched","rule": 'wrong-password'}};
             }
@@ -173,7 +181,7 @@ async function checkLogin(loginquery, passwordquery){
         
 }
 //Register new account
-async function register(first_name, last_name, email, phone_number, password, day, month, year) {
+async function register(first_name, last_name, email, phone_number, password) {
         if(await checker.isEmailExist(email)==false){
                     if(await checker.isNumberPhoneExist(phone_number) == false){
                         var userdocs = {
@@ -186,6 +194,7 @@ async function register(first_name, last_name, email, phone_number, password, da
                         const result = await user.create(userdocs);
                         news.addNewNews(result._id);
                         wall.addNewWall(result._id);
+                        sendVerifyAccountEMail(result._id);
                         if(result)
                             return {"success" : true};
                         else
