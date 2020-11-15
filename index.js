@@ -12,6 +12,7 @@ var tasksController = require('./controllers/TaskController');
 var searchqueryController = require('./controllers/SearchQueryController');
 const niv = require('node-input-validator');
 const { match } = require("assert");
+const upload = require("express-fileupload")
 const searchController = require('./controllers/SearchController');
 const newsController = require('./controllers/NewsController');
 const messageController = require('./controllers/MessageController');
@@ -28,6 +29,8 @@ const industriesController = require("./controllers/IndustriesController");
 const tagsController = require("./controllers/TagsController");
 const skillsController = require("./controllers/SkillsController");
 const skills = require("./models/SkillsModel");
+const mediaController = require("./controllers/MediaController");
+const media = require("./models/MediaModel");
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -42,7 +45,10 @@ paypal.configure({
 });
 app.use(bodyparser.json());
 app.use(limiter);
-app.use(helmet())
+app.use(helmet());
+//setting middleware
+app.use(express.static('./public'));
+app.use(upload());
 app.use(express.json({ limit: '300kb' })); // body-parser defaults to a body size limit of 300kb
 var clients = [];
 io.sockets.on('connection',function(socket){
@@ -524,24 +530,6 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-delete-edu",{"success" : false, "errors" : {"message" : "Undefined error"}});
 			throw(e);
 		}
-	});
-
-	//Check validate test
-	socket.on("test",async (data)=>{
-		console.log(data);
-		const v=new Validator(data,
-			{
-				first_name : 'required',
-				last_name : 'required'
-			});
-		const matched = await v.check();
-		if(!matched){
-			console.log(v.errors);
-			socket.emit("sv-test",v.errors);
-		}else{
-			socket.emit("sv-test",data);
-		}
-		
 	});
 
 	//View User Task History List
@@ -1905,11 +1893,53 @@ app.get('/',(req,res)=>
 );
 app.get('/payment-success',(req,res)=>{
 	res.send(req.query.paymentId);
-}
-);
+});
+
+app.get('/upload', (req,res)=>{
+	res.sendFile(__dirname+'/upload.html');
+});
 app.get('/payment-failure',(req,res)=>
 	res.send('Failure')
 );
+app.post('/avataruploader',(req,res)=>{
+	if(req.files && req.body.secret_key){
+		jwt.verify(req.body.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+			if(err){
+				res.send({"success" : false});
+			}
+			if(decoded){
+				var file = req.files.file;
+				var filename = file.name;
+				var allowedExtension = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp']
+				if(allowedExtension.indexOf(file.mimetype)!= -1){
+					let uploaded = await mediaController.avatarUpload(decoded._id, file.mimetype, file.size, "./public/images");
+					if(uploaded.success == true){
+						let mimetype = file.mimetype;
+						name = uploaded.data+"."+mimetype.substring(mimetype.indexOf('/')+1,mimetype.length)
+						file.mv('./public/images/'+name, async function(err){
+							if(err){
+								res.send(err);
+							}else{
+								let result = await userController.avatarChange(decoded._id, "https://taskeepererver.herokuapp.com/images/name/"+name);
+								if(result.success == true){
+									res.send({"success" : true});
+								}else{
+									res.send({"success" : false});
+								}
+							}
+						});
+					}else{
+						res.send({"success" : false});
+					}
+				}else{
+					res.send("Sai dinh dang");
+				}
+			}
+		});
+	}else{
+		res.send("Thieu truong ban oi");
+	}
+});
 async function checkExist(userId){
 	
 	let id = await clients.find(el => el.userId == userId);

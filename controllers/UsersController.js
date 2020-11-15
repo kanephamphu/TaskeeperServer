@@ -726,6 +726,18 @@ async function addNewLocationInformation(user_id, lat, lng){
         throw(e)
     }
 }
+async function avatarChange(user_id, avatar_location){
+    try{
+        let result = await user.updateOne({"_id" : user_id}, {"avatar" : avatar_location});
+        if(result){
+            return {"success" : true}
+        }else{
+            return {"success" : false};
+        }
+    }catch(e){
+        return {"success" : false}
+    }
+}
 
 //addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
@@ -733,6 +745,7 @@ async function addNewLocationInformation(user_id, lat, lng){
 //testviewJob();
 //saveTask("5f2546def9ca2b000466c467","5f3629d61e62e1000425540e")
 //getSavedTask("5f2546def9ca2b000466c467",1,0)
+module.exports.avatarChange = avatarChange;
 module.exports.addNewLocationInformation = addNewLocationInformation;
 module.exports.getWorkingInfo = getWorkingInfo;
 module.exports.getEduInfo = getEduInfo;
