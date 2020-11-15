@@ -1909,7 +1909,6 @@ app.post('/avataruploader',(req,res)=>{
 			}
 			if(decoded){
 				var file = req.files.file;
-				var filename = file.name;
 				var allowedExtension = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp']
 				if(allowedExtension.indexOf(file.mimetype)!= -1){
 					let uploaded = await mediaController.avatarUpload(decoded._id, file.mimetype, file.size, "./public/images");
@@ -1932,12 +1931,12 @@ app.post('/avataruploader',(req,res)=>{
 						res.send({"success" : false});
 					}
 				}else{
-					res.send("Sai dinh dang");
+					res.send({"success" : false, "error" : "File format"});
 				}
 			}
 		});
 	}else{
-		res.send("Thieu truong ban oi");
+		res.send({"success" : false, "error" : "Input data"});
 	}
 });
 async function checkExist(userId){
