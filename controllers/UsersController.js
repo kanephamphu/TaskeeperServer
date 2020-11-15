@@ -32,7 +32,7 @@ async function sendVerifyAccountEMail(user_id){
         return {"success" : false}
     }
 }
-sendVerifyAccountEMail("5f15dee66d224e19dcbf6bbf");
+//sendVerifyAccountEMail("5f15dee66d224e19dcbf6bbf");
 //Get email verify info
 async function getVerifyInfo(user_id){
     try{
@@ -517,7 +517,7 @@ async function setActive(user_id) {
         if(result)
             return {"success" : true};
         else
-            return {"success" : true, "errors" : {"message" : "Undefined errors"}};
+            return {"success" : false, "errors" : {"message" : "Undefined errors"}};
     }catch(e){
         console.log(e);
         throw(e);
