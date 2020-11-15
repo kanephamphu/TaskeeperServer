@@ -190,13 +190,21 @@ var UserChema = new mongoose.Schema({
         },
         is_limited: Boolean
     }],
-    votes : [{
-        voter_id : String,
-        vote_point : {
-            type : Number,
-            enum: [1,2,3,4,5]
-        }
-    }],
+    votes : {
+        vote_count : {
+            type : Number
+        },
+        vote_point_average : {
+            type : Number
+        },
+        vote_history : [{
+            voter_id : String,
+            vote_point : {
+                type : Number,
+                enum: [1,2,3,4,5]
+            }
+        }]
+    },
     followers : [{
         follower_id : String,
         follower_first_name : String,
@@ -283,6 +291,37 @@ var UserChema = new mongoose.Schema({
             type: Number,
             default : 0
         }
+    },
+    location_history : {
+        last_location : {
+            type : {
+                type : String,
+                default : 'Point',
+                enum: ['Point'], // 'location.type' must be 'Point'
+                required: true
+            },
+            coordinates : {
+                type : [Number],
+                required: true,
+                index : '2dsphere'
+            }
+        },
+        location_list : [{
+            type : {
+                type : String, 
+                default : 'Point',
+                enum: ['Point'], // 'location.type' must be 'Point'
+                required: true
+            },
+            coordinates : {
+                type : [Number],
+                required: true
+            },
+            time : {
+                type : Number,
+                default : Date.now()
+            }
+        }] 
     }
 });
 

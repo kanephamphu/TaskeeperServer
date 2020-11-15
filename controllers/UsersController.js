@@ -399,7 +399,7 @@ async function getAllDetail(_id){
         let detail = await user.findOne({"_id": _id}, ["avatar","first_name","last_name","gender",
         "description", "website","day_of_birth","month_of_birth","year_of_birth","nationality",
         "email.current_email","phone_number.current_phone_number","working_information","education_information",
-        "votes"]).exec();
+        "votes.vote_count", "votes.vote_point_average"]).exec();
         return detail;
     }catch(e){
         console.log(e);
@@ -492,17 +492,24 @@ async function deleteFollower(user_id, follower_id){
 // Vote user
 async function voteUser(user_id, voter_id, vote_point){
     try{
-        let isExist = await user.findOne({"_id" : user_id, "votes.voter_id" : voter_id});
+        let isExist = await user.findOne({"_id" : user_id, "votes.vote_history.voter_id" : voter_id},["_id"]);
         if(isExist){
-            let updated = await user.update({"_id" : user_id, "votes.voter_id" : voter_id}, {
-                $set : {
-                    "votes" : {
-                        "voter_id" : voter_id,
-                        "vote_point" : vote_point
-                    }
+            let updated = await user.updateOne({"_id" : user_id, "votes.vote_history.voter_id" : voter_id}, {
+                "$set" : {
+                    "votes.vote_history.$.vote_point" : vote_point
                 }
             });
             if(updated){
+                let voteData = await user.findOne({"_id": user_id}, ["votes.vote_history"]);
+                let sum =0;
+                let count = voteData.votes.vote_history.length;
+                voteData.votes.vote_history.forEach(element => {
+                    sum+=element.vote_point;
+                });
+                user.updateOne({"_id" : user_id}, {
+                    "votes.vote_count" : count,
+                    "votes.vote_point_average" : sum/count
+                }).exec();
                 return {"success" : true};
             }else{
                 return {"success" : false, "errors" : {"message" : "Could not vote"}};
@@ -510,13 +517,23 @@ async function voteUser(user_id, voter_id, vote_point){
         }else{
             let added = await user.update({"_id" : user_id}, {
                 $push : {
-                    "votes" : {
-                        "votes.voter_id" : voter_id,
+                    "votes.vote_history" : {
+                        "voter_id" : voter_id,
                         "vote_point" : vote_point
                     }
                 }
             });
             if(added){
+                let voteData = await user.findOne({"_id": user_id}, ["votes.vote_history"]);
+                let sum =0;
+                let count = voteData.votes.vote_history.length;
+                voteData.votes.vote_history.forEach(element => {
+                    sum+=element.vote_point;
+                });
+                user.updateOne({"_id" : user_id}, {
+                    "votes.vote_count" : count,
+                    "votes.vote_point_average" : sum/count
+                }).exec();
                 return {"success" : true};
             }else{
                 return {"success" : false, "errors" : {"message" : "Could not vote"}};
@@ -527,6 +544,7 @@ async function voteUser(user_id, voter_id, vote_point){
     }
 }
 
+//voteUser("5f2546def9ca2b000466c467", "5f1c59289a268609d0a36667", 2);
 
 // Get follower list
 async function getFollowerList(user_id){
@@ -707,7 +725,6 @@ async function addNewLocationInformation(user_id, lat, lng){
     }catch(e){
         throw(e)
     }
-    
 }
 
 //addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)

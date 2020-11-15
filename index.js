@@ -400,7 +400,6 @@ io.sockets.on('connection',function(socket){
 				time_type : 'required',
 				from_time : 'required'
 			});
-			console.log(data);
 			const matched = await v.check();
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
@@ -457,7 +456,6 @@ io.sockets.on('connection',function(socket){
 				from_time : 'required'
 			});
 			const matched = await v.check();
-			console.log(data);
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
@@ -467,7 +465,6 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						console.log("Kiem tra")
 						if(data.time_type=="past"){
 							const v1= new niv.Validator(data,{
 								to_time : "required"
@@ -1733,7 +1730,7 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	
-	// Get Industries
+	// Client get list industry recommendation for post new job
 	socket.on("cl-get-industry-list", async(data)=>{{
 		try{
 			const v= new niv.Validator(data, {
@@ -1751,6 +1748,7 @@ io.sockets.on('connection',function(socket){
 		}
 	}});
 
+	// Client get list tags recommendation for post new job
 	socket.on("cl-get-tags-list", async(data)=>{{
 		try{
 			const v= new niv.Validator(data, {
@@ -1768,6 +1766,7 @@ io.sockets.on('connection',function(socket){
 		}
 	}});
 
+	// Client get list skills recommendation for post new job
 	socket.on("cl-get-skills-list", async(data)=>{{
 		try{
 			const v= new niv.Validator(data, {
@@ -1784,6 +1783,65 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-get-skills-list", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	}});
+	// Client send new location 
+	socket.on("cl-send-new-location", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				lat : 'required',
+				lng : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("cl-send-new-location",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await userController.addNewLocationInformation(decoded._id, data.lat, data.lng);
+						socket.emit("cl-send-new-location", result);
+					}
+				});
+			}else{
+				socket.emit("cl-send-new-location", {"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("cl-send-new-location", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+		}
+	});
+
+	//Client send vote user 
+	socket.on("cl-send-vote", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				user_id : 'required',
+				vote_point : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("cl-send-vote",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await userController.voteUser(data.user_id, decoded._id, data.vote_point)
+						socket.emit("cl-send-vote", result);
+					}
+				});
+			}else{
+				socket.emit("cl-send-vote", {"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("cl-send-vote", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+		}
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);

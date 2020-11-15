@@ -23,11 +23,16 @@ var Tasks= new mongoose.Schema({
         },
         geometry : {
             location : {
-                lat : {
-                    type : String
+                type : {
+                    type : String, 
+                    default : 'Point',
+                    enum: ['Point'], // 'location.type' must be 'Point'
+                    required: true
                 },
-                lng : {
-                    type : String
+                coordinates : {
+                    type : [Number],
+                    required: true,
+                    index : '2dsphere'
                 }
             }
         }
@@ -99,6 +104,10 @@ var Tasks= new mongoose.Schema({
     },
     impression : {
         type : Number
+    },
+    status : {
+        type : String,
+        enum : ['deleted','active']
     }
 });
 
