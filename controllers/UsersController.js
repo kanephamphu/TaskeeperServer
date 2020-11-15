@@ -69,11 +69,13 @@ async function verifyCreator(user_id){
 // Check token for verify account
 async function checkToken(user_id, token){
     try{
+        console.log(user_id, token);
         let result = await user.findOne({
             "_id" : user_id,
             "verify_information.verify_token" : token,
             "verify_information.isUsed" : false
         });
+        console.log(result);
         if(result){
             return {"success" : true}
         }else{
