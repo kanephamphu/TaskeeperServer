@@ -1860,24 +1860,25 @@ io.sockets.on('connection',function(socket){
 	socket.on("cl-send-verify-number", async(data)=>{
 		try{
 			const v= new niv.Validator(data, {
-				secret_key : 'required'
+				secret_key : 'required',
+				verify_number : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
-						socket.emit("cl-send-verify-mail",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						socket.emit("cl-send-verify-number",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await userController.sendVerifyAccountEMail(decoded._id)
-						socket.emit("cl-send-verify-mail", result);
+						let result = await userController.setActivateByVerifyNumber(decoded._id, data.verify_number);
+						socket.emit("cl-send-verify-number", result);
 					}
 				});
 			}else{
-				socket.emit("cl-send-verify-mail", {"success" : false, "errors" : v.errors});
+				socket.emit("cl-send-verify-number", {"success" : false, "errors" : v.errors});
 			}
 		}catch(e){
-			socket.emit("cl-send-verify-mail", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+			socket.emit("cl-send-verify-number", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	});
 	//Disconnect
