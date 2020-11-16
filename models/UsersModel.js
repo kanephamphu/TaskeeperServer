@@ -70,7 +70,8 @@ var UserChema = new mongoose.Schema({
     email: {
         current_email: {
             type: String,
-            unique: true
+            unique: true,
+            index : true
         },
         old_mail_list: [{
             email: {
@@ -81,7 +82,8 @@ var UserChema = new mongoose.Schema({
     phone_number: {
         current_phone_number: {
             type: String,
-            unique: true
+            unique: true,
+            index : true
         },
         old_phone_number_list: {
             phone_number: {
