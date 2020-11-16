@@ -64,7 +64,6 @@ async function verifyCreator(user_id){
             "verify_information.isUsed" : false
         }).exec();
     });
-    return {"success" : true};
 }
 
 // Check token for verify account
@@ -197,17 +196,17 @@ async function register(first_name, last_name, email, phone_number, password) {
                             "phone_number.current_phone_number": phone_number,
                             "email.current_email": email
                         }
-                        const result = await user.create(userdocs); 
-                        console.log(result);
-                        news.addNewNews(result._id);
-                        wall.addNewWall(result._id);
-                        let verfiycreated = await verifyCreator(result._id);
-                        console.log(verfiycreated);
-                        if(verfiycreated.success == true){
-                            sendVerifyAccountEMail(result._id);
+                        const result = await user.create(userdocs);
+                        
+                        if(result){
+                            verifyCreator(result._id); 
+                            let wall = await news.addNewNews(result._id);
+                            let news = await wall.addNewWall(result._id);
+                            if(wall.success == true && news.success==true){
+                                sendVerifyAccountEMail(result._id);
+                                return {"success" : true};
+                            } 
                         }
-                        if(result)
-                            return {"success" : true};
                         else
                             return {"success" : false, "errors" : {message : "Cann't register"}};
                     }else{
