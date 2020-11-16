@@ -163,15 +163,19 @@ async function checkLogin(loginquery, passwordquery){
         "login_information.password");
         if(password != null) {
             if(password.login_information.password==checker.encrypt(passwordquery)){
-                let status = await checkUserStatus(password._id).status;
-                console.log(status);
-                if(status=='isActive'){
-                    return 'success';
-                }else if(status=='unActive'){
-                    return {"status": {"message": "Account is not verify","rule": 'unVefiy'}};
+                let user = await checkUserStatus(password._id);
+                if(user.success==true){
+                    if(user.status=='isActive'){
+                        return 'success';
+                    }else if(user.status=='unActive'){
+                        return {"status": {"message": "Account is not verify","rule": 'unVefiy'}};
+                    }else{
+                        return {"status": {"message": "Account is suspendd","rule": 'suspendd'}};
+                    }
                 }else{
-                    return {"status": {"message": "Account is suspendd","rule": 'suspendd'}};
+                    return 'falied';
                 }
+                
                 
             }else{
                 return {"password": {"message": "The password is not matched","rule": 'wrong-password'}};
