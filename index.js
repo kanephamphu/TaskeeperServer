@@ -131,7 +131,6 @@ io.sockets.on('connection',function(socket){
 			const matched = await v.check();
 			if(matched){
 				var result = await userController.register(data.first_name,data.last_name,data.email,data.phone_number,data.password);
-				console.log(result);
 				socket.emit("sv-send-register-res",result);
 			}else{
 				socket.emit("sv-send-register-res",{"success" : false, "errors" : v.errors});

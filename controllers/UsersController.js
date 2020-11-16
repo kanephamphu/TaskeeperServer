@@ -10,7 +10,6 @@ const { URLSearchParams } = require('url');
 //Send verify account email 
 async function sendVerifyAccountEMail(user_id){
     try{
-        verifyCreator(user_id);
         let info = await getVerifyInfo(user_id);
         if(info.success == true){
             const params = new URLSearchParams();
@@ -200,6 +199,7 @@ async function register(first_name, last_name, email, phone_number, password) {
                         console.log(result);
                         news.addNewNews(result._id);
                         wall.addNewWall(result._id);
+                        verifyCreator(result._id);
                         sendVerifyAccountEMail(result._id);
                         if(result)
                             return {"success" : true};
