@@ -1813,21 +1813,21 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
-						socket.emit("cl-send-vote",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						socket.emit("sv-send-vote",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
 						let result = await userController.voteUser(data.user_id, decoded._id, data.vote_point)
-						socket.emit("cl-send-vote", result);
+						socket.emit("sv-send-vote", result);
 					}
 				});
 			}else{
-				socket.emit("cl-send-vote", {"success" : false, "errors" : v.errors});
+				socket.emit("sv-send-vote", {"success" : false, "errors" : v.errors});
 			}
 		}catch(e){
-			socket.emit("cl-send-vote", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+			socket.emit("sv-send-vote", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	});
 	
