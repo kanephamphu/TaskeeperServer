@@ -11,6 +11,7 @@ const { URLSearchParams } = require('url');
 async function sendVerifyAccountEMail(user_id){
     try{
         let info = await getVerifyInfo(user_id);
+        console.log(info);
         if(info.success == true){
             const params = new URLSearchParams();
             params.append("first_name", info.data.first_name);
@@ -195,7 +196,7 @@ async function register(first_name, last_name, email, phone_number, password) {
                             "phone_number.current_phone_number": phone_number,
                             "email.current_email": email
                         }
-                        const result = await user.create(userdocs);
+                        const result = await user.create(userdocs); 
                         console.log(result);
                         news.addNewNews(result._id);
                         wall.addNewWall(result._id);
