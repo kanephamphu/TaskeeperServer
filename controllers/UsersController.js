@@ -57,12 +57,17 @@ async function verifyCreator(user_id){
     },async (err, key)=>{
         let keyToken = key;
         let verifyNumber = await Math.floor(Math.random()*(9999-1000)+1000);
-        user.updateOne({"_id" : user_id},
+        let result = await user.updateOne({"_id" : user_id},
         {
             "verify_information.verify_code" : verifyNumber,
             "verify_information.verify_token" : keyToken,
             "verify_information.isUsed" : false
-        }).exec();    
+        });
+        if(result){
+            return {"success" : true};
+        }else{
+            return {"success" : false};
+        }
     });
 }
 
@@ -200,8 +205,10 @@ async function register(first_name, last_name, email, phone_number, password) {
                         console.log(result);
                         news.addNewNews(result._id);
                         wall.addNewWall(result._id);
-                        verifyCreator(result._id);
-                        sendVerifyAccountEMail(result._id);
+                        let verfiycreated = await verifyCreator(result._id);
+                        if(verfiycreated.success == true){
+                            sendVerifyAccountEMail(result._id);
+                        }
                         if(result)
                             return {"success" : true};
                         else
