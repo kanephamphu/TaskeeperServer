@@ -57,18 +57,14 @@ async function verifyCreator(user_id){
     },async (err, key)=>{
         let keyToken = key;
         let verifyNumber = await Math.floor(Math.random()*(9999-1000)+1000);
-        let result = await user.updateOne({"_id" : user_id},
+        user.updateOne({"_id" : user_id},
         {
             "verify_information.verify_code" : verifyNumber,
             "verify_information.verify_token" : keyToken,
             "verify_information.isUsed" : false
-        });
-        if(result){
-            return {"success" : true};
-        }else{
-            return {"success" : false};
-        }
+        }).exec();
     });
+    return {"success" : true};
 }
 
 // Check token for verify account
