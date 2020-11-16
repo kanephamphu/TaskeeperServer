@@ -11,7 +11,7 @@ const { URLSearchParams } = require('url');
 async function sendVerifyAccountEMail(user_id){
     try{
         let info = await getVerifyInfo(user_id);
-        console.log(info);
+        console.log(info)
         if(info.success == true){
             const params = new URLSearchParams();
             params.append("first_name", info.data.first_name);
