@@ -164,6 +164,7 @@ async function checkLogin(loginquery, passwordquery){
         if(password != null) {
             if(password.login_information.password==checker.encrypt(passwordquery)){
                 let status = await checkUserStatus(password._id).status;
+                console.log(status);
                 if(status=='isActive'){
                     return 'success';
                 }else if(status=='unActive'){
@@ -192,6 +193,7 @@ async function register(first_name, last_name, email, phone_number, password) {
                             "email.current_email": email
                         }
                         const result = await user.create(userdocs);
+                        console.log(result);
                         news.addNewNews(result._id);
                         wall.addNewWall(result._id);
                         sendVerifyAccountEMail(result._id);
