@@ -202,6 +202,7 @@ async function register(first_name, last_name, email, phone_number, password) {
                         news.addNewNews(result._id);
                         wall.addNewWall(result._id);
                         let verfiycreated = await verifyCreator(result._id);
+                        console.log(verfiycreated);
                         if(verfiycreated.success == true){
                             sendVerifyAccountEMail(result._id);
                         }
