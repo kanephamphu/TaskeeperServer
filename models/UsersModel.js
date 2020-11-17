@@ -335,6 +335,14 @@ var UserChema = new mongoose.Schema({
         isUsed : {
             type : Boolean
         }
+    },
+    follower_number : {
+        type : Number,
+        default : 0
+    },
+    following_number : {
+        type : Number,
+        default : 0
     }
 });
 

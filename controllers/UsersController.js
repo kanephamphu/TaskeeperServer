@@ -47,6 +47,7 @@ async function getVerifyInfo(user_id){
         return {"success" : false}
     }
 }
+
 //getVerifyInfo("5f15dee66d224e19dcbf6bbf");
 // Created verify token for user
 async function verifyCreator(user_id){
@@ -625,6 +626,15 @@ async function getEduInfo(_id){
 //getEduInfo("5f2546def9ca2b000466c467")
 //getWorkingInfo("5f2546def9ca2b000466c467")
 // Add follower to follower_list
+
+async function updateFollowingNumber(user_id, number){
+    user.updateOne({"_id" : user_id}, {"following_number" : {$inc : {following_number : number}}}).exec();
+}
+
+async function updateFollowerNumber(user_id, number){
+    user.updateOne({"_id" : user_id}, {"follower_number" : {$inc : {following_number : number}}}).exec();
+}
+
 async function addFollower(user_id, follower_id){
     try{
         let isExist = await user.findOne({"followers.follower_id" : follower_id, "_id" : user_id});
@@ -644,6 +654,8 @@ async function addFollower(user_id, follower_id){
                 }
             });
             if(inserted){
+                updateFollowingNumber(follower_id, 1);
+                updateFollowerNumber(user_id, 1);
                 return {"success" : true};
             }else{
                 return {"success" : false, "errors" : {"message" : "Could n't import to follower list"}};
@@ -667,6 +679,8 @@ async function deleteFollower(user_id, follower_id){
                 }
             });
             if(deleted){
+                updateFollowingNumber(follower_id, -1);
+                updateFollowerNumber(user_id, -1);
                 return {"success" : true};
             }else{
                 return {"success" : false, "errors" : {"message" : "Could not delete"}};
