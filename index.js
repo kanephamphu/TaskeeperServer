@@ -940,7 +940,6 @@ io.sockets.on('connection',function(socket){
 				secret_key : 'required',
 				first_name : 'required',
 				last_name : 'required',
-				email : 'required|email',
 				phone_number : 'required|phoneNumber',
 				gender : 'required',
 				day_of_birth : 'required|integer',
@@ -957,7 +956,7 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await userController.editPersonalInfo(decoded._id,data.first_name, data.last_name, data.email,data.phone_number, data.gender, data.day_of_birth, data.month_of_birth, data.year_of_birth);
+						let result = await userController.editPersonalInfo(decoded._id,data.first_name, data.last_name,data.phone_number, data.gender, data.day_of_birth, data.month_of_birth, data.year_of_birth);
 						socket.emit("sv-edit-info", result);
 					}
 				})

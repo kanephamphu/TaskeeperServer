@@ -230,7 +230,7 @@ async function getGroupUser(id) {
 }
 
 // Edit personal information
-async function editPersonalInfo(user_id,first_name, last_name, email, phone_number, gender, 
+async function editPersonalInfo(user_id,first_name, last_name, phone_number, gender, 
     day_of_birth, month_of_birth, year_of_birth){
     try{
         if(day_of_birth != null && month_of_birth != null && year_of_birth != null){
@@ -239,7 +239,6 @@ async function editPersonalInfo(user_id,first_name, last_name, email, phone_numb
                 let userDocs = {
                     "first_name" : first_name,
                     "last_name" : last_name,
-                    "email.current_email" : email,
                     "phone_number.current_phone_number" : phone_number,
                     "gender" : gender,
                     "day_of_birth" : day_of_birth,
