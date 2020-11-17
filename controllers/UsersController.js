@@ -239,14 +239,14 @@ async function editPersonalInfo(user_id,first_name, last_name, email, phone_numb
             console.log(validDay);
             if(validDay){
                 let userDocs = {
-                "first_name" : first_name,
-                "last_name" : last_name,
-                "email.current_email" : email,
-                "phone_number.current_phone_number" : phone_number,
-                "gender" : gender,
-                "day_of_birth" : day_of_birth,
-                "month_of_birth" : month_of_birth,
-                "year_of_birth" : year_of_birth
+                    "first_name" : first_name,
+                    "last_name" : last_name,
+                    "email.current_email" : email,
+                    "phone_number.current_phone_number" : phone_number,
+                    "gender" : gender,
+                    "day_of_birth" : day_of_birth,
+                    "month_of_birth" : month_of_birth,
+                    "year_of_birth" : year_of_birth
                 }
                 let result = await user.updateOne({"_id" : user_id}, userDocs);
                 if(result){
