@@ -232,11 +232,8 @@ async function getGroupUser(id) {
 async function editPersonalInfo(user_id,first_name, last_name, email, phone_number, gender, 
     day_of_birth, month_of_birth, year_of_birth){
     try{
-        console.log(day_of_birth)
         if(day_of_birth != null && month_of_birth != null && year_of_birth != null){
-            console.log(day_of_birth);
             let validDay = isValidDay(day_of_birth+'/'+month_of_birth+'/'+year_of_birth);
-            console.log(validDay);
             if(validDay){
                 let userDocs = {
                     "first_name" : first_name,

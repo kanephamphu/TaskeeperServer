@@ -210,8 +210,8 @@ io.sockets.on('connection',function(socket){
 						if(typeof data.price_type !== 'undefined'){
 							if(data.price_type == 'unextract'){
 								const p= new niv.Validator(data,{
-									floor_price : 'required',
-									ceiling_price : 'required'
+									floor_price : 'required|integer',
+									ceiling_price : 'required|integer'
 								});
 								const matched1 = await p.check();
 								if(matched1){
@@ -943,14 +943,12 @@ io.sockets.on('connection',function(socket){
 				email : 'required|email',
 				phone_number : 'required|phoneNumber',
 				gender : 'required',
-				day_of_birth : 'required',
-				month_of_birth : 'required',
-				year_of_birth : 'required'
+				day_of_birth : 'required|integer',
+				month_of_birth : 'required|integer',
+				year_of_birth : 'required|integer'
 			});
 			const matched = await v.check();
-			console.log(data);
 			if(matched){
-				console.log(data.day_of_birth);
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
 						socket.emit("sv-edit-info",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
@@ -959,7 +957,6 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						console.log(data.day_of_birth);
 						let result = await userController.editPersonalInfo(decoded._id,data.first_name, data.last_name, data.email,data.phone_number, data.gender, data.day_of_birth, data.month_of_birth, data.year_of_birth);
 						socket.emit("sv-edit-info", result);
 					}
