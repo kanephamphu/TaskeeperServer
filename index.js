@@ -948,6 +948,7 @@ io.sockets.on('connection',function(socket){
 				year_of_birth : 'required'
 			});
 			const matched = await v.check();
+			console.log(data);
 			if(matched){
 				console.log(data.day_of_birth);
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
