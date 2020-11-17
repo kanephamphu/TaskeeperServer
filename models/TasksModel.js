@@ -8,6 +8,9 @@ var Tasks= new mongoose.Schema({
     task_description: {
         type: String
     },
+    task_requirement : {
+        type : String
+    },
     price: {
         price_type : {
             type: String,
@@ -62,7 +65,13 @@ var Tasks= new mongoose.Schema({
         introduction: {
             type: String
         },
-        price : Number
+        price : {
+            type: Number
+        },
+        time : {
+            type : Number,
+            default : Date.now()
+        } 
     }],
     work_employee_list: [{
         employee_id: {
@@ -103,7 +112,8 @@ var Tasks= new mongoose.Schema({
         type: Number
     },
     impression : {
-        type : Number
+        type : Number,
+        default : 0
     },
     status : {
         type : String,

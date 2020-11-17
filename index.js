@@ -218,7 +218,7 @@ io.sockets.on('connection',function(socket){
 									if(data.floor_price >= data.ceiling_price){
 										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 									}else{
-										var result = await tasksController.addTask(data.task_title, data.task_description, decoded.first_name, decoded.last_name, decoded.avatar,
+										var result = await tasksController.addTask(data.task_title, data.task_description, data.task_requirement, decoded.first_name, decoded.last_name, decoded.avatar,
 											data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type, data.language, data.industry, data.skills);
 										if(typeof result !== 'undefined'){
 											console.log(result);
@@ -237,7 +237,7 @@ io.sockets.on('connection',function(socket){
 								}
 							//Handle the dealing price type 
 							}else if(data.price_type == 'dealing'){
-								var result = await tasksController.addTask(data.task_title,data.task_description,decoded.first_name,decoded.last_name,decoded.avatar,data.task_type,decoded._id,
+								var result = await tasksController.addTask(data.task_title,data.task_description, data.task_requirement, decoded.first_name,decoded.last_name,decoded.avatar,data.task_type,decoded._id,
 									data.tags,null, null, data.location, data.price_type, data.language, data.industry, data.skills);
 								if(typeof result !== 'undefined'){
 									socket.emit("sv-new-tasks",result);

@@ -27,9 +27,6 @@ var UserChema = new mongoose.Schema({
     updated_time: {
         type: Number
     },
-    verify_code:  {
-        type: String
-    },
     avatar: {
         type: String
     },

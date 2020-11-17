@@ -1,4 +1,5 @@
 var task = require('../models/TasksModel');
+const user = require('../models/UsersModel');
 require('dotenv').config();
 //Add Freelancer Task
 async function addFreelanceTask(task_title,task_description,task_owner_first_name, task_owner_last_name, task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type,languages,industry) {
@@ -32,13 +33,14 @@ async function addFreelanceTask(task_title,task_description,task_owner_first_nam
 }
 
 //Add Freelancer Task
-async function addTask(task_title,task_description,task_owner_first_name, task_owner_last_name, 
+async function addTask(task_title,task_description, task_requirement, task_owner_first_name, task_owner_last_name, 
     task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type, 
     language, industry, skills) {
     try{
         var taskDocs = {
             "task_title" : task_title,
             "task_description" : task_description,
+            "task_requirement" : task_requirement,
             "task_owner_id" : task_owner_id,
             "tags" : tags,
             "price.price_type" : price_type,
@@ -225,8 +227,26 @@ async function getApplyList(task_id){
 // Get job saved detail
 async function getSavedDetail(task_id){
     let detail = await task.findOne({"_id" : task_id}, ["task_owner_id","task_owner_avatar", "task_owner_first_name", "task_owner_last_name", "task_title"]);
+    increaseImpression(task_id);
     return detail;
 }
+
+// Task increase impression
+async function increaseImpression(task_id){
+    try {
+        let result = await task.updateOne({"_id" : task_id}, {
+            $inc : {impression : 1}
+        });
+        if(result){
+            return {"success" : true};
+        }else{
+            return {"success" : false};
+        }
+    }catch(e){
+        return {"success" : false};
+    }
+}
+//increaseImpression("5f1c581dcde7010774853652");
 // Get list job which a client applied
 async function getAppliedJobs(user_id){
     let listJobs = await task.find({
