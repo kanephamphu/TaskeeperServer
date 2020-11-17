@@ -343,7 +343,7 @@ io.sockets.on('connection',function(socket){
 							if(!matched1){
 								socket.emit("sv-edit-working",{"success" : false, "errors" : v1.errors});
 							}else{
-								let result = await userController.editWorkingInformation(decoded._id,data.work_id, company_name, data.position, data.description, data.time_type, data.from_time, data.to_time);
+								let result = await userController.editWorkingInformation(decoded._id,data.work_id, data.company_name, data.position, data.description, data.time_type, data.from_time, data.to_time);
 								socket.emit("sv-edit-working",result);
 							}
 						}else{
