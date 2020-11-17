@@ -234,6 +234,7 @@ async function editPersonalInfo(user_id,first_name, last_name, email, phone_numb
     try{
         if(day_of_birth != null && month_of_birth != null && year_of_birth != null){
             let validDay = isValidDay(day_of_birth+'/'+month_of_birth+'/'+year_of_birth);
+            console.log(validDay);
             if(validDay){
                 let userDocs = {
                 "first_name" : first_name,
