@@ -123,9 +123,14 @@ var Tasks= new mongoose.Schema({
 });
 
 Tasks.index(
-    {task_title : "text",
-    task_description : "text",
-    location : "text"
+    {
+        task_title : "text",
+        task_description : "text",
+        tags : "text",
+        "task_owner_first_name" : "text",
+        "task_owner_last_name" : "text",
+        "task_type" : "text",
+        "location.formatted_address" : "text"
     }
 );  
 
