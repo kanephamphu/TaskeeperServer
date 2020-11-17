@@ -1,25 +1,62 @@
 var task = require('../models/TasksModel');
 const user = require('../models/UsersModel');
+const isValidDay = require('is-valid-date');
 require('dotenv').config();
+
+
 //Add Freelancer Task
-async function addFreelanceTask(task_title,task_description,task_owner_first_name, task_owner_last_name, task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type,languages,industry) {
+async function addFreelanceTask(task_title,task_description, task_description, task_owner_first_name, 
+    task_owner_last_name, task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,
+    price_type,languages,industry, endDay, endMonth, endYear) {
     try{
         if(task_type=='freelance'){
-            var taskDocs = {
-                "task_title" : task_title,
-                "task_description" : task_description,
-                "task_owner_id" : task_owner_id,
-                "tags" : tags,
-                "price.price_type" : price_type,
-                "task_type" : task_type,
-                "task_owner_first_name" : task_owner_first_name,
-                "task_owner_last_name" : task_owner_last_name,
-                "task_owner_avatar" : task_owner_avatar,
-                "price.floor_price" : floor_price,
-                "price.ceiling_price" : ceiling_price,
-                "location" : location
-            };
-            var result = await task.create(taskDocs);
+            if(endDay != null && endMonth != null && endYear != null){
+                let validDay = isValidDay(endDay+'/'+endMonth+'/'+endYear);
+                if(validDay){
+                    var taskDocs = {
+                        "task_title" : task_title,
+                        "task_description" : task_description,
+                        "task_owner_id" : task_owner_id,
+                        "tags" : tags,
+                        "price.price_type" : price_type,
+                        "task_type" : task_type,
+                        "task_owner_first_name" : task_owner_first_name,
+                        "task_owner_last_name" : task_owner_last_name,
+                        "task_owner_avatar" : task_owner_avatar,
+                        "price.floor_price" : floor_price,
+                        "price.ceiling_price" : ceiling_price,
+                        "location" : location,
+                        "languages" : languages,
+                        "industry" : industry,
+                        "skills" : skills,
+                        "end_day" : endDay,
+                        "end_month" : endMonth,
+                        "end_year" : endYear
+                    };
+                    var result = await task.create(taskDocs);
+                }else{
+                    return {"success" : false, "errors" : {"rule" : "date", "message" : "Date is invalid"}};
+                }
+            }else{
+                var taskDocs = {
+                    "task_title" : task_title,
+                    "task_description" : task_description,
+                    "task_owner_id" : task_owner_id,
+                    "tags" : tags,
+                    "price.price_type" : price_type,
+                    "task_type" : task_type,
+                    "task_owner_first_name" : task_owner_first_name,
+                    "task_owner_last_name" : task_owner_last_name,
+                    "task_owner_avatar" : task_owner_avatar,
+                    "price.floor_price" : floor_price,
+                    "price.ceiling_price" : ceiling_price,
+                    "location" : location,
+                    "languages" : languages,
+                    "industry" : industry,
+                    "skills" : skills
+                };
+                var result = await task.create(taskDocs);
+            }
             if(result){
                 return {"success" : true, "data" : result};
             }else{
@@ -35,32 +72,66 @@ async function addFreelanceTask(task_title,task_description,task_owner_first_nam
 //Add Freelancer Task
 async function addTask(task_title,task_description, task_requirement, task_owner_first_name, task_owner_last_name, 
     task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type, 
-    language, industry, skills) {
+    languages, industry, skills, endDay, endMonth, endYear) {
     try{
-        var taskDocs = {
-            "task_title" : task_title,
-            "task_description" : task_description,
-            "task_requirement" : task_requirement,
-            "task_owner_id" : task_owner_id,
-            "tags" : tags,
-            "price.price_type" : price_type,
-            "task_type" : task_type,
-            "price.floor_price" : floor_price,
-            "price.ceiling_price" : ceiling_price,
-            "location" : location,
-            "task_owner_first_name" : task_owner_first_name,
-            "task_owner_last_name" : task_owner_last_name,
-            "task_owner_avatar" : task_owner_avatar,
-            "language" : language,
-            "industry" : industry,
-            "skills" : skills
-        };
-        var result = await task.create(taskDocs);
-        if(result){
-            return {"success" : true, "data" : result};
+        if(endDay != null && endMonth != null && endYear != null){
+            let validDay = isValidDay(endDay+'/'+endMonth+'/'+endYear);
+            if(validDay){
+                var taskDocs = {
+                    "task_title" : task_title,
+                    "task_description" : task_description,
+                    "task_owner_id" : task_owner_id,
+                    "tags" : tags,
+                    "price.price_type" : price_type,
+                    "task_type" : task_type,
+                    "task_owner_first_name" : task_owner_first_name,
+                    "task_owner_last_name" : task_owner_last_name,
+                    "task_owner_avatar" : task_owner_avatar,
+                    "price.floor_price" : floor_price,
+                    "price.ceiling_price" : ceiling_price,
+                    "location" : location,
+                    "languages" : languages,
+                    "industry" : industry,
+                    "skills" : skills,
+                    "end_day" : endDay,
+                    "end_month" : endMonth,
+                    "end_year" : endYear
+                };
+                var result = await task.create(taskDocs);
+                if(result){
+                    return {"success" : true, "data" : result};
+                }else{
+                    return {"success" : false};
+                }
+            }else{
+                return {"success" : false, "errors" : {"rule" : "date", "message" : "Date is invalid"}};
+            }
         }else{
-            return {"success" : false};
-        }
+            var taskDocs = {
+                "task_title" : task_title,
+                "task_description" : task_description,
+                "task_requirement" : task_requirement,
+                "task_owner_id" : task_owner_id,
+                "tags" : tags,
+                "price.price_type" : price_type,
+                "task_type" : task_type,
+                "price.floor_price" : floor_price,
+                "price.ceiling_price" : ceiling_price,
+                "location" : location,
+                "task_owner_first_name" : task_owner_first_name,
+                "task_owner_last_name" : task_owner_last_name,
+                "task_owner_avatar" : task_owner_avatar,
+                "languages" : languages,
+                "industry" : industry,
+                "skills" : skills
+            };
+            var result = await task.create(taskDocs);
+            if(result){
+                return {"success" : true, "data" : result};
+            }else{
+                return {"success" : false};
+            }
+        }  
     }catch(e){
         console.log(e);
         throw(e);

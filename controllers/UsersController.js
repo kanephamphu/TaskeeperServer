@@ -4,8 +4,9 @@ const user = require('../models/UsersModel');
 var taskController = require('./TaskController');
 const news = require('../controllers/NewsController');
 const wall = require('../controllers/WallController');
-const rtg = require("random-token-generator")
-const fetch = require("node-fetch")
+const rtg = require("random-token-generator");
+const isValidDay = require('is-valid-date');
+const fetch = require("node-fetch");
 const { URLSearchParams } = require('url');
 //Send verify account email 
 async function sendVerifyAccountEMail(user_id){
@@ -231,22 +232,46 @@ async function getGroupUser(id) {
 async function editPersonalInfo(user_id,first_name, last_name, email, phone_number, gender, 
     day_of_birth, month_of_birth, year_of_birth){
     try{
-        let userDocs = {
-            "first_name" : first_name,
-            "last_name" : last_name,
-            "email.current_email" : email,
-            "phone_number.current_phone_number" : phone_number,
-            "gender" : gender,
-            "day_of_birth" : day_of_birth,
-            "month_of_birth" : month_of_birth,
-            "year_of_birth" : year_of_birth
+        if(day_of_birth != null && month_of_birth != null && year_of_birth != null){
+            let validDay = isValidDay(day_of_birth+'/'+month_of_birth+'/'+year_of_birth);
+            if(validDay){
+                let userDocs = {
+                "first_name" : first_name,
+                "last_name" : last_name,
+                "email.current_email" : email,
+                "phone_number.current_phone_number" : phone_number,
+                "gender" : gender,
+                "day_of_birth" : day_of_birth,
+                "month_of_birth" : month_of_birth,
+                "year_of_birth" : year_of_birth
+                }
+                let result = await user.updateOne({"_id" : user_id}, userDocs);
+                if(result){
+                    return {"success" : true};
+                }else{
+                    return {"success" : false};
+                }
+            }else{
+                return {"success" : false, "errors" : {"rule" : "date", "message" : "Date is invalid"}};
+            }
+            
+            
+        }else{ 
+            let userDocs = {
+                "first_name" : first_name,
+                "last_name" : last_name,
+                "email.current_email" : email,
+                "phone_number.current_phone_number" : phone_number,
+                "gender" : gender
+            }
+            let result = await user.updateOne({"_id" : user_id}, userDocs);
+            if(result){
+                return {"success" : true};
+            }else{
+                return {"success" : false};
+            }
         }
-        let result = await user.updateOne({"_id" : user_id}, userDocs);
-        if(result){
-            return {"success" : true};
-        }else{
-            return {"success" : false};
-        }
+        
     }catch(e){
         return e;
     }

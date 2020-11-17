@@ -78,17 +78,18 @@ var Tasks= new mongoose.Schema({
             type: String
         }
     }],
-    tags: [
-        {
-            type: String
-        }
-    ],
+    tags: 
+    {
+        type: [String],
+        default : []
+    },
     created_time : {
         type: Number,
         default: Date.now()
     },
     languages : [{
-        type: String
+        type: [String],
+        default : []
     }],
     industry: [{
         type: String
@@ -102,13 +103,13 @@ var Tasks= new mongoose.Schema({
     isDone: {
         type: Boolean
     },
-    day_of_working_done: {
+    end_day: {
         type: Number
     },
-    month_of_working_done: {
+    end_month: {
         type: Number
     },
-    year_of_working_done: {
+    end_year: {
         type: Number
     },
     impression : {

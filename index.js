@@ -219,7 +219,7 @@ io.sockets.on('connection',function(socket){
 										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 									}else{
 										var result = await tasksController.addTask(data.task_title, data.task_description, data.task_requirement, decoded.first_name, decoded.last_name, decoded.avatar,
-											data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type, data.language, data.industry, data.skills);
+											data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type, data.language, data.industry, data.skills, data.day, data.month, data.year);
 										if(typeof result !== 'undefined'){
 											console.log(result);
 											socket.emit("sv-new-tasks",result);
