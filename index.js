@@ -1970,8 +1970,7 @@ app.post('/avataruploader',(req,res)=>{
 							if(err){
 								res.send(err);
 							}else{
-								console.log(name);
-								let result = await userController.avatarChange(decoded._id, "https://taskeepererver.herokuapp.com/images/name/"+name);
+								let result = await userController.avatarChange(decoded._id, "https://taskeepererver.herokuapp.com/images/"+name);
 								if(result.success == true){
 									res.send({"success" : true});
 								}else{
