@@ -628,11 +628,12 @@ async function getEduInfo(_id){
 // Add follower to follower_list
 
 async function updateFollowingNumber(user_id, number){
-    user.updateOne({"_id" : user_id}, {"following_number" : {$inc : {following_number : number}}}).exec();
+    user.updateOne({"_id" : user_id}, {"$inc" : {"following_number" : number}}).exec();
 }
 
+//updateFollowerNumber("5fb3f741067baa00047e1a1c", 1);
 async function updateFollowerNumber(user_id, number){
-    user.updateOne({"_id" : user_id}, {"follower_number" : {$inc : {following_number : number}}}).exec();
+    user.updateOne({"_id" : user_id}, {$inc : {follower_number : number}}).exec();
 }
 
 async function addFollower(user_id, follower_id){
