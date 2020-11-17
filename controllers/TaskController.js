@@ -104,7 +104,7 @@ async function addTask(task_title,task_description, task_requirement, task_owner
                     return {"success" : false};
                 }
             }else{
-                return {"success" : false, "errors" : {"rule" : "date", "message" : "Date is invalid"}};
+                return {"success" : false, "errors" : "name" [{"rule" : "date", "message" : "Date is invalid"}]};
             }
         }else{
             var taskDocs = {

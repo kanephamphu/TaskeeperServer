@@ -252,7 +252,7 @@ async function editPersonalInfo(user_id,first_name, last_name, email, phone_numb
                     return {"success" : false};
                 }
             }else{
-                return {"success" : false, "errors" : {"rule" : "date", "message" : "Date is invalid"}};
+                return {"success" : false, "errors" : "name" [{"rule" : "date", "message" : "Date is invalid"}]};
             }
             
             
