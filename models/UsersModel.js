@@ -209,6 +209,14 @@ var UserChema = new mongoose.Schema({
         follower_last_name : String,
         avatar : String 
     }],
+    tags : {
+        type : [String],
+        default : []
+    },
+    languages : {
+        type : [String],
+        default : []
+    },
     search_queries : [{
         search_query : {
             type : String
