@@ -3,7 +3,8 @@ require('dotenv').config();
 mongoose.connect(process.env.mongo_URL || "mongodb+srv://tai123:tai123@cluster0.fsksm.gcp.mongodb.net/Taskeeper?retryWrites=true&w=majority");
 var Tasks= new mongoose.Schema({
     task_title: {
-        type: String
+        type: String,
+        default : ""
     },
     task_description: {
         type: String
@@ -30,11 +31,9 @@ var Tasks= new mongoose.Schema({
                     type : String, 
                     default : 'Point',
                     enum: ['Point'], // 'location.type' must be 'Point'
-                    required: true
                 },
                 coordinates : {
                     type : [Number],
-                    required: true,
                     index : '2dsphere'
                 }
             }

@@ -756,7 +756,7 @@ async function getFollowerList(user_id){
         "_id" : user_id
     },["followers"]);
     if(followers){
-        return {"success" : true, "data" : followers}
+        return {"success" : true, "data" : followers.followers}
     }else{
         return {"success" : false}
     }
