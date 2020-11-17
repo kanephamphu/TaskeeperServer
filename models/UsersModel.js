@@ -4,8 +4,7 @@ mongoose.connect(process.env.mongo_URL || "mongodb+srv://tai123:tai123@cluster0.
 var UserChema = new mongoose.Schema({
     login_information: {
         username:{
-            type: String,
-            unique: true
+            type: String
         },
         password: {
             type: String
