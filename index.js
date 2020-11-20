@@ -1833,6 +1833,32 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	
+	// Get tasks to manage
+	socket.on("cl-get-task-manage", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				number_task : 'required',
+				skip : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-task-manage",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await userController.setActivateByVerifyNumber(decoded._id, data.verify_number);
+						socket.emit("sv-get-task-manage", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-task-manage", {"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-task-manage", {"success" : false, "errors" : {"message" : "Undefiend error"}})
+		}
+	});
 	//Client send get verify email request
 	socket.on("cl-send-verify-mail", async(data)=>{
 		try{
@@ -1843,18 +1869,18 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
-						socket.emit("cl-send-verify-mail",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						socket.emit("sv-send-verify-mail",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
 						let result = await userController.sendVerifyAccountEMail(decoded._id)
-						socket.emit("cl-send-verify-mail", result);
+						socket.emit("sv-send-verify-mail", result);
 					}
 				});
 			}else{
-				socket.emit("cl-send-verify-mail", {"success" : false, "errors" : v.errors});
+				socket.emit("sv-send-verify-mail", {"success" : false, "errors" : v.errors});
 			}
 		}catch(e){
-			socket.emit("cl-send-verify-mail", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+			socket.emit("sv-send-verify-mail", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	});
 	
@@ -1869,18 +1895,18 @@ io.sockets.on('connection',function(socket){
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
-						socket.emit("cl-send-verify-number",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+						socket.emit("sv-send-verify-number",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
 						let result = await userController.setActivateByVerifyNumber(decoded._id, data.verify_number);
-						socket.emit("cl-send-verify-number", result);
+						socket.emit("sv-send-verify-number", result);
 					}
 				});
 			}else{
-				socket.emit("cl-send-verify-number", {"success" : false, "errors" : v.errors});
+				socket.emit("sv-send-verify-number", {"success" : false, "errors" : v.errors});
 			}
 		}catch(e){
-			socket.emit("cl-send-verify-number", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+			socket.emit("sv-send-verify-number", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	});
 	
