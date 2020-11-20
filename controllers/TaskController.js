@@ -1,6 +1,7 @@
 var task = require('../models/TasksModel');
 const user = require('../models/UsersModel');
 const isValidDay = require('is-valid-date');
+const { findOne } = require('../models/UsersModel');
 require('dotenv').config();
 
 
@@ -72,7 +73,7 @@ async function addFreelanceTask(task_title,task_description, task_description, t
 //Add Freelancer Task
 async function addTask(task_title,task_description, task_requirement, task_owner_first_name, task_owner_last_name, 
     task_owner_avatar,task_type,task_owner_id,tags,floor_price,ceiling_price,location,price_type, 
-    languages, industry, skills, endDay, endMonth, endYear) {
+    languages, industry, skills, endDay, endMonth, endYear, working_time) {
     try{
         if(endDay != null && endMonth != null && endYear != null){
             let validDay = isValidDay(endDay+'/'+endMonth+'/'+endYear);
@@ -95,7 +96,8 @@ async function addTask(task_title,task_description, task_requirement, task_owner
                     "skills" : skills,
                     "end_day" : endDay,
                     "end_month" : endMonth,
-                    "end_year" : endYear
+                    "end_year" : endYear,
+                    "working_time" : working_time
                 };
                 var result = await task.create(taskDocs);
                 if(result){
@@ -123,7 +125,8 @@ async function addTask(task_title,task_description, task_requirement, task_owner
                 "task_owner_avatar" : task_owner_avatar,
                 "languages" : languages,
                 "industry" : industry,
-                "skills" : skills
+                "skills" : skills,
+                "working_time" : working_time
             };
             var result = await task.create(taskDocs);
             if(result){
@@ -175,6 +178,7 @@ async function viewTaskDetail(task_id){
         throw(e);
     }
 }
+
 async function test() {
     var tags = [];
     tags.push('Lập Trình');
@@ -294,7 +298,6 @@ async function getApplyList(task_id){
     }   
 }
 
-
 // Get job saved detail
 async function getSavedDetail(task_id){
     let detail = await task.findOne({"_id" : task_id}, ["task_owner_id","task_owner_avatar", "task_owner_first_name", "task_owner_last_name", "task_title"]);
@@ -340,11 +343,19 @@ async function setTaskDone(task_owner_id, task_id){
     }
 }
 
-
 // Get task manage
 async function getTaskManage(task_owner_id, number_task, skip){
-    
+    try{
+        let result = await task.find({"task_owner_id" : task_owner_id}, ["task_title", "task_type", "created_time"],{limit : number_task, skip: skip}).sort({"created_time" : -1});
+        if(result)
+            return {"success" : true, "data" : result}
+        else
+            return {"success" : false}
+    }catch(e){
+        return {"success" : false}
+    }
 }
+
 // Client send approve work 
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
     let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list.price"]);
@@ -364,6 +375,7 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
         return {"success" : false};
     }
 }
+
 // Get task owner id
 async function getTaskOwnerId(task_id){
     let owner_id = await task.findOne({
@@ -375,6 +387,7 @@ async function getTaskOwnerId(task_id){
         return null
     }
 }
+
 async function testviewJob(){
     var result =  await addFreelanceTask("Tuyển thành viên tập đoàn đa cấp ","Lương tháng 7 tỉ", "Ti", "Phu",
     "sdsdf",'freelance', "123", ["Lập Trình"], 76,445,"Vl", 'unextract');
@@ -385,7 +398,28 @@ async function testviewJob(){
     console.log(result);
 }
 
+// Get list employee 
+async function getWorkEmployee(task_owner_id, task_id){
+    try{
+        let employeeId = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id},["work_employee_list"]);
+        if(employeeId){
+            console.log(employeeId.work_employee_list)
+            let result = await user.find({"_id" : {$in : employeeId.work_employee_list}}, ["_id", "first_name", "last_name", "votes.vote_count", "votes.vote_point_average"]);
+            if(result){
+                console.log(result);
+                return {"success" : true, "data" : result};
+            }else{
+                return {"success" : false};
+            }
+            
+        }else{
 
+        }
+    }catch(e){
+        return {"success" : false}
+    }
+}
+//getWorkEmployee("5fb378656eae3400041711a3","5fb425c241900d0004b6ee5c");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
 
@@ -403,3 +437,4 @@ module.exports.addTask = addTask;
 module.exports.getTasks = getTasks;
 module.exports.setTaskDone = setTaskDone;
 module.exports.approveEmployeeToWork = approveEmployeeToWork;
+module.exports.getTaskManage = getTaskManage;

@@ -694,13 +694,14 @@ async function deleteFollower(user_id, follower_id){
 }
 
 // Vote user
-async function voteUser(user_id, voter_id, vote_point){
+async function voteUser(user_id, voter_id, vote_point, vote_comment){
     try{
         let isExist = await user.findOne({"_id" : user_id, "votes.vote_history.voter_id" : voter_id},["_id"]);
         if(isExist){
             let updated = await user.updateOne({"_id" : user_id, "votes.vote_history.voter_id" : voter_id}, {
                 "$set" : {
-                    "votes.vote_history.$.vote_point" : vote_point
+                    "votes.vote_history.$.vote_point" : vote_point,
+                    "votes.vote_history.$.vote_comment" : vote_comment
                 }
             });
             if(updated){
@@ -723,7 +724,8 @@ async function voteUser(user_id, voter_id, vote_point){
                 $push : {
                     "votes.vote_history" : {
                         "voter_id" : voter_id,
-                        "vote_point" : vote_point
+                        "vote_point" : vote_point,
+                        "vote_comment" : vote_comment
                     }
                 }
             });

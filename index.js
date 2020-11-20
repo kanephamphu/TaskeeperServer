@@ -219,7 +219,8 @@ io.sockets.on('connection',function(socket){
 										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
 									}else{
 										var result = await tasksController.addTask(data.task_title, data.task_description, data.task_requirement, decoded.first_name, decoded.last_name, decoded.avatar,
-											data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type, data.language, data.industry, data.skills, data.day, data.month, data.year);
+											data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type, data.language, data.industry, data.skills, 
+											data.day, data.month, data.year, data.working_time);
 										if(typeof result !== 'undefined'){
 											console.log(result);
 											socket.emit("sv-new-tasks",result);
@@ -238,7 +239,7 @@ io.sockets.on('connection',function(socket){
 							//Handle the dealing price type 
 							}else if(data.price_type == 'dealing'){
 								var result = await tasksController.addTask(data.task_title,data.task_description, data.task_requirement, decoded.first_name,decoded.last_name,decoded.avatar,data.task_type,decoded._id,
-									data.tags,null, null, data.location, data.price_type, data.language, data.industry, data.skills);
+									data.tags,null, null, data.location, data.price_type, data.language, data.industry, data.skills, data.working_time);
 								if(typeof result !== 'undefined'){
 									socket.emit("sv-new-tasks",result);
 									// Add tasks to news feed of followers
@@ -1322,6 +1323,7 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
+
 						let result = await messageController.readUserMessage(decoded._id, data.receiver_id, 10, data.skip);
 						socket.emit("sv-get-private-message", result);
 						//socket.emit("sv-get-private-message", result);
@@ -1806,7 +1808,8 @@ io.sockets.on('connection',function(socket){
 			const v= new niv.Validator(data, {
 				secret_key : 'required',
 				user_id : 'required',
-				vote_point : 'required'
+				vote_point : 'required',
+				vote_comment : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
@@ -1818,7 +1821,7 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await userController.voteUser(data.user_id, decoded._id, data.vote_point)
+						let result = await userController.voteUser(data.user_id, decoded._id, data.vote_point, data.vote_comment);
 						socket.emit("sv-send-vote", result);
 					}
 				});
@@ -1880,6 +1883,8 @@ io.sockets.on('connection',function(socket){
 			socket.emit("cl-send-verify-number", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	});
+	
+	// 
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);

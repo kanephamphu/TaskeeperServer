@@ -21,7 +21,7 @@ async function addNewCareer(industryName, careerName, language){
 }
 
 async function getIndustries(language){
-    let result = await industry.findOne({"language" : language});
+    let result = await industry.find({"language" : language});
     if(result){
         return {"success" : true, "data" : result};
     }else{

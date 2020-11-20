@@ -39,6 +39,14 @@ var Tasks= new mongoose.Schema({
             }
         }
     },
+    working_time : {
+        start_time : {
+            type : String
+        },
+        end_time : {
+            type : String
+        }
+    },
     task_type : {
         type: String,
         enum: ['full-time','part-time','freelance'],
@@ -72,11 +80,9 @@ var Tasks= new mongoose.Schema({
             default : Date.now()
         } 
     }],
-    work_employee_list: [{
-        employee_id: {
-            type: String
-        }
-    }],
+    work_employee_list: {
+        type: [String]
+    },
     tags: 
     {
         type: [String],

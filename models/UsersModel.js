@@ -200,6 +200,9 @@ var UserChema = new mongoose.Schema({
             vote_point : {
                 type : Number,
                 enum: [1,2,3,4,5]
+            },
+            vote_comment : {
+                type : String
             }
         }]
     },
