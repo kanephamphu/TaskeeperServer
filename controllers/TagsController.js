@@ -19,7 +19,7 @@ async function addNewTag(tag){
         }
     }else{
         let tagDocs = {
-            "tag_name" : tag,
+            "name" : tag,
             "tag_using_count" : 1,
             "tag_month_using_count" : 1
         }
@@ -37,10 +37,12 @@ async function searchTags(tag_query){
         $text : {
             $search : tag_query
         }
-    },["_id","tag_name"],{limit : 5}).sort({'tag_month_using_count' : -1});
+    },["_id","name"],{limit : 5}).sort({'tag_month_using_count' : -1});
     return tagList;
 }
-//addNewTag("tik tok");
+//addNewTag("IT");
+//addNewTag("Hacking");
+//addNewTag("Tester");
 //searchTags("ti");
 module.exports.addNewTag = addNewTag;
 module.exports.searchTags = searchTags;

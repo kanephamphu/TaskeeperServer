@@ -21,6 +21,7 @@ async function searchSkills(skill_query){
     return skillList;
 }
 //addNewSkills("Coding");
+
 //searchSkills("Ly");
 module.exports.addNewSkills = addNewSkills;
 module.exports.searchSkills = searchSkills;
