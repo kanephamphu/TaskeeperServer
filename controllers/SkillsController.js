@@ -2,7 +2,7 @@ const skills = require("../models/SkillsModel");
 
 async function addNewSkills(skill){
     let skillDocs = {
-        "skill_name" : skill
+        "name" : skill
     }
     let addResult = await skills.create(skillDocs);
     if(addResult){
@@ -17,7 +17,7 @@ async function searchSkills(skill_query){
         $text : {
             $search : skill_query
         }
-    },["_id","skill_name"],{limit : 5});
+    },["_id","name"],{limit : 5});
     return skillList;
 }
 //addNewSkills("Quản Lý Thời Gian");
