@@ -1821,7 +1821,7 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await userController.voteUser(data.user_id, decoded._id, data.vote_point, data.vote_comment);
+						let result = await userController.voteUser(data.user_id, decoded._id, data.vote_point, data.vote_comment, decoded.first_name, decoded.last_name, decoded.avatars);
 						socket.emit("sv-send-vote", result);
 					}
 				});
@@ -1848,7 +1848,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-get-task-manage",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
 					if(decoded){
-						let result = await userController.setActivateByVerifyNumber(decoded._id, data.verify_number);
+						let result = await tasksController.getTaskManage(decoded._id, data.number_task, data.skip);
 						socket.emit("sv-get-task-manage", result);
 					}
 				});
@@ -1884,7 +1884,7 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	
-	//Verify by verify number
+	// Verify by verify number
 	socket.on("cl-send-verify-number", async(data)=>{
 		try{
 			const v= new niv.Validator(data, {

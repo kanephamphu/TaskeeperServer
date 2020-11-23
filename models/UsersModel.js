@@ -196,10 +196,22 @@ var UserChema = new mongoose.Schema({
             type : Number
         },
         vote_history : [{
-            voter_id : String,
+            voter_id : {
+                type : String,
+                index : true
+            },
             vote_point : {
                 type : Number,
                 enum: [1,2,3,4,5]
+            },
+            voter_first_name : {
+                type : String
+            },
+            voter_last_name : {
+                type : String
+            },
+            voter_avatar : {
+                type : String
             },
             vote_comment : {
                 type : String
@@ -207,7 +219,10 @@ var UserChema = new mongoose.Schema({
         }]
     },
     followers : [{
-        follower_id : String,
+        follower_id : {
+            type : String,
+            index : true
+        },
         follower_first_name : String,
         follower_last_name : String,
         avatar : String 
@@ -234,15 +249,20 @@ var UserChema = new mongoose.Schema({
     }],
     task_saved : [{
         task_id : {
-            type : String
+            type : String,
+            index : true
         },
         task_owner_id : {
-            type : String
+            type : String,
+            index : true
         },
         task_owner_avatar : {
             type : String
         },
         task_owner_first_name : {
+            type : String
+        },
+        task_owner_last_name : {
             type : String
         },
         task_title : {

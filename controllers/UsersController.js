@@ -229,16 +229,29 @@ async function getGroupUser(id) {
     }
 }
 
+async function editName(user_id, first_name, last_name){
+    let userDocs = {
+        "first_name" : first_name,
+        "last_name" : last_name
+    }
+    let result = await user.updateOne({"_id" : user_id}, userDocs);
+    if(result){
+        updateUserOfNameData(user_id, first_name, last_name);
+        taskController.updateUserNameTaskData(user_id, first_name, last_name);
+        return {"success" : true}
+    }else{
+        return {"success" : false}
+    }
+}
+
 // Edit personal information
-async function editPersonalInfo(user_id,first_name, last_name, phone_number, gender, 
+async function editPersonalInfo(user_id, phone_number, gender, 
     day_of_birth, month_of_birth, year_of_birth){
     try{
         if(day_of_birth != null && month_of_birth != null && year_of_birth != null){
             let validDay = isValidDay(day_of_birth+'/'+month_of_birth+'/'+year_of_birth);
             if(validDay){
                 let userDocs = {
-                    "first_name" : first_name,
-                    "last_name" : last_name,
                     "phone_number.current_phone_number" : phone_number,
                     "gender" : gender,
                     "day_of_birth" : day_of_birth,
@@ -255,12 +268,8 @@ async function editPersonalInfo(user_id,first_name, last_name, phone_number, gen
                 return {"success" : false, "errors" : "name" [{"rule" : "date", "message" : "Date is invalid"}]};
             }
             
-            
-        }else{ 
-            console.log(day_of_birth);
+        }else{
             let userDocs = {
-                "first_name" : first_name,
-                "last_name" : last_name,
                 "email.current_email" : email,
                 "phone_number.current_phone_number" : phone_number,
                 "gender" : gender
@@ -622,10 +631,11 @@ async function getEduInfo(_id){
         return {"success" : false}
     }
 }
+
 //getEduInfo("5f2546def9ca2b000466c467")
 //getWorkingInfo("5f2546def9ca2b000466c467")
-// Add follower to follower_list
 
+// Add follower to follower_list
 async function updateFollowingNumber(user_id, number){
     user.updateOne({"_id" : user_id}, {"$inc" : {"following_number" : number}}).exec();
 }
@@ -694,12 +704,13 @@ async function deleteFollower(user_id, follower_id){
 }
 
 // Vote user
-async function voteUser(user_id, voter_id, vote_point, vote_comment){
+async function voteUser(user_id, voter_id, vote_point, vote_comment, voter_first_name, voter_last_name, voter_avatar){
     try{
         let isExist = await user.findOne({"_id" : user_id, "votes.vote_history.voter_id" : voter_id},["_id"]);
         if(isExist){
             let updated = await user.updateOne({"_id" : user_id, "votes.vote_history.voter_id" : voter_id}, {
                 "$set" : {
+                    "votes.vote_history.$.vote_point" : vote_point,
                     "votes.vote_history.$.vote_point" : vote_point,
                     "votes.vote_history.$.vote_comment" : vote_comment
                 }
@@ -725,7 +736,10 @@ async function voteUser(user_id, voter_id, vote_point, vote_comment){
                     "votes.vote_history" : {
                         "voter_id" : voter_id,
                         "vote_point" : vote_point,
-                        "vote_comment" : vote_comment
+                        "vote_comment" : vote_comment,
+                        "voter_first_name" : voter_first_name,
+                        "voter_last_name" : voter_last_name,
+                        "voter_avatar" : voter_avatar
                     }
                 }
             });
@@ -917,7 +931,6 @@ async function addNewLocationInformation(user_id, lat, lng){
             }
         });
         let result1 = await user.updateOne({"_id" : user_id}, {
-            
             $push : {
                 "location_history.location_list" : {
                     "coordinates" : [lat,lng]
@@ -936,6 +949,8 @@ async function avatarChange(user_id, avatar_location){
     try{
         let result = await user.updateOne({"_id" : user_id}, {"avatar" : avatar_location});
         if(result){
+            updateUserOfAvatarData(user_id, avatar_location);
+            taskController.updateAvatarTaskData(user_id, avatar_location);
             return {"success" : true}
         }else{
             return {"success" : false};
@@ -945,6 +960,62 @@ async function avatarChange(user_id, avatar_location){
     }
 }
 
+// Update user data user schema
+async function updateUserOfNameData(user_id, first_name, last_name){
+    try{
+        user.updateMany({"votes.vote_history.voter_id" : user_id},
+        {
+            "$set" : {
+                "votes.vote_history.$.voter_first_name" : first_name,
+                "votes.vote_history.$.voter_last_name" : last_name
+            }
+        });
+        user.updateMany({"followers.follower_id" : user_id},
+        {
+            "$set" : {
+                "followers.$.follower_first_name" : first_name,
+                "followers.$.follower_last_name" : last_name
+            }
+        });
+
+        user.updateMany({"task_saved.task_owner_id" : user_id},
+        {
+            "$set" : {
+                "task_saved.$.task_owner_first_name" : first_name,
+                "task_saved.$.task_owner_last_name" : last_name
+            }
+        });
+    }catch(e){
+        throw(e)
+    }
+} 
+
+// Update avatar data user schema
+async function updateUserOfAvatarData(user_id, avatar){
+    try{
+        user.updateMany({"votes.vote_history.voter_id" : user_id},
+        {
+            "$set" : {
+                "votes.vote_history.$.voter_avatar" : avatar
+            }
+        });
+        user.updateMany({"followers.follower_id" : user_id},
+        {
+            "$set" : {
+                "followers.$.avatar" : avatar
+            }
+        });
+
+        user.updateMany({"task_saved.task_owner_id" : user_id},
+        {
+            "$set" : {
+                "task_saved.$.task_owner_avatar" : avatar
+            }
+        });
+    }catch(e){
+        throw(e)
+    }
+} 
 //addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");

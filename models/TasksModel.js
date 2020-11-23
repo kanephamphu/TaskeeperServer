@@ -67,22 +67,63 @@ var Tasks= new mongoose.Schema({
     },
     task_candidate_apply_list: [{
         candidate_id: {
-            type: String
+            type: String,
+            index : true
         },
         introduction: {
             type: String
         },
+        candidate_first_name : {
+            type : String
+        },
+        candidate_last_name : {
+            type : String
+        },
+        candidate_avatar: {
+            type : String
+        },
         price : {
             type: Number
         },
-        time : {
+        applied_time : {
             type : Number,
             default : Date.now()
-        } 
+        },
+        updated_time : {
+            type : Number
+        },
+        status : {
+            type : String,
+            enum : ["applied", "unapplied", "deleted"],
+        }
     }],
-    work_employee_list: {
-        type: [String]
-    },
+    work_employee_list: [{
+        employee_id : {
+            type : String,
+            index : true
+        },
+        employee_first_name : {
+            type : String
+        },
+        employee_last_name : {
+            type : String
+        },
+        employee_avatar: {
+            type : String
+        },
+        approved_time : {
+            type : Number,
+            default : Date.now()
+        },
+        updated_time : {
+            type : Number
+        },
+        status : {
+            type : String,
+            enum : ["approved", "unapproved", "deleted"],
+            default : "approved" 
+        }
+    }],
     tags: 
     {
         type: [String],
@@ -123,6 +164,7 @@ var Tasks= new mongoose.Schema({
     },
     status : {
         type : String,
+        default : 'active',
         enum : ['deleted','active']
     }
 });

@@ -403,8 +403,7 @@ async function getWorkEmployee(task_owner_id, task_id){
     try{
         let employeeId = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id},["work_employee_list"]);
         if(employeeId){
-            console.log(employeeId.work_employee_list)
-            let result = await user.find({"_id" : {$in : employeeId.work_employee_list}}, ["_id", "first_name", "last_name", "votes.vote_count", "votes.vote_point_average"]);
+            let result = await user.find({"_id" : {$in : employeeId.work_employee_list.employee_id}}, ["_id", "first_name", "last_name", "votes.vote_count", "votes.vote_point_average"]);
             if(result){
                 console.log(result);
                 return {"success" : true, "data" : result};
@@ -419,10 +418,63 @@ async function getWorkEmployee(task_owner_id, task_id){
         return {"success" : false}
     }
 }
-//getWorkEmployee("5fb378656eae3400041711a3","5fb425c241900d0004b6ee5c");
+
+// Update user data task
+async function updateUserNameTaskData(user_id, first_name, last_name){
+    try{
+        task.updateMany({"task_owner_id" : user_id}, {
+            "task_owner_first_name" : first_name,
+            "task_owner_last_name" : last_name
+        }).exec();
+        task.updateMany({"task_candidate_apply_list.candidate_id" : user_id},
+        {
+            "$set" : {
+                "task_candidate_apply_list.$.candidate_first_name" : first_name,
+                "task_candidate_apply_list.$.candidate_last_name" : last_name
+            }
+        });
+        task.updateMany({"work_employee_list.employee_id" : user_id},
+        {
+            "$set" : {
+                "work_employee_list.$.employee_first_name" : first_name,
+                "work_employee_list.$.employee_first_name" : last_name
+            }
+        });
+    }catch(e){
+        throw(e)
+    }
+} 
+
+// Update user data task
+async function updateAvatarTaskData(user_id, avatar){
+    try{
+        task.updateMany({"task_owner_id" : user_id}, {
+            "task_owner_avatar" : avatar
+        }).exec();
+        task.updateMany({"task_candidate_apply_list.candidate_id" : user_id},
+        {
+            "$set" : {
+                "task_candidate_apply_list.$.candidate_avatar" : avatar
+            }
+        });
+        task.updateMany({"work_employee_list.employee_id" : user_id},
+        {
+            "$set" : {
+                "work_employee_list.$.employee_avatar" : avatar
+            }
+        });
+    }catch(e){
+        throw(e)
+    }
+} 
+
+//getWorkEmployee("5fb378656eae3400041711a3","5fb49a7077406d0004a29ac5");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
 
+module.exports.updateUserNameTaskData = updateUserNameTaskData;
+module.exports.updateAvatarTaskData = updateAvatarTaskData;
+module.exports.getWorkEmployee = getWorkEmployee;
 module.exports.getTaskOwnerId = getTaskOwnerId;
 module.exports.getSavedDetail = getSavedDetail; 
 module.exports.getAppliedJobs = getAppliedJobs;
