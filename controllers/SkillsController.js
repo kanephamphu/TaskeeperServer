@@ -20,7 +20,7 @@ async function searchSkills(skill_query){
     },["_id","name"],{limit : 5});
     return skillList;
 }
-//addNewSkills("Quản Lý Thời Gian");
-searchSkills("Ly");
+//addNewSkills("Coding");
+//searchSkills("Ly");
 module.exports.addNewSkills = addNewSkills;
 module.exports.searchSkills = searchSkills;

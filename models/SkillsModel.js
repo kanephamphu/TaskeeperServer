@@ -14,7 +14,7 @@ var SkillSchema= new mongoose.Schema({
 
 SkillSchema.index(
     {
-        skill_name : "text"
+        name : "text"
     }
 );  
 const skills = mongoose.model("Skills",SkillSchema);
