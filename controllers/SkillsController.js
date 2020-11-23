@@ -18,10 +18,9 @@ async function searchSkills(skill_query){
             $search : skill_query
         }
     },["_id","skill_name"],{limit : 5});
-    console.log(skillList)
     return skillList;
 }
 //addNewSkills("Quản Lý Thời Gian");
-//searchSkills("Ly");
+searchSkills("Ly");
 module.exports.addNewSkills = addNewSkills;
 module.exports.searchSkills = searchSkills;

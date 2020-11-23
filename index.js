@@ -1764,7 +1764,7 @@ io.sockets.on('connection',function(socket){
 			const matched = await v.check();
 			if(matched){
 				let result = await skillsController.searchSkills(data.skill_query);
-				socket.emit("sv-get-skills-list", result);
+				socket.emit("sv-get-skills-list",  {"data" :result});
 			}else{
 				socket.emit("sv-get-skills-list", {"success" : false, "errors" : v.errors});
 			}
