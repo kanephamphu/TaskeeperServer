@@ -645,6 +645,13 @@ io.sockets.on('connection',function(socket){
 			}else{
 				let detail = await tasksController.viewTaskDetail(data._task_id);
 				socket.emit("sv-task-detail", {"success": true, "data": detail});
+				if(data.secret_key){
+					jwt.verify(data.secret_key,process.env.login_secret_key, async(err,decoded)=>{
+						if(decoded){
+							userController.addNewTaskView(decoded._id, data._task_id);
+						}
+					})
+				}
 			}
 		}catch(e){
 			socket.emit("sv-task-detail",{"success" : false, "errors" : {"message" : "Undefined error"}});

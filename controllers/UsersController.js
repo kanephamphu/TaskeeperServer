@@ -1015,7 +1015,22 @@ async function updateUserOfAvatarData(user_id, avatar){
     }catch(e){
         throw(e)
     }
-} 
+}
+
+// Add new view task history
+async function addNewTaskView(user_id, task_id){
+    try{
+        let result = await user.updateOne({"_id" : user_id}, {
+            $push : {
+                "task_view_history" : task_id
+            }
+        });
+    }catch(e){
+        throw(e);
+    }
+}
+
+//addNewTaskView("5f2546def9ca2b000466c467", "5fb41e3d41900d0004b6ee54")
 //addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");
@@ -1060,3 +1075,4 @@ module.exports.checkUserStatus = checkUserStatus;
 module.exports.setActivateByToken = setActivateByToken;
 module.exports.setActivateByVerifyNumber = setActivateByVerifyNumber;
 module.exports.sendVerifyAccountEMail = sendVerifyAccountEMail;
+module.exports.addNewTaskView = addNewTaskView;

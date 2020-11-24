@@ -247,6 +247,9 @@ var UserChema = new mongoose.Schema({
             default : Date.now()
         }
     }],
+    task_view_history : {
+        type : [String]
+    },
     task_saved : [{
         task_id : {
             type : String,
