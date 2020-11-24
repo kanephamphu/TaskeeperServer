@@ -2,9 +2,9 @@ const tags = require("../models/TagsModel");
 const { addNewEducationInformation } = require("./UsersController");
 
 async function addNewTag(tag){
-    let result = await tags.findOne({"tag_name" : tag});
+    let result = await tags.findOne({"name" : tag});
     if(result){
-        let updateResult = await tags.updateOne({"tag_name" : tag},
+        let updateResult = await tags.updateOne({"name" : tag},
         {
             $inc : {
                 "tag_using_count" : 1,
@@ -37,12 +37,16 @@ async function searchTags(tag_query){
         $text : {
             $search : tag_query
         }
-    },["_id","name"],{limit : 5}).sort({'tag_month_using_count' : -1});
+    },["_id","name"],{limit : 5});
+    //console.log(tagList)
     return tagList;
 }
 //addNewTag("IT");
+//addNewTag("Học Tập");
+//addNewTag("Kinh doanh");
+//addNewTag("Công nghệ thông tin");
 //addNewTag("Hacking");
 //addNewTag("Tester");
-//searchTags("ti");
+//searchTags("Kinh");
 module.exports.addNewTag = addNewTag;
 module.exports.searchTags = searchTags;
