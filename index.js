@@ -1753,7 +1753,11 @@ io.sockets.on('connection',function(socket){
 			const matched = await v.check();
 			if(matched){
 				let result = await tagsController.searchTags(data.tag_query);
-				socket.emit("sv-get-tags-list", result);
+				if(result){
+					socket.emit("sv-get-tags-list", {"success" : true, "data" : result});
+				}else{
+					socket.emit("sv-get-tags-list", {"success" : false});
+				}
 			}else{
 				socket.emit("sv-get-tags-list", {"success" : false, "errors" : v.errors});
 			}
