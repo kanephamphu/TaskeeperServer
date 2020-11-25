@@ -303,6 +303,18 @@ async function getApplyList(task_id){
     }   
 }
 
+// Get job work employee list
+async function getWorkEmployeeList(task_id){
+    let work_employee_list = await task.findOne({
+        "_id" : task_id
+    },["work_employee_list"]);
+    if(work_employee_list){
+        return {"success" : true, "data" : work_employee_list}
+    }else{
+        return {"success" : false}
+    }   
+}
+
 // Get job saved detail
 async function getSavedDetail(task_id){
     let detail = await task.findOne({"_id" : task_id}, ["task_owner_id","task_owner_avatar", "task_owner_first_name", "task_owner_last_name", "task_title"]);
@@ -366,7 +378,7 @@ async function getTaskManage(task_owner_id, number_task, skip){
         return {"success" : false}
     }
 }
-getTaskManage("5fb378656eae3400041711a3",10,0)
+//getTaskManage("5fb378656eae3400041711a3",10,0)
 // Client send approve work 
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
     let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list.price"]);

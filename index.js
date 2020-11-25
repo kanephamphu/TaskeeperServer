@@ -1947,7 +1947,36 @@ io.sockets.on('connection',function(socket){
 		}catch(e){
 			socket.emit("sv-approve-employee-to-work", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
-	}); 
+	});
+	
+	// Get list work employee 
+	socket.on("cl-get-work-employee-job", async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required',
+				task_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-work-employee-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await tasksController.getWorkEmployee(decoded._id, data.task_id);
+						socket.emit("sv-get-work-employee-job", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-work-employee-job", {"success": false, "errors" : v.errors})
+			}
+		}catch(e){
+			socket.emit("sv-get-work-employee-job", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);
