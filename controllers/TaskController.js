@@ -297,12 +297,27 @@ async function getApplyList(task_id){
         "_id" : task_id
     },["task_candidate_apply_list"]);
     if(candidate_apply_list){
-        return {"success" : true, "data" : candidate_apply_list}
+        let list = [];
+        for(let i of candidate_apply_list.task_candidate_apply_list){
+            let user = await userController.getInformation(i.candidate_id);
+            list.push({
+                "applied_time" : i.applied_time,  
+                "_id" : i._id,
+                "candidate_id": i.candidate_id,
+                "introduction" : i.introduction,
+                "price" : i.price,
+                "candidate_first_name" : i.candidate_first_name,
+                "candidate_last_name" : i.candidate_last_name,
+                "candidate_avatar" : i.candidate_avatar,
+                "vote_average" : user.votes.vote_point_average
+            });
+        };
+        return {"success" : true, "data" : list}
     }else{
         return {"success" : false}
     }   
 }
-
+getApplyList("5fb422d241900d0004b6ee58")
 // Get job work employee list
 async function getWorkEmployeeList(task_id){
     let work_employee_list = await task.findOne({
