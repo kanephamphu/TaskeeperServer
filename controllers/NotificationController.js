@@ -64,6 +64,7 @@ async function getTotalUnreadNotification(user_id){
 }
 //getTotalUnreadNotification("5f2546def9ca2b000466c467");
 //getNotification("5f2546def9ca2b000466c467",1,0)
+//setReadedAll("5f3553ba335aa2000433c44f")
 module.exports.getNotification = getNotification;
 module.exports.setReaded = setReaded;
 module.exports.setReadedAll = setReadedAll;
