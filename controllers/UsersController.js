@@ -1030,6 +1030,24 @@ async function addNewTaskView(user_id, task_id){
     }
 }
 
+// Add tags to user
+async function addTags(user_id, tag_name){
+    try{
+        let result = await user.updateOne({"_id" : user_id}, {
+            $push : {
+                "tags" : tag_name
+            }
+        });
+        if(result){
+            return {"success" : true}
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){
+        throw(e);
+    }
+}
+
 //addNewTaskView("5f2546def9ca2b000466c467", "5fb41e3d41900d0004b6ee54")
 //addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
@@ -1037,6 +1055,7 @@ async function addNewTaskView(user_id, task_id){
 //testviewJob();
 //saveTask("5f2546def9ca2b000466c467","5f3629d61e62e1000425540e")
 //getSavedTask("5f2546def9ca2b000466c467",1,0)
+module.exports.addTags = addTags;
 module.exports.avatarChange = avatarChange;
 module.exports.addNewLocationInformation = addNewLocationInformation;
 module.exports.getWorkingInfo = getWorkingInfo;

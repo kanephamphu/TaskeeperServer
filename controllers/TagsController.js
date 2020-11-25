@@ -41,12 +41,7 @@ async function searchTags(tag_query){
     //console.log(tagList)
     return tagList;
 }
-//addNewTag("IT");
-//addNewTag("Học Tập");
-//addNewTag("Kinh doanh");
-//addNewTag("Công nghệ thông tin");
-//addNewTag("Hacking");
-//addNewTag("Tester");
-//searchTags("Kinh");
+//addNewTag("Nodejs");
+
 module.exports.addNewTag = addNewTag;
 module.exports.searchTags = searchTags;
