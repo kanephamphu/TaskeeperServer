@@ -3,7 +3,8 @@ require('dotenv').config();
 mongoose.connect(process.env.mongo_URL || "mongodb+srv://tai123:tai123@cluster0.fsksm.gcp.mongodb.net/Taskeeper?retryWrites=true&w=majority");
 var Notification= new mongoose.Schema({
     user_id : {
-        type: String
+        type: String,
+        indexes : true
     },
     created_time : {
         type: Number,
