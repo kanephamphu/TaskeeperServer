@@ -13,7 +13,8 @@ var Notification= new mongoose.Schema({
         type : String
     },
     type : {
-        type : String
+        type : String,
+        enum : ["followed", "applied", "approved"]
     },
     is_readed : {
         type : Boolean,
@@ -23,6 +24,9 @@ var Notification= new mongoose.Schema({
         type : String
     },
     related_user_id : {
+        type : String
+    },
+    related_user_first_name : {
         type : String
     }
 });

@@ -805,7 +805,7 @@ io.sockets.on('connection',function(socket){
 						}
 						let result = await userController.addFollower(data.user_id, decoded._id);
 						socket.emit("sv-follow-user",result);
-						notificationController.addNotification(data.user_id, "followed you", "followed", decoded._id, null);
+						notificationController.addNotification(data.user_id, "followed you", "followed", null, decoded._id);
 						if(checkExist(data.user_id)){
 							let socketUserId = await getSocketID(data.user_id);
 							io.to(socketUserId).emit("sv-send-notification", {"success" : true, data : {"type" : "followed", "follower_id" : data.user_id}});
