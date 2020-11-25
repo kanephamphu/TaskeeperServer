@@ -144,7 +144,7 @@ async function addTask(task_title,task_description, task_requirement, task_owner
 //Get tasks by number of tasks
 async function getTasks(number_task,skip){
     try{
-        let listTasks = await task.find({}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","end_day","end_month", "end_year"],{limit : number_task, skip: skip}).exec();
+        let listTasks = await task.find({}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","end_day","end_month", "end_year","working_time"],{limit : number_task, skip: skip}).exec();
         return listTasks;
     }catch(e){
         console.log(e);
