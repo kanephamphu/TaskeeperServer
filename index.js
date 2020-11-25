@@ -1941,6 +1941,7 @@ io.sockets.on('connection',function(socket){
 					if(decoded){
 						let result = await tasksController.approveEmployeeToWork(decoded._id, data.task_id, data.employee_id);
 						socket.emit("sv-approve-employee-to-work", result);
+						notificationController.addNotification(data.employee_id, "approved you to work", "approved", data.task_id, decoded._id);
 					}
 				});
 			}
