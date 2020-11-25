@@ -1923,8 +1923,31 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-send-verify-number", {"success" : false, "errors" : {"message" : "Undefiend error"}});
 		}
 	});
-	
-	// 
+
+	// Approve employee to work
+	socket.on("cl-approve-employee-to-work", async(data)=>{
+		try{
+			const v= new niv.Validator(data, {
+				secret_key : 'required',
+				task_id : 'required',
+				employee_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-approve-employee-to-work",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						let result = await tasksController.approveEmployeeToWork(decoded._id, data.task_id, data.employee_id);
+						socket.emit("sv-approve-employee-to-work", result);
+					}
+				});
+			}
+		}catch(e){
+			socket.emit("sv-approve-employee-to-work", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+		}
+	}); 
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);

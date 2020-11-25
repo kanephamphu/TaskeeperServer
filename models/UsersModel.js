@@ -190,10 +190,12 @@ var UserChema = new mongoose.Schema({
     }],
     votes : {
         vote_count : {
-            type : Number
+            type : Number,
+            default : 0
         },
         vote_point_average : {
-            type : Number
+            type : Number,
+            default : 0
         },
         vote_history : [{
             voter_id : {

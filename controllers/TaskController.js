@@ -351,16 +351,22 @@ async function setTaskDone(task_owner_id, task_id){
 // Get task manage
 async function getTaskManage(task_owner_id, number_task, skip){
     try{
-        let result = await task.find({"task_owner_id" : task_owner_id}, ["task_title", "task_type", "created_time"],{limit : number_task, skip: skip}).sort({"created_time" : -1});
+        let result = await task.find({"task_owner_id" : task_owner_id}, ["task_title", "created_time"],{limit : number_task, skip: skip}).sort({"created_time" : -1});
         if(result)
+        {
+            let list = []
+            for(const i of result){
+                list.push({"task_title" : i.task_title, "applier_number" : await getCandidateNumber(i._id), "_id" : i._id});
+            }
             return {"success" : true, "data" : result}
+        } 
         else
             return {"success" : false}
     }catch(e){
         return {"success" : false}
     }
 }
-
+getTaskManage("5fb378656eae3400041711a3",10,0)
 // Client send approve work 
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
     let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list.price"]);
@@ -390,6 +396,14 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
     
 }
 
+// Get candidate list
+async function getCandidateNumber(task_id){
+    let result = await task.findOne({"_id" : task_id}, ["task_candidate_apply_list"]);
+    if(result){
+        return result.task_candidate_apply_list.length;
+    }
+}
+//getCandidateNumber("5fb425c241900d0004b6ee5c");
 // Get task owner id
 async function getTaskOwnerId(task_id){
     let owner_id = await task.findOne({
