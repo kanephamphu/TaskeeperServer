@@ -56,7 +56,6 @@ async function setReadedAll(user_id){
 async function getTotalUnreadNotification(user_id){
     try{
         let unread_number = await notification.find({"user_id" : user_id, "is_readed" : false},{}).count();
-        console.log(unread_number)
         return {"success" : true, "data" : unread_number}
     }catch(e){
         throw(e);

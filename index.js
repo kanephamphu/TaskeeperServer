@@ -692,7 +692,8 @@ io.sockets.on('connection',function(socket){
 						notificationController.addNotification(task_owner_id, "applied you to work", "applied", data.task_id, decoded._id);
 						if(checkExist(data.user_id)){
 							let socketUserId = await getSocketID(task_owner_id);
-							io.to(socketUserId).emit("sv-send-notification", {"success" : true, data : {"type" : "applied", "user_id" : decoded._id, "task_id" : data.task_id}});
+							let result = await notificationController.getTotalUnreadNotification(task_owner_id);
+							io.to(socketUserId).emit("sv-get-total-unread-notification", result);
 						}
 					}
 				});
@@ -807,9 +808,9 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-follow-user",result);
 						notificationController.addNotification(data.user_id, "followed you", "followed", null, decoded._id);
 						if(checkExist(data.user_id)){
-							let socketUserId = await getSocketID(data.user_id);
-							io.to(socketUserId).emit("sv-send-notification", {"success" : true, data : {"type" : "followed", "follower_id" : data.user_id}});
-						}	
+							let result = await notificationController.getTotalUnreadNotification(data.user_id);
+							io.to(socketUserId).emit("sv-get-total-unread-notification", result);
+						}
 					}
 				});
 			}else{
@@ -1942,6 +1943,11 @@ io.sockets.on('connection',function(socket){
 						let result = await tasksController.approveEmployeeToWork(decoded._id, data.task_id, data.employee_id);
 						socket.emit("sv-approve-employee-to-work", result);
 						notificationController.addNotification(data.employee_id, "approved you to work", "approved", data.task_id, decoded._id);
+						if(checkExist(data.user_id)){
+							let socketUserId = await getSocketID(task_owner_id);
+							let result = await notificationController.getTotalUnreadNotification(data.employee_id);
+							io.to(socketUserId).emit("sv-get-total-unread-notification", result);
+						}
 					}
 				});
 			}
