@@ -3,6 +3,8 @@ const user = require('../models/UsersModel');
 const isValidDay = require('is-valid-date');
 const { findOne } = require('../models/UsersModel');
 const userController =require('../controllers/UsersController');
+const { permittedCrossDomainPolicies } = require('helmet');
+const fetch = require('node-fetch');
 require('dotenv').config();
 
 
@@ -317,7 +319,7 @@ async function getApplyList(task_id){
         return {"success" : false}
     }   
 }
-getApplyList("5fb422d241900d0004b6ee58")
+//getApplyList("5fb422d241900d0004b6ee58")
 // Get job work employee list
 async function getWorkEmployeeList(task_id){
     let work_employee_list = await task.findOne({
@@ -523,6 +525,37 @@ async function updateAvatarTaskData(user_id, avatar){
     }
 } 
 
+// Recommend task for candidate 
+async function recommendTask(user_id){
+    try{
+        let task_history = await userController.getTaskView(user_id);
+        let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=cosine"
+        task_history.forEach(element => {
+            url = url + "&task_id=" + element
+        });
+        fetch(url,{
+                method : 'get'
+            })
+            .then(res => res.json())
+            .then(async(json) => {
+                var listID = [];
+                json.forEach((element) => {
+                    listID.push(element.task_id)
+                });
+                let result = await task.find({"_id" : {
+                    $in : listID
+                }}, ["task_owner_first_name", "task_owner_last_name", "location", "task_title", "task_owner_avatar"]);
+                if(result){
+                    return {"success" : true, "data" : result}
+                }else{
+                    return {"success" : false}
+                }
+            });
+    }catch(e){
+        throw(e)
+    }
+}
+//recommendTask("5f2546def9ca2b000466c467");
 //getWorkEmployee("5fb378656eae3400041711a3","5fb49a7077406d0004a29ac5");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
@@ -546,3 +579,4 @@ module.exports.getTasks = getTasks;
 module.exports.setTaskDone = setTaskDone;
 module.exports.approveEmployeeToWork = approveEmployeeToWork;
 module.exports.getTaskManage = getTaskManage;
+module.exports.recommendTask = recommendTask;

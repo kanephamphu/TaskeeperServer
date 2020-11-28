@@ -1024,9 +1024,19 @@ async function addNewTaskView(user_id, task_id){
             $push : {
                 "task_view_history" : task_id
             }
-        });
+        }).exec();
     }catch(e){
         throw(e);
+    }
+}
+
+// Get task view history
+async function getTaskView(user_id, number_task){
+    let result = await user.findOne({"_id" : user_id},["task_view_history"],{"task_view_history" : {$slice : [0,number_task]}})
+    if(result){
+        return result.task_view_history
+    }else{
+        return []
     }
 }
 
@@ -1048,7 +1058,7 @@ async function addTags(user_id, tag_name){
     }
 }
 
-//addNewTaskView("5f2546def9ca2b000466c467", "5fb41e3d41900d0004b6ee54")
+//addNewTaskView("5f2546def9ca2b000466c467", "5fb422d241900d0004b6ee58")
 //addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
 //addFollower("5f15dee66d224e19dcbf6bbf","5f19a01bb989ab4374ab6c09");
@@ -1095,3 +1105,4 @@ module.exports.setActivateByToken = setActivateByToken;
 module.exports.setActivateByVerifyNumber = setActivateByVerifyNumber;
 module.exports.sendVerifyAccountEMail = sendVerifyAccountEMail;
 module.exports.addNewTaskView = addNewTaskView;
+module.exports.getTaskView = getTaskView;
