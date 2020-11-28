@@ -555,6 +555,13 @@ async function recommendTask(user_id){
         throw(e)
     }
 }
+
+
+// Get top task 
+async function getTopTask(){
+    let task_id = await task.find({"isDone" : false},["_id", "impression"]).sort({"impression" : -1}).limit(1);
+    return task_id;
+}
 //recommendTask("5f2546def9ca2b000466c467");
 //getWorkEmployee("5fb378656eae3400041711a3","5fb49a7077406d0004a29ac5");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
@@ -580,3 +587,4 @@ module.exports.setTaskDone = setTaskDone;
 module.exports.approveEmployeeToWork = approveEmployeeToWork;
 module.exports.getTaskManage = getTaskManage;
 module.exports.recommendTask = recommendTask;
+module.exports.getTopTask = getTopTask;

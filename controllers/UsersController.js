@@ -1,7 +1,6 @@
 var validator = require('validator');
 var checker= require('./Check');
 const user = require('../models/UsersModel');
-const task = require('../models/TasksModel');
 var taskController = require('./TaskController');
 const news = require('../controllers/NewsController');
 const wall = require('../controllers/WallController');
@@ -1037,7 +1036,7 @@ async function getTaskView(user_id, number_task){
     if(result.task_view_history == []){
         return result.task_view_history
     }else{
-        let topTask = await task.find({"isDone" : false},["_id", "impression"]).sort({"impression" : -1}).limit(1);
+        let topTask = await taskController.getTopTask();
         return [topTask[0]._id]
     }
 }
