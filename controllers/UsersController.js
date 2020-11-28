@@ -321,6 +321,10 @@ async function  getFunction(_id) {
     }
 }
 
+// Popular by ID news
+async function newAccountNewsFeed(){
+
+}
 //Get Information By ID
 async function getInformation(_id){
     try{

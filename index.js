@@ -1085,55 +1085,8 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						socket.emit("sv-get-recommend-task", {"success" : true, "data" : [{
-							"_id" : "5f1c581dcde7010774853652",
-							"task_owner_first_name" : "FPT",
-							"task_owner_last_name" : "Software",
-							"location" : "Da Nang",
-							"task_title" : "Tuyển nhân sự",
-							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
-						},
-						{
-							"_id" : "5f1c581dcde7010774853652",
-							"task_owner_first_name" : "FPT",
-							"task_owner_last_name" : "Software",
-							"location" : "Da Nang",
-							"task_title" : "Tuyển nhân sự",
-							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
-						},
-						{
-							"_id" : "5f1c581dcde7010774853652",
-							"task_owner_first_name" : "FPT",
-							"task_owner_last_name" : "Software",
-							"location" : "Da Nang",
-							"task_title" : "Tuyển nhân sự",
-							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
-						},
-						{
-							"_id" : "5f1c581dcde7010774853652",
-							"task_owner_first_name" : "FPT",
-							"task_owner_last_name" : "Software",
-							"location" : "Da Nang",
-							"task_title" : "Tuyển nhân sự",
-							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
-						},
-						{
-							"_id" : "5f1c581dcde7010774853652",
-							"task_owner_first_name" : "FPT",
-							"task_owner_last_name" : "Software",
-							"location" : "Da Nang",
-							"task_title" : "Tuyển nhân sự",
-							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
-						},
-						{
-							"_id" : "5f1c581dcde7010774853652",
-							"task_owner_first_name" : "FPT",
-							"task_owner_last_name" : "Software",
-							"location" : "Da Nang",
-							"task_title" : "Tuyển nhân sự",
-							"task_owner_avatar" : "https://live.staticflickr.com/3689/8989851909_9b78222fbb.jpg"
-						}
-					]});
+						let result = await tasksController.recommendTask(decoded._id);
+						socket.emit("sv-get-recommend-task", result);
 					}
 				})
 			}else{

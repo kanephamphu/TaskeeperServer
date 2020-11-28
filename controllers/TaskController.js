@@ -529,7 +529,7 @@ async function updateAvatarTaskData(user_id, avatar){
 async function recommendTask(user_id){
     try{
         let task_history = await userController.getTaskView(user_id);
-        let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=cosine"
+        let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=cosine&k=10"
         task_history.forEach(element => {
             url = url + "&task_id=" + element
         });
