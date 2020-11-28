@@ -1,6 +1,7 @@
 var validator = require('validator');
 var checker= require('./Check');
 const user = require('../models/UsersModel');
+const task = require('../models/TasksModel');
 var taskController = require('./TaskController');
 const news = require('../controllers/NewsController');
 const wall = require('../controllers/WallController');
@@ -1033,13 +1034,14 @@ async function addNewTaskView(user_id, task_id){
 // Get task view history
 async function getTaskView(user_id, number_task){
     let result = await user.findOne({"_id" : user_id},["task_view_history"],{"task_view_history" : {$slice : [0,number_task]}})
-    if(result){
+    if(result.task_view_history == []){
         return result.task_view_history
     }else{
-        return []
+        let topTask = await task.find({"isDone" : false},["_id", "impression"]).sort({"impression" : -1}).limit(1);
+        return [topTask[0]._id]
     }
 }
-
+getTaskView("5fb378656eae3400041711a3",5);
 // Add tags to user
 async function addTags(user_id, tag_name){
     try{
