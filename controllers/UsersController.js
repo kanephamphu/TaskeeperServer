@@ -321,10 +321,7 @@ async function  getFunction(_id) {
     }
 }
 
-// Popular by ID news
-async function newAccountNewsFeed(){
 
-}
 //Get Information By ID
 async function getInformation(_id){
     try{
@@ -572,8 +569,10 @@ async function deleteEducationInformation(_id, education_id){
 async function setActive(user_id) {
     try{
         var result = await user.update({"_id" : user_id},{"status" : "isActive", "verify_information.isUsed" : true});
-        if(result)
+        if(result){
+            taskController.newNewsFeed(user_id);
             return {"success" : true};
+        } 
         else
             return {"success" : false, "errors" : {"message" : "Undefined errors"}};
     }catch(e){

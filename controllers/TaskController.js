@@ -5,6 +5,7 @@ const { findOne } = require('../models/UsersModel');
 const userController =require('../controllers/UsersController');
 const { permittedCrossDomainPolicies } = require('helmet');
 const fetch = require('node-fetch');
+const newsController = require('../controllers/NewsController');
 require('dotenv').config();
 
 
@@ -557,6 +558,28 @@ async function recommendTask(user_id){
 }
 
 
+// Popular by ID news
+async function newNewsFeed(user_id){
+    try{
+        let task_ids = await getTopTask();
+        topID = task_ids[0]._id;
+        let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=dot&k=20&task_id="+topID;
+        fetch(url,{
+            method : 'get'
+        })
+        .then(res => res.json())
+        .then(async(json) => {
+            json.forEach((element) => {
+                console.log(element.task_id)
+                newsController.addNews(user_id, element.task_id);
+            });
+           
+        });
+    }catch(e){
+        throw(e);
+    }
+}
+
 // Get top task 
 async function getTopTask(){
     let task_id = await task.find({"isDone" : false},["_id", "impression"]).sort({"impression" : -1}).limit(1);
@@ -588,3 +611,4 @@ module.exports.approveEmployeeToWork = approveEmployeeToWork;
 module.exports.getTaskManage = getTaskManage;
 module.exports.recommendTask = recommendTask;
 module.exports.getTopTask = getTopTask;
+module.exports.newNewsFeed = newNewsFeed;
