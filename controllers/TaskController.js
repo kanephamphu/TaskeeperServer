@@ -537,23 +537,21 @@ async function recommendTask(user_id){
         let res = await fetch(url,{
                 method : 'get'
             });
-        let res = res.json();
-        if(res){
-            var listID = [];
-                json.forEach((element) => {
-                    listID.push(element.task_id)
-                });
-                let result = await task.find({"_id" : {
-                    $in : listID
-                }}, ["task_owner_first_name", "task_owner_last_name", "location", "task_title", "task_owner_avatar"]);
-                if(result){
-                    return {"success" : true, "data" : result}
-                }else{
-                    return {"success" : false}
-                }
+        res = await res.json();
+        var listID = [];
+        res.forEach((element) => {
+            listID.push(element.task_id)
+        });
+        
+        let result = await task.find({"_id" : {
+            $in : listID
+        }}, ["task_owner_first_name", "task_owner_last_name", "location", "task_title", "task_owner_avatar"]);
+        if(result){
+            return {"success" : true, "data" : result}
+        }else{
+            return {"success" : false}
         }
-        console.log(res);
-    }catch(e){
+}catch(e){
         throw(e)
     }
 }
@@ -586,7 +584,7 @@ async function getTopTask(){
     let task_id = await task.find({"isDone" : false},["_id", "impression"]).sort({"impression" : -1}).limit(1);
     return task_id;
 }
-//recommendTask("5f2546def9ca2b000466c467");
+recommendTask("5f2546def9ca2b000466c467");
 //getWorkEmployee("5fb378656eae3400041711a3","5fb49a7077406d0004a29ac5");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
