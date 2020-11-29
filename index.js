@@ -1098,6 +1098,7 @@ io.sockets.on('connection',function(socket){
 							addToList(decoded._id, socket.id);
 						}
 						tasksController.recommendTask(decoded._id, (data)=>{
+							console.log(data);
 							socket.emit("sv-get-recommend-task", data);
 						});
 					}
