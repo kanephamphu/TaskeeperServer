@@ -534,12 +534,12 @@ async function recommendTask(user_id){
         task_history.forEach(element => {
             url = url + "&task_id=" + element
         });
-        await fetch(url,{
+        let res = await fetch(url,{
                 method : 'get'
-            })
-            .then(res => res.json())
-            .then(async(json) => {
-                var listID = [];
+            });
+        let res = res.json();
+        if(res){
+            var listID = [];
                 json.forEach((element) => {
                     listID.push(element.task_id)
                 });
@@ -551,7 +551,8 @@ async function recommendTask(user_id){
                 }else{
                     return {"success" : false}
                 }
-            });
+        }
+        console.log(res);
     }catch(e){
         throw(e)
     }
