@@ -534,7 +534,7 @@ async function recommendTask(user_id){
         task_history.forEach(element => {
             url = url + "&task_id=" + element
         });
-        fetch(url,{
+        await fetch(url,{
                 method : 'get'
             })
             .then(res => res.json())

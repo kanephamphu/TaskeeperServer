@@ -1097,10 +1097,8 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						tasksController.recommendTask(decoded._id).then((data)=>{
-							console.log(data);
-							socket.emit("sv-get-recommend-task", data);
-						}) 
+						let result = await tasksController.recommendTask(decoded._id);
+						socket.emit("sv-get-recommend-task", result)
 					}
 				})
 			}else{
