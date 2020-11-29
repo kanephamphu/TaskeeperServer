@@ -326,7 +326,7 @@ async function  getFunction(_id) {
 async function getInformation(_id){
     try{
         var information = await user.findOne({"_id":_id},["login_information.username"
-        ,"avatar","first_name","last_name", "votes.vote_point_average"]);
+        ,"avatar","first_name","last_name", "votes.vote_point_average", "status"]);
         return information;
     }catch(e){
         console.log(e);

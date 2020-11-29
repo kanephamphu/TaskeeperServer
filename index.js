@@ -72,7 +72,8 @@ io.sockets.on('connection',function(socket){
 						"username" : INFORMATION.login_information.username,
 						"avatar" : INFORMATION.avatar,
 						"first_name" : INFORMATION.first_name,
-						"last_name" : INFORMATION.last_name
+						"last_name" : INFORMATION.last_name,
+						"status" : INFORMATION.status
 					};
 					//, { expiresIn: 60*60*24 }
 					jwt.sign(tokenInformation,process.env.login_secret_key,(err,token)=>{
@@ -153,28 +154,30 @@ io.sockets.on('connection',function(socket){
 					socket.emit("sv-change-password",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 				if(decoded)
 				{
-					if(await checkExist(decoded._id) == false){
-						addToList(decoded._id, socket.id);
-					}
-					const v= new niv.Validator(data,{
-						old_password : 'required|minLength:8',
-						new_password : 'required|minLength:8|same:confirm_password',
-						confirm_password : 'required|minLength:8'
-					});
-					const matched = await v.check();
-					if(matched){
-						if( checker.encrypt(data.old_password) == decoded.password){
-							var changepassword = await userController.changePassword(decoded._id,data.new_password);
-							if(typeof changepassword !== undefined){
-								socket.emit("sv-change-password", changepassword);
+					if(decoded.status != 'isActive'){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						const v= new niv.Validator(data,{
+							old_password : 'required|minLength:8',
+							new_password : 'required|minLength:8|same:confirm_password',
+							confirm_password : 'required|minLength:8'
+						});
+						const matched = await v.check();
+						if(matched){
+							if( checker.encrypt(data.old_password) == decoded.password){
+								var changepassword = await userController.changePassword(decoded._id,data.new_password);
+								if(typeof changepassword !== undefined){
+									socket.emit("sv-change-password", changepassword);
+								}else{
+									socket.emit("sv-change-password", {"success" : false, "errors" : {"message" : "Server errors"}});
+								}
 							}else{
-								socket.emit("sv-change-password", {"success" : false, "errors" : {"message" : "Server errors"}});
+								socket.emit("sv-change-password",{"success" : false, "errors": {"message": "Wrong password", "rule": "old_password" }});
 							}
 						}else{
-							socket.emit("sv-change-password",{"success" : false, "errors": {"message": "Wrong password", "rule": "old_password" }});
+							socket.emit("sv-change-password", {"success" : false, "errors" : v.errors} );
 						}
-					}else{
-						socket.emit("sv-change-password", {"success" : false, "errors" : v.errors} );
 					}
 				}
 			})
@@ -198,33 +201,54 @@ io.sockets.on('connection',function(socket){
 			const matched = await v.check();
 			if(matched){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					
 					//If token error, cancel transaction
 					if(err){
 						socket.emit("sv-new-tasks",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
-					if(decoded){
-						if(await checkExist(decoded._id) == false){
-							addToList(decoded._id, socket.id);
-						}
-						//Check price_type, if it difference with undefined format, continue handle transaction 
-						if(typeof data.price_type !== 'undefined'){
-							if(data.price_type == 'unextract'){
-								const p= new niv.Validator(data,{
-									floor_price : 'required|integer',
-									ceiling_price : 'required|integer'
-								});
-								const matched1 = await p.check();
-								if(matched1){
-									if(data.floor_price >= data.ceiling_price){
-										socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
-									}else{
-										var result = await tasksController.addTask(data.task_title, data.task_description, data.task_requirement, decoded.first_name, decoded.last_name, decoded.avatar,
-											data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type, data.language, data.industry, data.skills, 
-											data.day, data.month, data.year, data.working_time);
+					
+						if(decoded){
+							if(decoded.status != 'isActive'){
+								if(await checkExist(decoded._id) == false){
+									addToList(decoded._id, socket.id);
+								}
+								//Check price_type, if it difference with undefined format, continue handle transaction 
+								if(typeof data.price_type !== 'undefined'){
+									if(data.price_type == 'unextract'){
+										const p= new niv.Validator(data,{
+											floor_price : 'required|integer',
+											ceiling_price : 'required|integer'
+										});
+										const matched1 = await p.check();
+										if(matched1){
+											if(data.floor_price >= data.ceiling_price){
+												socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message": "Ceiling price must greater than floor price"}})
+											}else{
+												var result = await tasksController.addTask(data.task_title, data.task_description, data.task_requirement, decoded.first_name, decoded.last_name, decoded.avatar,
+													data.task_type, decoded._id, data.tags, data.floor_price, data.ceiling_price, data.location, data.price_type, data.language, data.industry, data.skills, 
+													data.day, data.month, data.year, data.working_time);
+												if(typeof result !== 'undefined'){
+													console.log(result);
+													socket.emit("sv-new-tasks",result);
+													// Add tasks to news feed of followers, and add to wall
+													if(result.success = true){
+														newsController.addNewsToFollowers(decoded._id, result.data._id);
+														wallController.addWall(decoded._id, result.data._id);
+													}
+												}else{
+													socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
+												}
+											}
+										}else{
+											socket.emit("sv-new-tasks", {"success": false, "errors": p.errors})
+										}
+									//Handle the dealing price type 
+									}else if(data.price_type == 'dealing'){
+										var result = await tasksController.addTask(data.task_title,data.task_description, data.task_requirement, decoded.first_name,decoded.last_name,decoded.avatar,data.task_type,decoded._id,
+											data.tags,null, null, data.location, data.price_type, data.language, data.industry, data.skills, data.working_time);
 										if(typeof result !== 'undefined'){
-											console.log(result);
 											socket.emit("sv-new-tasks",result);
-											// Add tasks to news feed of followers, and add to wall
+											// Add tasks to news feed of followers
 											if(result.success = true){
 												newsController.addNewsToFollowers(decoded._id, result.data._id);
 												wallController.addWall(decoded._id, result.data._id);
@@ -232,32 +256,16 @@ io.sockets.on('connection',function(socket){
 										}else{
 											socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
 										}
+									}else{
+										socket.emit("sv-new-tasks", {"result" : "undefined"});
 									}
 								}else{
-									socket.emit("sv-new-tasks", {"success": false, "errors": p.errors})
-								}
-							//Handle the dealing price type 
-							}else if(data.price_type == 'dealing'){
-								var result = await tasksController.addTask(data.task_title,data.task_description, data.task_requirement, decoded.first_name,decoded.last_name,decoded.avatar,data.task_type,decoded._id,
-									data.tags,null, null, data.location, data.price_type, data.language, data.industry, data.skills, data.working_time);
-								if(typeof result !== 'undefined'){
-									socket.emit("sv-new-tasks",result);
-									// Add tasks to news feed of followers
-									if(result.success = true){
-										newsController.addNewsToFollowers(decoded._id, result.data._id);
-										wallController.addWall(decoded._id, result.data._id);
-									}
-								}else{
-									socket.emit("sv-new-tasks", {"success" : false, "errors" : {"message" : "Undefined errors"}});
+									socket.emit("sv-new-tasks",{"success":false, "errors": {"message" : "Miss price data type", "rule": "price_type"}})
 								}
 							}else{
-								socket.emit("sv-new-tasks", {"result" : "undefined"});
-							}
-						}else{
-							socket.emit("sv-new-tasks",{"success":false, "errors": {"message" : "Miss price data type", "rule": "price_type"}})
+								socket.emit("sv-new-tasks",{"success" : false, "errors" : {"message" : "Invalid account"}});
+							}	
 						}
-					}
-						
 				});
 			}else{
 				socket.emit("sv-new-tasks", {"success": false, "errors": v.errors})
@@ -682,20 +690,25 @@ io.sockets.on('connection',function(socket){
 					if(err){
 						socket.emit("sv-apply-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
 					}
-					if(decoded){
-						if(await checkExist(decoded._id) == false){
-							addToList(decoded._id, socket.id);
+					
+						if(decoded){
+							if(decoded.status == 'isActive'){
+								if(await checkExist(decoded._id) == false){
+									addToList(decoded._id, socket.id);
+								}
+								let result = await tasksController.addApplicationJob(decoded._id,data.task_id,data.introduction,data.price);
+								socket.emit("sv-apply-job",result);
+								let task_owner_id = await tasksController.getTaskOwnerId(data.task_id);
+								notificationController.addNotification(task_owner_id, "applied you to work", "applied", data.task_id, decoded._id);
+								if(checkExist(data.user_id)){
+									let socketUserId = await getSocketID(task_owner_id);
+									let result = await notificationController.getTotalUnreadNotification(task_owner_id);
+									io.to(socketUserId).emit("sv-get-total-unread-notification", result);
+								}
+							}else{
+								socket.emit("sv-apply-job",{"success" : false, "errors" : {"message" : "Invalid account"}});
+							}
 						}
-						let result = await tasksController.addApplicationJob(decoded._id,data.task_id,data.introduction,data.price);
-						socket.emit("sv-apply-job",result);
-						let task_owner_id = await tasksController.getTaskOwnerId(data.task_id);
-						notificationController.addNotification(task_owner_id, "applied you to work", "applied", data.task_id, decoded._id);
-						if(checkExist(data.user_id)){
-							let socketUserId = await getSocketID(task_owner_id);
-							let result = await notificationController.getTotalUnreadNotification(task_owner_id);
-							io.to(socketUserId).emit("sv-get-total-unread-notification", result);
-						}
-					}
 				});
 			}else{
 				socket.emit("sv-apply-job",{"success" : false, "errors" : v.errors});
