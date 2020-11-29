@@ -1040,7 +1040,7 @@ async function getTaskView(user_id, number_task){
         return result.task_view_history
     }else{
         let topTask = await taskController.getTopTask();
-        return [topTask[0]._id]
+        return topTask
     }
 }
 getTaskView("5fb378656eae3400041711a3",5);

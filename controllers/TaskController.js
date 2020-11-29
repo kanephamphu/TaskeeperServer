@@ -529,10 +529,11 @@ async function updateAvatarTaskData(user_id, avatar){
 // Recommend task for candidate 
 async function recommendTask(user_id){
     try{
-        let task_history = await userController.getTaskView(user_id);
+        let task_history = await userController.getTaskView(user_id,5);
         let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=cosine&k=10"
         task_history.forEach(element => {
-            url = url + "&task_id=" + element
+            console.log(element)
+            url = url + "&task_id=" + element._id
         });
         let res = await fetch(url,{
                 method : 'get'
@@ -555,7 +556,7 @@ async function recommendTask(user_id){
         throw(e)
     }
 }
-
+recommendTask("5f2546def9ca2b000466c467");
 
 // Popular by ID news
 async function newNewsFeed(user_id){
@@ -584,7 +585,7 @@ async function getTopTask(){
     let task_id = await task.find({"isDone" : false},["_id", "impression"]).sort({"impression" : -1}).limit(1);
     return task_id;
 }
-recommendTask("5f2546def9ca2b000466c467");
+
 //getWorkEmployee("5fb378656eae3400041711a3","5fb49a7077406d0004a29ac5");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
