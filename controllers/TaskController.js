@@ -556,7 +556,7 @@ async function recommendTask(user_id){
         throw(e)
     }
 }
-recommendTask("5f2546def9ca2b000466c467");
+//recommendTask("5f2546def9ca2b000466c467");
 
 // Popular by ID news
 async function newNewsFeed(user_id){
