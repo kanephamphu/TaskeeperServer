@@ -1085,8 +1085,7 @@ io.sockets.on('connection',function(socket){
 	socket.on("cl-get-recommend-task", async(data)=>{
 		try{
 			const v=new niv.Validator(data, {
-				secret_key : 'required',
-				skip : 'required'
+				secret_key : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
