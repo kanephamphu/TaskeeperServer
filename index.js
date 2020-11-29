@@ -1099,6 +1099,7 @@ io.sockets.on('connection',function(socket){
 						}
 						let result = await tasksController.recommendTask(decoded._id);
 						if(result){
+							console.log(result);
 							socket.emit("sv-get-recommend-task", result);
 						}else{
 							socket.emit("sv-get-recommend-task", {"success" : false});
