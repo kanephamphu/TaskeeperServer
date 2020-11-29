@@ -333,6 +333,8 @@ async function getWorkEmployeeList(task_id){
     }   
 }
 
+
+
 // Get job saved detail
 async function getSavedDetail(task_id){
     let detail = await task.findOne({"_id" : task_id}, ["task_owner_id","task_owner_avatar", "task_owner_first_name", "task_owner_last_name", "task_title"]);
@@ -447,15 +449,17 @@ async function getTaskOwnerId(task_id){
 }
 
 async function testviewJob(){
-    var result =  await addFreelanceTask("Tuyển thành viên tập đoàn đa cấp ","Lương tháng 7 tỉ", "Ti", "Phu",
-    "sdsdf",'freelance', "123", ["Lập Trình"], 76,445,"Vl", 'unextract');
+    //var result =  await addFreelanceTask("Tuyển thành viên tập đoàn đa cấp ","Lương tháng 7 tỉ", "Ti", "Phu",
+    //"sdsdf",'freelance', "123", ["Lập Trình"], 76,445,"Vl", 'unextract');
     //var result = await viewTaskDetail("5f1c581dcde7010774853652");
     //var result = await viewTasks(10, 10);
     //var result = await getAppliedJobs("5f19a81b1cc2f7000458a566");
     //var result = await addApplicationJob("5f2ac25e8e857e00041dc2b8","5f1c581dcde7010774853652", "Hddd",34, 65);
-    console.log(result);
+    //console.log(result);
+    let t = await task.update({"task_owner_id" : "5fb378656eae3400041711a3"}, {"task_owner_avatar" : "https://pbs.twimg.com/profile_images/1033521116965289984/r-sCBamh.jpg"});
+    console.log(t)
 }
-
+//testviewJob()
 // Get list employee 
 async function getWorkEmployee(task_owner_id, task_id){
     try{
@@ -556,8 +560,34 @@ async function recommendTask(user_id){
         throw(e)
     }
 }
-//recommendTask("5f2546def9ca2b000466c467");
 
+// Recommend task for candidate 
+async function recommendCandidate(task_id){
+    try{
+        let url = "http://34.72.96.216/candidaterecommend?secret_token=Taibodoiqua&measure=cosine&k=10&candidate_id=5fb358bd885c830004fe0b3c"
+        let res = await fetch(url,{
+                method : 'get'
+            });
+        res = await res.json();
+        var listID = [];
+        res.forEach((element) => {
+            listID.push(element.user_id)
+        });
+        let result = await user.find({"_id" : {
+            $in : listID
+        }}, ["first_name", "last_name", "avatar", "votes.vote_point_average"]);
+        if(result){
+            return {"success" : true, "data" : result}
+        }else{
+            return {"success" : false}
+        }
+}catch(e){
+        throw(e)
+    }
+}
+
+//recommendTask("5f2546def9ca2b000466c467");
+//recommendCandidate("123123")
 // Popular by ID news
 async function newNewsFeed(user_id){
     try{
@@ -612,3 +642,4 @@ module.exports.getTaskManage = getTaskManage;
 module.exports.recommendTask = recommendTask;
 module.exports.getTopTask = getTopTask;
 module.exports.newNewsFeed = newNewsFeed;
+module.exports.recommendCandidate = recommendCandidate;

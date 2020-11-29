@@ -103,6 +103,7 @@ async function getNewsData(user_id, number_task, skip){
         }
     });
     if(tasknews){
+        console.log(tasknews)
         let task_id = tasknews.task_news;
         let list_task_id = [];
         for(let i in task_id){
@@ -117,12 +118,12 @@ async function getNewsData(user_id, number_task, skip){
             return {"success" : false};
         }
     }
-    return {"success" : true, "data" : [{}]};
+    return {"success" : true, "data" : []};
     
 }
 
 //addFollowers("5f15dee66d224e19dcbf6bbf","5f1c5df095199238c4282655");
-//getNewsData("5f19a01bb989ab4374ab6c09",5,5)
+//getNewsData("5f2546def9ca2b000466c467",1,37)
 /*async function test(){
     //let te = await addNews("123","3443","2342346","Tai", "sdfsf", "Thanh An", "unextract", 34, 67, "freelance", "Taa", 123123);
     //console.log(te);
