@@ -208,7 +208,7 @@ io.sockets.on('connection',function(socket){
 					}
 					
 						if(decoded){
-							if(decoded.status != 'isActive'){
+							if(decoded.status == 'isActive'){
 								if(await checkExist(decoded._id) == false){
 									addToList(decoded._id, socket.id);
 								}
