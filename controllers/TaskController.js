@@ -400,6 +400,7 @@ async function getTaskManage(task_owner_id, number_task, skip){
             for(const i of result){
                 list.push({"task_title" : i.task_title, "applier_number" : await getCandidateNumber(i._id), "_id" : i._id});
             }
+            console.log(list)
             return {"success" : true, "data" : result}
         } 
         else
@@ -412,6 +413,7 @@ async function getTaskManage(task_owner_id, number_task, skip){
 // Client send approve work 
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
     let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list.price"]);
+    console.log(pricelist)
     if(pricelist){
         let price = pricelist.task_candidate_apply_list[0].price;
         let user = await userController.getInformation(employee_id);
