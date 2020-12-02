@@ -117,6 +117,7 @@ async function addTask(task_title,task_description, task_requirement, task_owner
                 return {"success" : false, "errors" : "name" [{"rule" : "date", "message" : "Date is invalid"}]};
             }
         }else{
+            
             var taskDocs = {
                 "task_title" : task_title,
                 "task_description" : task_description,
@@ -136,6 +137,7 @@ async function addTask(task_title,task_description, task_requirement, task_owner
                 "skills" : skills,
                 "working_time" : working_time
             };
+            console.log(taskDocs);
             var result = await task.create(taskDocs);
             if(result){
                 return {"success" : true, "data" : result};
