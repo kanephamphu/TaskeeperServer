@@ -175,8 +175,12 @@ async function viewTaskHistoryList(employee_id,number_of_skip){
 //View Task Detail
 async function viewTaskDetail(task_id){
     try{
-        let taskDetail = await task.findOne({"_id": task_id},{}).exec();
-        return taskDetail;
+        let taskDetail = await task.findOne({"_id": task_id},{});
+        if(taskDetail){
+            return taskDetail;
+        }else{
+            return {};
+        }
     }catch(e){
         console.log(e);
         throw(e);
@@ -456,7 +460,7 @@ async function testviewJob(){
     //var result = await getAppliedJobs("5f19a81b1cc2f7000458a566");
     //var result = await addApplicationJob("5f2ac25e8e857e00041dc2b8","5f1c581dcde7010774853652", "Hddd",34, 65);
     //console.log(result);
-    let t = await task.update({"task_owner_id" : "5fb378656eae3400041711a3"}, {"task_owner_avatar" : "https://pbs.twimg.com/profile_images/1033521116965289984/r-sCBamh.jpg"});
+    let t = await task.updateMany({"task_owner_id" : "5fb378656eae3400041711a3"}, {"task_owner_avatar" : "https://pbs.twimg.com/profile_images/1033521116965289984/r-sCBamh.jpg"});
     console.log(t)
 }
 //testviewJob()
