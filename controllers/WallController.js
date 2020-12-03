@@ -70,6 +70,34 @@ async function getWallData(user_id, number_task, skip){
             $in : list_task_id
         }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", "task_owner_first_name", "task_owner_last_name", "task_owner_avatar", "end_day", "end_month", "end_year", "working_time"]);
         if(result){
+            var data = [];
+            for(let i of result){
+                let isSaved = await userController.checkTaskSaved(user_id, i._id);
+                let isApplied = await taskController.checkApplied(user_id, i._id);
+                if(isSaved.success == true && isApplied.success == true){
+                    let docs = {
+                        "_id" : i._id,
+                        "task_title" : i.task_title,
+                        "task_description" : i.task_description,
+                        "created_time" : i.created_time,
+                        "location" : i.location,
+                        "price.price_type" : i.price.price_type,
+                        "price.floor_price" : i.price.floor_price,
+                        "price.ceiling_price" : i.price.ceiling_price,
+                        "task_owner_id" : i.task_owner_id,
+                        "task_owner_first_name" : i.task_owner_first_name,
+                        "task_owner_last_name" : i.task_owner_last_name,
+                        "task_owner_avatar" : i.task_owner_avatar,
+                        "end_day" : i.end_day,
+                        "end_month" : i.end_month,
+                        "end_year" :i.end_year,
+                        "working_time" : i.working_time,
+                        "isSaved" : isSaved.isSaved,
+                        "isApplied" : isApplied.isApplied
+                    }
+                    data.push(docs);
+                }
+            }
             return {"success" : true, "data" : result};
         }else{
             return {"success" : false, "data" : {}};

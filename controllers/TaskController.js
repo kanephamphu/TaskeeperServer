@@ -223,8 +223,11 @@ async function addApplicationJob(user_id,task_id, introduction,price){
                     }
                 }
             });
-            console.log(applyTask)
             if(applyTask){
+                let listTags = await getTagsOfJob(task_id);
+                if(listTags.success == true){
+                    userController.addListTags(user_id, listTags.data);
+                }
                 return {"success" : true };
             }
             return {"success" : false, "errors" : {"message" : "Undefined errors"}};
@@ -238,6 +241,17 @@ async function addApplicationJob(user_id,task_id, introduction,price){
     }
 }
 
+// Get list tags from job
+async function getTagsOfJob(task_id){
+    let result = await task.findOne({"_id" : task_id}, ["tags"]);
+    if(result){
+        return {"success" : true, "data" : result.tags}
+    }else{
+        return {"success" : false};
+    }
+}
+
+getTagsOfJob("5fb41e3d41900d0004b6ee54");
 // Delete application of job
 async function deleteApplicationJob(user_id, task_id){
     try{
@@ -628,6 +642,15 @@ async function getTopTask(){
     return task_id;
 }
 
+// Check is apply task
+async function checkApplied(user_id, task_id){
+    let result = await task.findOne({"_id" : task_id, "task_candidate_apply_list.candidate_id" : user_id}, ["_id"]);
+    if(result){
+        return {"success" : true, "isApplied" : true}
+    }else{
+        return {"success" : true, "isApplied" : false};
+    }
+}
 //getWorkEmployee("5fb378656eae3400041711a3","5fb49a7077406d0004a29ac5");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
@@ -655,3 +678,4 @@ module.exports.recommendTask = recommendTask;
 module.exports.getTopTask = getTopTask;
 module.exports.newNewsFeed = newNewsFeed;
 module.exports.recommendCandidate = recommendCandidate;
+module.exports.checkApplied = checkApplied;

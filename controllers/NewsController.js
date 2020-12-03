@@ -1,6 +1,8 @@
 const news = require('../models/NewsModel');
 const user = require('../models/UsersModel');
 const task = require('../models/TasksModel');
+const userController = require('../controllers/UsersController');
+const taskController = require('../controllers/TaskController');
 // Add new news 
 async function addNewNews(user_id){
     let result = await news.create(
@@ -103,7 +105,6 @@ async function getNewsData(user_id, number_task, skip){
         }
     });
     if(tasknews){
-        console.log(tasknews)
         let task_id = tasknews.task_news;
         let list_task_id = [];
         for(let i in task_id){
@@ -111,9 +112,39 @@ async function getNewsData(user_id, number_task, skip){
         }
         let result = await task.find({"_id": {
             $in : list_task_id
-        }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", "task_owner_first_name", "task_owner_last_name", "task_owner_avatar", "end_day", "end_month", "end_year", "working_time"]);
+        }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", 
+        "task_owner_first_name", "task_owner_last_name", "task_owner_avatar", 
+        "end_day", "end_month", "end_year", "working_time"]);
         if(result){
-            return {"success" : true, "data" : result};
+            var data = [];
+            for(let i of result){
+                let isSaved = await userController.checkTaskSaved(user_id, i._id);
+                let isApplied = await taskController.checkApplied(user_id, i._id);
+                if(isSaved.success == true && isApplied.success == true){
+                    let docs = {
+                        "_id" : i._id,
+                        "task_title" : i.task_title,
+                        "task_description" : i.task_description,
+                        "created_time" : i.created_time,
+                        "location" : i.location,
+                        "price.price_type" : i.price.price_type,
+                        "price.floor_price" : i.price.floor_price,
+                        "price.ceiling_price" : i.price.ceiling_price,
+                        "task_owner_id" : i.task_owner_id,
+                        "task_owner_first_name" : i.task_owner_first_name,
+                        "task_owner_last_name" : i.task_owner_last_name,
+                        "task_owner_avatar" : i.task_owner_avatar,
+                        "end_day" : i.end_day,
+                        "end_month" : i.end_month,
+                        "end_year" :i.end_year,
+                        "working_time" : i.working_time,
+                        "isSaved" : isSaved.isSaved,
+                        "isApplied" : isApplied.isApplied
+                    }
+                    data.push(docs);
+                }
+            }
+            return {"success" : true, "data" : data};
         }else{
             return {"success" : false};
         }
@@ -123,7 +154,7 @@ async function getNewsData(user_id, number_task, skip){
 }
 
 //addFollowers("5f15dee66d224e19dcbf6bbf","5f1c5df095199238c4282655");
-//getNewsData("5f2546def9ca2b000466c467",1,37)
+getNewsData("5f2546def9ca2b000466c467",10,0)
 /*async function test(){
     //let te = await addNews("123","3443","2342346","Tai", "sdfsf", "Thanh An", "unextract", 34, 67, "freelance", "Taa", 123123);
     //console.log(te);

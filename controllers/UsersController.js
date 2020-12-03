@@ -12,7 +12,6 @@ const { URLSearchParams } = require('url');
 async function sendVerifyAccountEMail(user_id){
     try{
         let info = await getVerifyInfo(user_id);
-        console.log(info)
         if(info.success == true){
             const params = new URLSearchParams();
             params.append("first_name", info.data.first_name);
@@ -581,6 +580,15 @@ async function setActive(user_id) {
     }
 }
 
+//addListTags("123123", ["tasdf", "sdfsdf"])
+//Add new tags from list tags
+async function addListTags(user_id, list_tags){
+    for(let i of list_tags){
+        addTags(user_id, i);
+    }
+}
+
+
 //Set suspended account
 async function setSuspended(_id) {
     try{
@@ -635,6 +643,17 @@ async function getEduInfo(_id){
     }
 }
 
+// Check is followed
+async function checkFollowed(user_id, following_id){
+    let result = await user.findOne({"_id" : following_id, "followers.follower_id" : user_id}, ["_id"]);
+    if(result){
+        return {"success" : true, "isFollowing" : true}
+    }else{
+        return {"success" : true, "isFollowing" : false}
+    }
+}
+
+//checkFollowed("5f2546def9ca2b000466c467", "5fb358bd885c830004fe0b3c");
 //getEduInfo("5f2546def9ca2b000466c467")
 //getWorkingInfo("5f2546def9ca2b000466c467")
 
@@ -1047,21 +1066,38 @@ async function getTaskView(user_id, number_task){
 // Add tags to user
 async function addTags(user_id, tag_name){
     try{
-        let result = await user.updateOne({"_id" : user_id}, {
-            $push : {
-                "tags" : tag_name
+        let isExist = await user.findOne({"_id" : user_id, "tags": tag_name}, ["_id"]);
+        if(!isExist){
+            let result = await user.updateOne({"_id" : user_id}, {
+                $push : {
+                    "tags" : tag_name
+                }
+            });
+            if(result){
+                return {"success" : true}
+            }else{
+                return {"success" : false}
             }
-        });
-        if(result){
-            return {"success" : true}
-        }else{
-            return {"success" : false}
+        }{
+            return{"success" : false}
         }
+        
     }catch(e){
         throw(e);
     }
 }
 
+// Check is saved task
+async function checkTaskSaved(user_id, task_id){
+    let isSaved = await user.findOne({"_id" : user_id, "task_saved.task_id" : task_id}, ["_id"]);
+    if(isSaved){
+        return {"success" : true, "isSaved" : true}
+    }else{
+        return {"success" : true, "isSaved" : false}
+    }
+}
+
+//addTags("5f2546def9ca2b000466c467", "IT");
 //addNewTaskView("5f2546def9ca2b000466c467", "5fb422d241900d0004b6ee58")
 //addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)
 //addFollower("5f2546def9ca2b000466c467", "5f59fd269a3b8500045c8375");
@@ -1110,3 +1146,6 @@ module.exports.setActivateByVerifyNumber = setActivateByVerifyNumber;
 module.exports.sendVerifyAccountEMail = sendVerifyAccountEMail;
 module.exports.addNewTaskView = addNewTaskView;
 module.exports.getTaskView = getTaskView;
+module.exports.addListTags = addListTags;
+module.exports.checkFollowed = checkFollowed;
+module.exports.checkTaskSaved = checkTaskSaved;
