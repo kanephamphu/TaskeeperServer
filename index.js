@@ -1844,7 +1844,7 @@ io.sockets.on('connection',function(socket){
 	});
 	
 	// Get tasks to manage
-	socket.on("cl-get-task-manage", async(data)=>{
+	socket.on("cl-get-task-manage", async(data)=>{	
 		try{
 			const v= new niv.Validator(data, {
 				secret_key : 'required',

@@ -576,7 +576,7 @@ async function recommendTask(user_id){
         
         let result = await task.find({"_id" : {
             $in : listID
-        }}, ["task_owner_first_name", "task_owner_last_name", "location", "task_title", "task_owner_avatar"]);
+        }}, ["task_owner_first_name", "task_owner_last_name", "location", "task_title", "task_owner_avatar", "task_owner_id", "task_description"]);
         if(result){
             return {"success" : true, "data" : result}
         }else{
