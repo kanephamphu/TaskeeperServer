@@ -1979,6 +1979,34 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-get-work-employee-job", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
+
+	socket.on('cl-check-followed', async(data){
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required',
+				user_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-check-followed",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await userController.checkFollowed(decoded._id, data.user_id);
+						socket.emit("sv-check-followed", result);
+					}
+				});
+			}else{
+				socket.emit("sv-check-followed", {"success": false, "errors" : v.errors})
+			}
+		}catch(e){
+			socket.emit("sv-check-followed", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	})
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);
