@@ -1980,7 +1980,8 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
-	socket.on('cl-check-followed', async(data){
+	// Check is user already followed another user
+	socket.on('cl-check-followed', async(data)=>{
 		try{
 			const v=new niv.Validator(data, {
 				secret_key : 'required',
