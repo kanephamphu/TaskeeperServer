@@ -653,7 +653,7 @@ async function checkFollowed(user_id, following_id){
     }
 }
 
-checkFollowed("5f2546def9ca2b000466c467", "5fb358bd885c830004fe0b3c");
+//checkFollowed("5f2546def9ca2b000466c467", "5fb358bd885c830004fe0b3c");
 //getEduInfo("5f2546def9ca2b000466c467")
 //getWorkingInfo("5f2546def9ca2b000466c467")
 

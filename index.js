@@ -963,20 +963,26 @@ io.sockets.on('connection',function(socket){
 		*/
 		try{
 			const v=new niv.Validator(data, {
-				search_string : 'required'
+				search_string : 'required',
+				limit : 'required',
+				skip : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
-				let result = await searchController.searchTask(data.search_string);
-				socket.emit("sv-search-task", {"success" : true, "data" : result});
-				searchqueryController.addSearchQuery(data.search_string);
+				
 				if(data.secret_key){
 					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 						if(decoded){
+							let result = await searchController.searchTask(data.search_string, null, data.limit, data.skip);
+							socket.emit("sv-search-task", {"success" : true, "data" : result});
 							userController.addSearchHistory(decoded._id, data.search_string);
 							searchqueryController.addSearchQuery(data.search_string);
 						}
 					});
+				}else{
+					let result = await searchController.searchTask(data.search_string, null, data.limit, data.skip);
+					socket.emit("sv-search-task", {"success" : true, "data" : result});
+					searchqueryController.addSearchQuery(data.search_string);
 				}
 			}else{
 				socket.emit("sv-search-task", {"success": false, "errors" : v.errors})
