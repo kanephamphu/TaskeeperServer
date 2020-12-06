@@ -33,7 +33,7 @@ const mediaController = require("./controllers/MediaController");
 const media = require("./models/MediaModel");
 const user = require("./models/UsersModel");
 const api_key= process.env.APIKEY || "Taibodoiqua"
-import cors from 'cors';
+const cors = require('cors');
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
