@@ -33,6 +33,7 @@ const mediaController = require("./controllers/MediaController");
 const media = require("./models/MediaModel");
 const user = require("./models/UsersModel");
 const api_key= process.env.APIKEY || "Taibodoiqua"
+import cors from 'cors';
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -47,6 +48,7 @@ paypal.configure({
 });
 app.use(bodyparser.json());
 app.use(limiter);
+app.use(cors());
 app.use(helmet());
 //setting middleware
 app.use(express.static('./public'));
