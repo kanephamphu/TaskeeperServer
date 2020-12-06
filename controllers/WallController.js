@@ -69,7 +69,9 @@ async function getWallData(user_id, number_task, skip){
         let result = await task.find({"_id": {
             $in : list_task_id
         }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", "task_owner_first_name", "task_owner_last_name", "task_owner_avatar", "end_day", "end_month", "end_year", "working_time"]);
-        return {"success" : true, "data" : result};
+        if(result){
+            return {"success" : true, "data" : result};
+        }
         }else{
             return {"success" : false, "data" : {}};
         }
