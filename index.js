@@ -2250,7 +2250,7 @@ app.get('/set-suspended-user',async(req,res)=>{
 	}
 } );
 
-// Set suspended user
+// Set active user
 app.get('/set-active-user',async(req,res)=>{
 	/**
 	 * api_key
@@ -2273,12 +2273,42 @@ app.get('/get-all-user-information', async(req,res)=>{
 	 */
 	if(req.query.api_key == api_key){
 		let user_id = await req.query.user_id;
-		let result = await userController.getAllDetail()
+		let result = await userController.getAllDetail(user_id);
 		res.send(result);
 	}else{
 		res.send({"success" : false, "message" : "API key error"});
 	}
-})
+});
+
+// Get all user information
+app.get('/get-all-user-information', async(req,res)=>{
+	/**
+	 * api_key
+	 * user_id
+	 */
+	if(req.query.api_key == api_key){
+		let user_id = await req.query.user_id;
+		let result = await userController.getAllDetail(user_id);
+		res.send(result);
+	}else{
+		res.send({"success" : false, "message" : "API key error"});
+	}
+});
+
+// Get all task information
+app.get('/get-all-user-information', async(req,res)=>{
+	/**
+	 * api_key
+	 * task_id
+	 */
+	if(req.query.api_key == api_key){
+		let task_id = await req.query.task_id;
+		let result = await tasksController.getTaskDetail(task_id);
+		res.send(result);
+	}else{
+		res.send({"success" : false, "message" : "API key error"});
+	}
+});
 
 
 

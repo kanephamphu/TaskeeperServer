@@ -254,6 +254,19 @@ async function getAllTask(){
         return {"success" : false, "errors": e}
     }
 }
+// Get all task information
+async function getTaskDetail(task_id){
+    try{
+        let result = await task.findOne({"_id" : task_id},{});
+        if(result){
+            return {"success" : true, "data" : result};
+        }else{
+            return {"success" : false};
+        }
+    }catch(e){
+        return {"success" : false, "errors" : e};
+    }
+}
 // Get list tags from job
 async function getTagsOfJob(task_id){
     let result = await task.findOne({"_id" : task_id}, ["tags"]);
@@ -693,3 +706,4 @@ module.exports.newNewsFeed = newNewsFeed;
 module.exports.recommendCandidate = recommendCandidate;
 module.exports.checkApplied = checkApplied;
 module.exports.getAllTask = getAllTask;
+module.exports.getTaskDetail = getTaskDetail;
