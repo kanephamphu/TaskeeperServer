@@ -2296,7 +2296,7 @@ app.get('/get-all-user-information', async(req,res)=>{
 });
 
 // Get all task information
-app.get('/get-all-user-information', async(req,res)=>{
+app.get('/get-all-task-information', async(req,res)=>{
 	/**
 	 * api_key
 	 * task_id
