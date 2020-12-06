@@ -1097,6 +1097,20 @@ async function checkTaskSaved(user_id, task_id){
     }
 }
 
+// Get all users list
+async function getAllUser(){
+    try{
+        let userList = await user.find({}, {});
+        if(userList){
+            return {"success" : true, "data" : userList};
+        }else{
+            return {"success" : true, "data" : []};
+        }
+    }catch(e){
+        return {"success" : false, "errors": e}
+    }
+    
+}
 //addTags("5f2546def9ca2b000466c467", "IT");
 //addNewTaskView("5f2546def9ca2b000466c467", "5fb422d241900d0004b6ee58")
 //addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)
@@ -1105,6 +1119,8 @@ async function checkTaskSaved(user_id, task_id){
 //testviewJob();
 //saveTask("5f2546def9ca2b000466c467","5f3629d61e62e1000425540e")
 //getSavedTask("5f2546def9ca2b000466c467",1,0)
+getAllUser();
+module.exports.getAllUser = getAllUser;
 module.exports.addTags = addTags;
 module.exports.avatarChange = avatarChange;
 module.exports.addNewLocationInformation = addNewLocationInformation;

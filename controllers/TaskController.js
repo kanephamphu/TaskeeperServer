@@ -241,6 +241,19 @@ async function addApplicationJob(user_id,task_id, introduction,price){
     }
 }
 
+// Get all task
+async function getAllTask(){
+    try{
+        let taskList = await task.find({}, {});
+        if(taskList){
+            return {"success" : true, "data" : taskList};
+        }else{
+            return {"success" : true, "data" : []};
+        }
+    }catch(e){
+        return {"success" : false, "errors": e}
+    }
+}
 // Get list tags from job
 async function getTagsOfJob(task_id){
     let result = await task.findOne({"_id" : task_id}, ["tags"]);
@@ -251,7 +264,7 @@ async function getTagsOfJob(task_id){
     }
 }
 
-getTagsOfJob("5fb41e3d41900d0004b6ee54");
+//getTagsOfJob("5fb41e3d41900d0004b6ee54");
 // Delete application of job
 async function deleteApplicationJob(user_id, task_id){
     try{
@@ -679,3 +692,4 @@ module.exports.getTopTask = getTopTask;
 module.exports.newNewsFeed = newNewsFeed;
 module.exports.recommendCandidate = recommendCandidate;
 module.exports.checkApplied = checkApplied;
+module.exports.getAllTask = getAllTask;

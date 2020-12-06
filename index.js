@@ -32,6 +32,7 @@ const skills = require("./models/SkillsModel");
 const mediaController = require("./controllers/MediaController");
 const media = require("./models/MediaModel");
 const user = require("./models/UsersModel");
+const api_key= process.env.APIKEY || "Taibodoiqua"
 server.listen(process.env.PORT || 3000);
 require('dotenv').config()
 
@@ -834,7 +835,41 @@ io.sockets.on('connection',function(socket){
 			throw(e);
 		}
 	});
-	
+	// Client following another user
+	socket.on("cl-unfollow-user", async(data)=>{
+		/*
+		Args:
+			secret_key: Json web token,
+			user_id: ID of user is followed
+		*/
+		try{
+			const v = new niv.Validator(data,{
+				secret_key : 'required',
+				user_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("cl-unfollow-user",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await userController.deleteFollower(data.user_id, decoded._id);
+						socket.emit("cl-unfollow-user",result);	
+					}
+				});
+			}else{
+				socket.emit("sv-follow-user",{"success" : false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-follow-user", {"success" : false, "errors" : {"message" : "Undefined error"}});
+			throw(e);
+		}
+	});
+
 	//WARNING: Get list tasks, for testing 
 	socket.on("cl-get-default-tasks",async(data)=>{
 		/*Args:
@@ -2165,6 +2200,78 @@ async function removeFromList(socketId){
 		} 
 	} 
 }
+
+// Get all user
+app.get('/get-all-user',async(req,res)=>{
+	/**
+	 * api_key
+	 */
+	if(req.query.api_key == api_key){
+		let result = await userController.getAllUser();
+		res.send(result);
+	}else{
+		res.send({"success" : false, "message" : "API key error"});
+	}
+} );
+
+// Get all task
+app.get('/get-all-task',async(req,res)=>{
+	/**
+	 * api_key
+	 */
+	if(req.query.api_key == api_key){
+		let result = await tasksController.getAllTask();
+		res.send(result);
+	}else{
+		res.send({"success" : false, "message" : "API key error"});
+	}
+} );
+
+// Set suspended user
+app.get('/set-suspended-user',async(req,res)=>{
+	/**
+	 * api_key
+	 * user_id
+	 */
+	if(req.query.api_key == api_key){
+		let user_id = await req.query.user_id;
+		let result = await userController.setSuspended(user_id);
+		res.send(result);
+	}else{
+		res.send({"success" : false, "message" : "API key error"});
+	}
+} );
+
+// Set suspended user
+app.get('/set-active-user',async(req,res)=>{
+	/**
+	 * api_key
+	 * user_id
+	 */
+	if(req.query.api_key == api_key){
+		let user_id = await req.query.user_id;
+		let result = await userController.setActive(user_id);
+		res.send(result);
+	}else{
+		res.send({"success" : false, "message" : "API key error"});
+	}
+} );
+
+// Get all user information
+app.get('/get-all-user-information', async(req,res)=>{
+	/**
+	 * api_key
+	 * user_id
+	 */
+	if(req.query.api_key == api_key){
+		let user_id = await req.query.user_id;
+		let result = await userController.getAllDetail()
+		res.send(result);
+	}else{
+		res.send({"success" : false, "message" : "API key error"});
+	}
+})
+
 
 
 
