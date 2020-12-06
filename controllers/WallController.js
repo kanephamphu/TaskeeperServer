@@ -61,7 +61,7 @@ async function getWallData(user_id, number_task, skip){
         }
     });
     if(taskwall){
-        let task_id = taskwall.wall;
+        let task_id = await taskwall.wall;
         let list_task_id = [];
         for(let i in task_id){
             list_task_id.push(task_id[i].task_id)
@@ -72,12 +72,13 @@ async function getWallData(user_id, number_task, skip){
         if(result){
             return {"success" : true, "data" : result};
         }
-        }else{
+        else{
             return {"success" : false, "data" : {}};
         }
     }
     return {"success" : true, "data" : [{}]};
 }
+
 
 //getWallData("5f15dee66d224e19dcbf6bbf",2,0);
 //addWall("5f15dee66d224e19dcbf6bbf","5f1c5da395199238c4282654")
