@@ -480,7 +480,6 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
             $push : {
                 "work_employee_list" : {
                     "employee_id" : employee_id,
-                    "price" : price,
                     "employee_first_name" : user.first_name,
                     "employee_last_name" : user.last_name,
                     "employee_avatar" : user.avatar
