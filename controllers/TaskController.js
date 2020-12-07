@@ -681,7 +681,7 @@ async function checkApplied(user_id, task_id){
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
 //addApplicationJob("5fb358bd885c830004fe0b3c", "5fb425c241900d0004b6ee5c", "Mình thích làm lắm", 1000);
-approveEmployeeToWork("5f2546def9ca2b000466c467", "5fbd77093bdad20004711e74", "5fb358bd885c830004fe0b3c")
+//approveEmployeeToWork("5f2546def9ca2b000466c467", "5fbd77093bdad20004711e74", "5fb358bd885c830004fe0b3c")
 module.exports.updateUserNameTaskData = updateUserNameTaskData;
 module.exports.updateAvatarTaskData = updateAvatarTaskData;
 module.exports.getWorkEmployee = getWorkEmployee;
