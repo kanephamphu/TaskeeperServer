@@ -453,7 +453,6 @@ async function getTaskManage(task_owner_id, number_task, skip){
 // Client send approve work 
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
     let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list"]);
-    console.log(pricelist);
     if(pricelist){
         let price = await pricelist.task_candidate_apply_list.price;
         let user = await userController.getInformation(employee_id);
@@ -469,6 +468,7 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
                 }
             }
         });
+        console.log(result);
         if(result){
             return {"success" : true};
         }else{
