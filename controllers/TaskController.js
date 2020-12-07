@@ -475,8 +475,10 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
         }
     }else{
         let user = await userController.getInformation(employee_id);
+        console.log(user);
         let result = await task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id},
         {
+            
             $push : {
                 "work_employee_list" : {
                     "employee_id" : employee_id,
