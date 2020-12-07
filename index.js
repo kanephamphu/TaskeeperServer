@@ -1982,7 +1982,7 @@ io.sockets.on('connection',function(socket){
 						socket.emit("sv-approve-employee-to-work", result);
 						notificationController.addNotification(data.employee_id, "approved you to work", "approved", data.task_id, decoded._id);
 						if(checkExist(data.user_id)){
-							let socketUserId = await getSocketID(task_owner_id);
+							let socketUserId = await getSocketID(decoded._id);
 							let result = await notificationController.getTotalUnreadNotification(data.employee_id);
 							io.to(socketUserId).emit("sv-get-total-unread-notification", result);
 						}
