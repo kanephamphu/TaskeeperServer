@@ -452,9 +452,10 @@ async function getTaskManage(task_owner_id, number_task, skip){
 //getTaskManage("5fb378656eae3400041711a3",10,0)
 // Client send approve work 
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
-    let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list.price"]);
+    let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list"]);
+    console.log(pricelist);
     if(pricelist){
-        let price = pricelist.task_candidate_apply_list[0].price;
+        let price = await pricelist.task_candidate_apply_list.price;
         let user = await userController.getInformation(employee_id);
         let result = await task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id},
         {
@@ -473,29 +474,11 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
         }else{
             return {"success" : false};
         }
-    }else{
-        let user = await userController.getInformation(employee_id);
-        console.log(user);
-        let result = await task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id},
-        {
-            
-            $push : {
-                "work_employee_list" : {
-                    "employee_id" : employee_id,
-                    "employee_first_name" : user.first_name,
-                    "employee_last_name" : user.last_name,
-                    "employee_avatar" : user.avatar
-                }
-            }
-        });
-        if(result){
-            return {"success" : true};
-        }else{
-            return {"success" : false};
-        }
     }
+    return {"success" : false};
     
 }
+//approveEmployeeToWork()
 
 // Get candidate list
 async function getCandidateNumber(task_id){
@@ -698,7 +681,7 @@ async function checkApplied(user_id, task_id){
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
 //addApplicationJob("5fb358bd885c830004fe0b3c", "5fb425c241900d0004b6ee5c", "Mình thích làm lắm", 1000);
-//approveEmployeeToWork("5fb378656eae3400041711a3","5fb425c241900d0004b6ee5c", "5fb358bd885c830004fe0b3c")
+approveEmployeeToWork("5f2546def9ca2b000466c467", "5fbd77093bdad20004711e74", "5fb358bd885c830004fe0b3c")
 module.exports.updateUserNameTaskData = updateUserNameTaskData;
 module.exports.updateAvatarTaskData = updateAvatarTaskData;
 module.exports.getWorkEmployee = getWorkEmployee;
