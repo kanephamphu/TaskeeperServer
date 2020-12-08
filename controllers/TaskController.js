@@ -469,7 +469,8 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
             }
         });
         console.log(result);
-        if(result){
+        if(result !== null){
+            console.log(result);
             return {"success" : true};
         }else{
             return {"success" : false};
@@ -513,21 +514,16 @@ async function testviewJob(){
 }
 //testviewJob()
 // Get list employee 
-async function getWorkEmployee(task_owner_id, task_id){
+async function getWorkEmployee(task_owner_id){
     try{
-        let employeeId = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id},["work_employee_list"]);
-        if(employeeId){
-            let result = await user.find({"_id" : {$in : employeeId.work_employee_list.employee_id}}, ["_id", "first_name", "last_name", "votes.vote_count", "votes.vote_point_average"]);
-            if(result){
-                console.log(result);
-                return {"success" : true, "data" : result};
-            }else{
-                return {"success" : false};
+        let data = [];
+        let employeeList = await task.find({"task_owner_id" : task_owner_id},["work_employee_list", "task_title"]).sort({created_time: -1});
+        for(let i of employeeList){
+            if(i.work_employee_list.length != 0){
+                data.push(i);
             }
-            
-        }else{
-
         }
+        return {"success" : true, "data": data};
     }catch(e){
         return {"success" : false}
     }
@@ -677,7 +673,7 @@ async function checkApplied(user_id, task_id){
         return {"success" : true, "isApplied" : false};
     }
 }
-//getWorkEmployee("5fb378656eae3400041711a3","5fb49a7077406d0004a29ac5");
+getWorkEmployee("5fb378656eae3400041711a3");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
 //addApplicationJob("5fb358bd885c830004fe0b3c", "5fb425c241900d0004b6ee5c", "Mình thích làm lắm", 1000);

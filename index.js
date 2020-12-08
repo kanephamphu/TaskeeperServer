@@ -1998,8 +1998,7 @@ io.sockets.on('connection',function(socket){
 	socket.on("cl-get-work-employee-job", async(data)=>{
 		try{
 			const v=new niv.Validator(data, {
-				secret_key : 'required',
-				task_id : 'required'
+				secret_key : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
@@ -2011,7 +2010,7 @@ io.sockets.on('connection',function(socket){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);
 						}
-						let result = await tasksController.getWorkEmployee(decoded._id, data.task_id);
+						let result = await tasksController.getWorkEmployee(decoded._id);
 						socket.emit("sv-get-work-employee-job", result);
 					}
 				});
@@ -2050,7 +2049,36 @@ io.sockets.on('connection',function(socket){
 		}catch(e){
 			socket.emit("sv-check-followed", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
-	})
+	});
+	// Recommend candidate for task
+	socket.on('cl-get-recommend-candidate', async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required',
+				task_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-recommend-candidate",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await tasksController.recommendCandidate(data.task_id);
+						socket.emit("sv-get-recommend-candidate", result);
+					}
+				});
+			}else{
+				socket.emit("sv-get-recommend-candidate", {"success": false, "errors" : v.errors})
+			}
+		}catch(e){
+			socket.emit("sv-get-recommend-candidate", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+		
+	});
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);
