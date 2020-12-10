@@ -2050,6 +2050,7 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-check-followed", {"success" : false, "errors" : {"message" : "Undefined error"}});
 		}
 	});
+	
 	// Recommend candidate for task
 	socket.on('cl-get-recommend-candidate', async(data)=>{
 		try{
@@ -2079,6 +2080,25 @@ io.sockets.on('connection',function(socket){
 		}
 		
 	});
+	
+	// Get list recommend task based on task id
+	socket.on("cl-get-recommend-task-based-on-id", async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				task_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				let result = await tasksController.recommendTaskBasedOnTaskID(data.task_id);
+				socket.emit("sv-get-recommend-task-based-on-id", result)
+			}else{
+				socket.emit("sv-get-recommend-task-based-on-id", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-recommend-task-based-on-id", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+	 
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);

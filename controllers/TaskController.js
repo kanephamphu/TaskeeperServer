@@ -523,7 +523,9 @@ async function getWorkEmployee(task_owner_id){
                 data.push(i);
             }
         }
+        
         return {"success" : true, "data": data};
+
     }catch(e){
         return {"success" : false}
     }
@@ -582,7 +584,8 @@ async function updateAvatarTaskData(user_id, avatar){
 async function recommendTask(user_id){
     try{
         let task_history = await userController.getTaskView(user_id,5);
-        let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=cosine&k=10"
+        let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=cosine&k=10";
+        
         task_history.forEach(element => {
             console.log(element)
             url = url + "&task_id=" + element._id
@@ -605,6 +608,31 @@ async function recommendTask(user_id){
             return {"success" : false}
         }
 }catch(e){
+        throw(e)
+    }
+}
+// Recommend task based on id
+async function recommendTaskBasedOnTaskID(task_id){
+    try{
+        let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=cosine&k=10&task_id="+task_id;
+        let res = await fetch(url,{
+                method : 'get'
+            });
+        res = await res.json();
+        var listID = [];
+        res.forEach((element) => {
+            listID.push(element.task_id)
+        });
+        
+        let result = await task.find({"_id" : {
+            $in : listID
+        }}, ["task_owner_first_name", "task_owner_last_name", "location", "task_title", "task_owner_avatar", "task_owner_id", "task_description"]);
+        if(result){
+            return {"success" : true, "data" : result}
+        }else{
+            return {"success" : false}
+        }
+    }catch(e){
         throw(e)
     }
 }
@@ -703,3 +731,4 @@ module.exports.recommendCandidate = recommendCandidate;
 module.exports.checkApplied = checkApplied;
 module.exports.getAllTask = getAllTask;
 module.exports.getTaskDetail = getTaskDetail;
+module.exports.recommendTaskBasedOnTaskID = recommendTaskBasedOnTaskID;
