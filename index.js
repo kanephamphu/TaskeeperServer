@@ -975,7 +975,7 @@ io.sockets.on('connection',function(socket){
 				if(data.secret_key){
 					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 						if(decoded){
-							let result = await searchController.searchTask(data.search_string, null, data.limit, data.skip);
+							let result = await searchController.searchTask(data.search_string, decoded._id, data.limit, data.skip);
 							socket.emit("sv-search-task", {"success" : true, "data" : result});
 							userController.addSearchHistory(decoded._id, data.search_string);
 							searchqueryController.addSearchQuery(data.search_string);
