@@ -17,7 +17,7 @@ async function searchTask(search_string, user_id = null, limit = 10, skip = 0){
             }
         },["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", 
         "task_owner_first_name", "task_owner_last_name", "task_owner_avatar", 
-        "end_day", "end_month", "end_year", "working_time"],{limit : limit, skip : skip}).sort({"search_count" : -1});
+        "end_day", "end_month", "end_year", "working_time"],{limit : limit, skip : skip}).sort({"created_time" : -1});
         if(user_id != null){
             var data = [];
             for(let i of result){
