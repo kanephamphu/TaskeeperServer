@@ -971,7 +971,7 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = await v.check();
 			if(matched){
-				
+				console.log(data);
 				if(data.secret_key){
 					jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 						if(decoded){
