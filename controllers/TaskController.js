@@ -701,7 +701,7 @@ async function checkApplied(user_id, task_id){
         return {"success" : true, "isApplied" : false};
     }
 }
-getWorkEmployee("5fb378656eae3400041711a3");
+//getWorkEmployee("5fb378656eae3400041711a3");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
 //testviewJob();
 //addApplicationJob("5fb358bd885c830004fe0b3c", "5fb425c241900d0004b6ee5c", "Mình thích làm lắm", 1000);
