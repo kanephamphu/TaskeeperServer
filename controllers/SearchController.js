@@ -20,7 +20,7 @@ async function searchTask(search_string, user_id = null, limit = 10, skip = 0){
         "end_day", "end_month", "end_year", "working_time"],{limit : limit, skip : skip}).sort({"created_time" : -1});
         if(user_id != null){
             var data = [];
-            for(let i of result){
+            for(let i of searchResult){
                 let isSaved = await userController.checkTaskSaved(user_id, i._id);
                 let isApplied = await taskController.checkApplied(user_id, i._id);
                 if(isSaved.success == true && isApplied.success == true){
