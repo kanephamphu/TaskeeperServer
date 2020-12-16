@@ -134,12 +134,11 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = await v.check();
 			if(matched){
-				var result = await userController.register(data.first_name,data.last_name,data.email,data.phone_number,data.password);
+				const result = await userController.register(data.first_name,data.last_name,data.email,data.phone_number,data.password);
 				socket.emit("sv-send-register-res",result);
 			}else{
 				socket.emit("sv-send-register-res",{"success" : false, "errors" : v.errors});
 			}
-			
 		}catch(e){
 			socket.emit("sv-send-register-res",{"success" : false, "errors" :{
 				"message" : "undefined"
