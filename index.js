@@ -1482,7 +1482,7 @@ io.sockets.on('connection',function(socket){
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
 					if(err){
 						socket.emit("sv-readed-all-notification",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
-					}
+					}``
 					if(decoded){
 						if(await checkExist(decoded._id) == false){
 							addToList(decoded._id, socket.id);

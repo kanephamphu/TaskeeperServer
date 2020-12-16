@@ -40,7 +40,7 @@ async function searchTask(search_string, user_id = null, limit = 10, skip = 0){
                         "end_day" : i.end_day,
                         "end_month" : i.end_month ? i.end_month : null,
                         "end_year" :i.end_year,
-                        "working_time" : i.working_time ? i.working_time : null,
+                        "working_time" : i.working_time ? i.working_time : {"start_time" : null, "end_time": null},
                         "isSaved" : isSaved.isSaved,
                         "isApplied" : isApplied.isApplied
                     }
