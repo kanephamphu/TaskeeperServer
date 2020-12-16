@@ -38,7 +38,7 @@ async function searchTask(search_string, user_id = null, limit = 10, skip = 0){
                         "task_owner_last_name" : i.task_owner_last_name,
                         "task_owner_avatar" : i.task_owner_avatar,
                         "end_day" : i.end_day,
-                        "end_month" : i.end_month,
+                        "end_month" : i.end_month ? i.end_month : null,
                         "end_year" :i.end_year,
                         "working_time" : i.working_time,
                         "isSaved" : isSaved.isSaved,

@@ -378,7 +378,8 @@ var UserChema = new mongoose.Schema({
 UserChema.index(
     {
         first_name : "text",
-        last_name : "text"
+        last_name : "text",
+        tags: "text"
     }
 );
 const user = mongoose.model("User",UserChema);
