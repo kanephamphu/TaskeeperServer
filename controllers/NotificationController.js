@@ -44,14 +44,15 @@ async function setReaded(user_id, notification_id){
 
 // Set notification readed
 async function setReadedAll(user_id){
-    let result = await notification.update({"user_id" : user_id, "is_readed" : false}, {"is_readed" : true});
+    let result = await notification.updateMany({"user_id" : user_id, "is_readed" : false}, {"is_readed" : true});
+    console.log(result);
     if(result){
         return {"success" : true}
     }else{
         return {"success" : false}
     }
 }
-//setReadedAll("5f2546def9ca2b000466c467")
+//setReadedAll("5fb378656eae3400041711a3")
 // Get unread notification 
 async function getTotalUnreadNotification(user_id){
     try{
