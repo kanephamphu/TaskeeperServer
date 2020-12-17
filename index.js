@@ -143,7 +143,6 @@ io.sockets.on('connection',function(socket){
 			socket.emit("sv-send-register-res",{"success" : false, "errors" :{
 				"message" : "undefined"
 			}});
-			console.log(e);
 			throw(e);
 		}
 	});
