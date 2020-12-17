@@ -202,12 +202,13 @@ async function register(first_name, last_name, email, phone_number, password) {
                         if(result){
                             let newsAdded = await news.addNewNews(result._id);
                             let wallAdded = await wall.addNewWall(result._id);
-                            console.log(result._id);
-                            if(wallAdded && newsAdded){
-                                if(wallAdded.success == true && newsAdded.success == true){
-                                    sendVerifyUser(result._id);
+                            setTimeout(()=>{
+                                if(wallAdded && newsAdded){
+                                    if(wallAdded.success == true && newsAdded.success == true){
+                                        sendVerifyUser(result._id);
+                                    }
                                 }
-                            }
+                            }, 1000);
                             return {"success" : true};
                         }
                         else
@@ -221,7 +222,7 @@ async function register(first_name, last_name, email, phone_number, password) {
 }
 
 // Verify send
-async function sendVerifyUser(user_id){
+function sendVerifyUser(user_id){
     verifyCreator(user_id).then(()=>{
         sendVerifyAccountEMail(user_id);
     })
