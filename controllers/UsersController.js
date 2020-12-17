@@ -198,6 +198,7 @@ async function register(first_name, last_name, email, phone_number, password) {
                             "email.current_email": email
                         }
                         const result = await user.create(userdocs);
+                        console.log(result);
                         if(result){
                             let newsAdded = await news.addNewNews(result._id);
                             let wallAdded = await wall.addNewWall(result._id);
@@ -205,6 +206,7 @@ async function register(first_name, last_name, email, phone_number, password) {
                                 if(wallAdded.success == true && newsAdded.success == true){
                                     sendVerifyUser(result._id);
                                 }
+
                                 return {"success" : true};
                             } 
                         }
