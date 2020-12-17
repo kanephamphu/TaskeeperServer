@@ -199,13 +199,19 @@ async function register(first_name, last_name, email, phone_number, password) {
                     "email.current_email": email
                 }
                 const result = await user.create(userdocs);
-                news.addNewNews(result._id);
-                wall.addNewWall(result._id);
+
                 if(result){
+                    let newsAdded = await news.addNewNews(result._id);
+                    let wallAdded = await wall.addNewWall(result._id);
+                    if(wallAdded && newsAdded){
+                        if(wallAdded.success == true && newsAdded.success == true){
+                            sendVerifyUser(result._id);
+                        }
+                    }
                     return {"success" : true};
-                }else
-                    return {"success" : false, "errors" : {"message" : "Cann't register"}};
-                
+                }
+                else
+                    return {"success" : false, "errors" : {message : "Cann't register"}};
             }else{
                 return {"success" : false, "errors" : {"message" : "Phone number already exists", "rule" : "phoneNumber"}};
             }
@@ -214,14 +220,16 @@ async function register(first_name, last_name, email, phone_number, password) {
         }
     }catch(error){
         console.log(error);
+        throw error;
     }
         
 }
 
 // Verify send
-async function sendVerifyUser(user_id){
-    await verifyCreator(user_id);
-    sendVerifyAccountEMail(user_id);
+function sendVerifyUser(user_id){
+    verifyCreator(user_id).then(()=>{
+        sendVerifyAccountEMail(user_id);
+    })
 }
 
 //Get Group User 
