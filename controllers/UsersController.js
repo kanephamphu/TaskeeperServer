@@ -201,15 +201,6 @@ async function register(first_name, last_name, email, phone_number, password) {
                 const result = await user.create(userdocs);
 
                 if(result){
-                    let newsAdded = await news.addNewNews(result._id);
-                    let wallAdded = await wall.addNewWall(result._id);
-                    setTimeout(()=>{
-                        if(wallAdded && newsAdded){
-                            if(wallAdded.success == true && newsAdded.success == true){
-                                sendVerifyUser(result._id);
-                            }
-                        }
-                    }, 1000);
                     return {"success" : true};
                 }
                 else
@@ -227,10 +218,11 @@ async function register(first_name, last_name, email, phone_number, password) {
 }
 
 // Verify send
-function sendVerifyUser(user_id){
-    verifyCreator(user_id).then(()=>{
-        sendVerifyAccountEMail(user_id);
-    })
+async function sendVerifyUser(user_id){
+    news.addNewNews(user_id);
+    wall.addNewWall(user_id);
+    await verifyCreator(user_id);
+    sendVerifyAccountEMail(user_id);
 }
 
 //Get Group User 
