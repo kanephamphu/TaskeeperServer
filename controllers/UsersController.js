@@ -202,10 +202,8 @@ async function register(first_name, last_name, email, phone_number, password) {
                             let newsAdded = await news.addNewNews(result._id);
                             let wallAdded = await wall.addNewWall(result._id);
                             if(wallAdded && newsAdded){
-                                
                                 if(wallAdded.success == true && newsAdded.success == true){
-                                    await verifyCreator(result._id);
-                                    sendVerifyAccountEMail(result._id);
+                                    sendVerifyUser(result._id);
                                 }
                                 return {"success" : true};
                             } 
@@ -219,6 +217,14 @@ async function register(first_name, last_name, email, phone_number, password) {
                 return {"success" : false, "errors" : {message : "Email already exists", "rule" : "email"}};
             }
 }
+
+// Verify send
+async function sendVerifyUser(user_id){
+    verifyCreator(user_id).then(()=>{
+        sendVerifyAccountEMail(user_id);
+    })
+}
+
 //Get Group User 
 async function getGroupUser(id) {
     try{
