@@ -199,12 +199,13 @@ async function register(first_name, last_name, email, phone_number, password) {
                     "email.current_email": email
                 }
                 const result = await user.create(userdocs);
-
+                news.addNewNews(result._id);
+                wall.addNewWall(result._id);
                 if(result){
                     return {"success" : true};
-                }
-                else
-                    return {"success" : false, "errors" : {message : "Cann't register"}};
+                }else
+                    return {"success" : false, "errors" : {"message" : "Cann't register"}};
+                
             }else{
                 return {"success" : false, "errors" : {"message" : "Phone number already exists", "rule" : "phoneNumber"}};
             }
@@ -219,8 +220,6 @@ async function register(first_name, last_name, email, phone_number, password) {
 
 // Verify send
 async function sendVerifyUser(user_id){
-    news.addNewNews(user_id);
-    wall.addNewWall(user_id);
     await verifyCreator(user_id);
     sendVerifyAccountEMail(user_id);
 }
