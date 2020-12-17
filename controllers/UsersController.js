@@ -188,37 +188,42 @@ async function checkLogin(loginquery, passwordquery){
 }
 //Register new account
 async function register(first_name, last_name, email, phone_number, password) {
+    try{
         if(await checker.isEmailExist(email)==false){
-                    if(await checker.isNumberPhoneExist(phone_number) == false){
-                        var userdocs = {
-                            "first_name": first_name,
-                            "last_name": last_name,
-                            "login_information.password": checker.encrypt(password),
-                            "phone_number.current_phone_number": phone_number,
-                            "email.current_email": email
-                        }
-                        const result = await user.create(userdocs);
+            if(await checker.isNumberPhoneExist(phone_number) == false){
+                var userdocs = {
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "login_information.password": checker.encrypt(password),
+                    "phone_number.current_phone_number": phone_number,
+                    "email.current_email": email
+                }
+                const result = await user.create(userdocs);
 
-                        if(result){
-                            let newsAdded = await news.addNewNews(result._id);
-                            let wallAdded = await wall.addNewWall(result._id);
-                            setTimeout(()=>{
-                                if(wallAdded && newsAdded){
-                                    if(wallAdded.success == true && newsAdded.success == true){
-                                        sendVerifyUser(result._id);
-                                    }
-                                }
-                            }, 1000);
-                            return {"success" : true};
+                if(result){
+                    let newsAdded = await news.addNewNews(result._id);
+                    let wallAdded = await wall.addNewWall(result._id);
+                    setTimeout(()=>{
+                        if(wallAdded && newsAdded){
+                            if(wallAdded.success == true && newsAdded.success == true){
+                                sendVerifyUser(result._id);
+                            }
                         }
-                        else
-                            return {"success" : false, "errors" : {message : "Cann't register"}};
-                    }else{
-                        return {"success" : false, "errors" : {"message" : "Phone number already exists", "rule" : "phoneNumber"}};
-                    }
+                    }, 1000);
+                    return {"success" : true};
+                }
+                else
+                    return {"success" : false, "errors" : {message : "Cann't register"}};
             }else{
-                return {"success" : false, "errors" : {message : "Email already exists", "rule" : "email"}};
+                return {"success" : false, "errors" : {"message" : "Phone number already exists", "rule" : "phoneNumber"}};
             }
+        }else{
+            return {"success" : false, "errors" : {message : "Email already exists", "rule" : "email"}};
+        }
+    }catch(error){
+        console.log(error);
+    }
+        
 }
 
 // Verify send
