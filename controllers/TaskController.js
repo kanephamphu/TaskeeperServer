@@ -407,11 +407,24 @@ async function increaseImpression(task_id){
         return {"success" : false};
     }
 }
+
 //increaseImpression("5f1c581dcde7010774853652");
 // Get list job which a client applied
 async function getAppliedJobs(user_id){
     let listJobs = await task.find({
         "task_candidate_apply_list.candidate_id" : user_id
+    },["task_title", "task_type", "position"]).exec();
+    if(listJobs){
+        return {"success" : true, "data" : listJobs}
+    }else{
+        return {"success" : false}
+    }
+}
+
+// Get list job which a client applied
+async function getApprovedJobs(user_id){
+    let listJobs = await task.find({
+        "work_employee_list.employee_id" : user_id
     },["task_title", "task_type", "position"]).exec();
     if(listJobs){
         return {"success" : true, "data" : listJobs}
@@ -732,3 +745,4 @@ module.exports.checkApplied = checkApplied;
 module.exports.getAllTask = getAllTask;
 module.exports.getTaskDetail = getTaskDetail;
 module.exports.recommendTaskBasedOnTaskID = recommendTaskBasedOnTaskID;
+module.exports.getApprovedJobs = getApprovedJobs;
