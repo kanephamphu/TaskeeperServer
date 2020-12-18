@@ -63,7 +63,7 @@ async function searchUser(search_string){
             $text : {
                 $search : search_string
             }
-        },{},{limit : 10}).sort({"search_count" : -1});
+        },{score: {$meta: "textScore"}} ,{limit : 10}).sort({"votes.vote_point_average" : -1, score:{$meta:"textScore"} });
         return searchResult;    
     }catch(e){
         throw(e);
@@ -77,10 +77,10 @@ async function getSearchTrend(){
 }
 // Test
 async function test(){
-    let t = await searchTask("Hoa Kỳ", "5f2546def9ca2b000466c467", 10, 0);
-    console.log(t);
-    /*let te = await searchUser("Pham Phu Tai");
-    console.log(te);*/
+    /*let t = await searchTask("Hoa Kỳ", "5f2546def9ca2b000466c467", 10, 0);
+    console.log(t);*/
+    let te = await searchUser("Học Tập, Lập Trình");
+    console.log(te);
 }
 test();
 module.exports.getSearchTrend = getSearchTrend;
