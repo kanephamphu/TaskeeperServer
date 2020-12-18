@@ -1,7 +1,8 @@
 const user = require('../models/UsersModel');
 const task = require('../models/TasksModel');
 const searchquery = require('../models/SearchQueryModel');
-
+const userController = require('../controllers/UsersController');
+const taskController = require('../controllers/TaskController');
 //Search
 async function searchTask(search_string, user_id = null, limit = 10, skip = 0){
     /*
@@ -11,13 +12,7 @@ async function searchTask(search_string, user_id = null, limit = 10, skip = 0){
         list user or task suitable for search 
     */
     try{
-        let searchResult = await task.find({
-            $text : {
-                $search : search_string
-            }
-        },["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", 
-        "task_owner_first_name", "task_owner_last_name", "task_owner_avatar", 
-        "end_day", "end_month", "end_year", "working_time"],{limit : limit, skip : skip}).sort({"created_time" : -1});
+        let searchResult = await task.find({$text: {$search: search_string}}, {score: {$meta: "textScore"}}, {limit: limit, skip: skip}).sort({created_time: -1, score:{$meta:"textScore"} });
         if(user_id != null){
             var data = [];
             for(let i of searchResult){
@@ -82,12 +77,12 @@ async function getSearchTrend(){
 }
 // Test
 async function test(){
-    let t = await searchTask("Nodejs");
+    let t = await searchTask("Hoa Kỳ", "5f2546def9ca2b000466c467", 10, 0);
     console.log(t);
-    let te = await searchUser("Pham Phu Tai");
-    console.log(te);
+    /*let te = await searchUser("Pham Phu Tai");
+    console.log(te);*/
 }
-
+test();
 module.exports.getSearchTrend = getSearchTrend;
 module.exports.searchTask = searchTask;
 module.exports.searchUser = searchUser;
