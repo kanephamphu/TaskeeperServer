@@ -82,7 +82,7 @@ async function test(){
     let te = await searchUser("Học Tập, Lập Trình");
     console.log(te);
 }
-test();
+//test();
 module.exports.getSearchTrend = getSearchTrend;
 module.exports.searchTask = searchTask;
 module.exports.searchUser = searchUser;
