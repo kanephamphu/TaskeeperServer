@@ -6,6 +6,7 @@ const userController =require('../controllers/UsersController');
 const { permittedCrossDomainPolicies } = require('helmet');
 const fetch = require('node-fetch');
 const newsController = require('../controllers/NewsController');
+const _ = require("lodash");
 require('dotenv').config();
 
 
@@ -267,6 +268,7 @@ async function getTaskDetail(task_id){
         return {"success" : false, "errors" : e};
     }
 }
+
 // Get list tags from job
 async function getTagsOfJob(task_id){
     let result = await task.findOne({"_id" : task_id}, ["tags"]);
@@ -413,19 +415,20 @@ async function increaseImpression(task_id){
 async function getAppliedJobs(user_id){
     let listJobs = await task.find({
         "task_candidate_apply_list.candidate_id" : user_id
-    },["task_title", "task_type", "position"]).exec();
+    },["task_title", "task_type", "position", "task_owner_avatar"]);
+    
     if(listJobs){
         return {"success" : true, "data" : listJobs}
     }else{
         return {"success" : false}
     }
 }
-
+getAppliedJobs("5fb358bd885c830004fe0b3c");
 // Get list job which a client applied
 async function getApprovedJobs(user_id){
     let listJobs = await task.find({
         "work_employee_list.employee_id" : user_id
-    },["task_title", "task_type", "position"]).exec();
+    },["task_title", "task_type", "position", "task_owner_avatar"]).exec();
     if(listJobs){
         return {"success" : true, "data" : listJobs}
     }else{
@@ -481,9 +484,7 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
                 }
             }
         });
-        console.log(result);
         if(result !== null){
-            console.log(result);
             return {"success" : true};
         }else{
             return {"success" : false};
@@ -600,7 +601,6 @@ async function recommendTask(user_id){
         let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=cosine&k=10";
         
         task_history.forEach(element => {
-            console.log(element)
             url = url + "&task_id=" + element._id
         });
         let res = await fetch(url,{
@@ -680,25 +680,17 @@ async function recommendCandidate(task_id){
 // Popular by ID news
 async function newNewsFeed(user_id){
     try{
-        let task_ids = await getTopTask();
-        topID = task_ids[0]._id;
-        let url = "http://34.72.96.216/recommend?secret_token=Taibodoiqua&measure=dot&k=20&task_id="+topID;
-        fetch(url,{
-            method : 'get'
-        })
-        .then(res => res.json())
-        .then(async(json) => {
-            json.forEach((element) => {
-                console.log(element.task_id)
-                newsController.addNews(user_id, element.task_id);
-            });
-           
+        const latestNews = await task.find({},["_id"], {limit: 30}).sort({"created_time" : -1});
+        _.map(latestNews, el=>{
+            newsController.addNews(user_id, el._id);
         });
+
+        
     }catch(e){
         throw(e);
     }
 }
-
+//newNewsFeed("5fbfcc39926ea40004b8f6ec");
 // Get top task 
 async function getTopTask(){
     let task_id = await task.find({"isDone" : false},["_id", "impression"]).sort({"impression" : -1}).limit(1);
