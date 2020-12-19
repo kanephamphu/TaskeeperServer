@@ -529,7 +529,7 @@ async function testviewJob(){
 async function getWorkEmployee(task_owner_id){
     try{
         let data = [];
-        let employeeList = await task.find({"task_owner_id" : task_owner_id},["work_employee_list", "task_title"]).sort({created_time: -1});
+        let employeeList = await task.find({"task_owner_id" : task_owner_id},["work_employee_list", "task_title", "task_owner_avatar"]).sort({created_time: -1});
         for(let i of employeeList){
             if(i.work_employee_list.length != 0){
                 data.push(i);
