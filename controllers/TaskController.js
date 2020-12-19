@@ -653,7 +653,20 @@ async function recommendTaskBasedOnTaskID(task_id){
 // Recommend task for candidate 
 async function recommendCandidate(task_id){
     try{
-        let url = "http://34.72.96.216/candidaterecommend?secret_token=Taibodoiqua&measure=cosine&k=10&candidate_id=5fb358bd885c830004fe0b3c"
+        let tags = await task.findOne({"_id" : task_id}, ["tags"]);
+        tags = tags.tags;
+        let searchResult = await user.find({
+            $text : {
+                $search : tags.toString()
+            }
+        },{score: {$meta: "textScore"}} ,{limit : 1}).sort({"votes.vote_point_average" : -1, score:{$meta:"textScore"} });
+        let candidateID;
+        if(searchResult){
+            candidateID = searchResult[0]._id;
+        }else{
+            candidateID = "5fb358bd885c830004fe0b3c";
+        }
+        let url = "http://34.72.96.216/candidaterecommend?secret_token=Taibodoiqua&measure=cosine&k=10&candidate_id="+candidateID;
         let res = await fetch(url,{
                 method : 'get'
             });
@@ -676,7 +689,7 @@ async function recommendCandidate(task_id){
 }
 
 //recommendTask("5f2546def9ca2b000466c467");
-//recommendCandidate("123123")
+//recommendCandidate("5fc0c03f98802000044a3f39")
 // Popular by ID news
 async function newNewsFeed(user_id){
     try{
