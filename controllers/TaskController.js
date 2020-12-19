@@ -416,14 +416,13 @@ async function getAppliedJobs(user_id){
     let listJobs = await task.find({
         "task_candidate_apply_list.candidate_id" : user_id
     },["task_title", "task_type", "position", "task_owner_avatar"]);
-    
     if(listJobs){
         return {"success" : true, "data" : listJobs}
     }else{
-        return {"success" : false}
+        return {"success" : false}  
     }
 }
-getAppliedJobs("5fb358bd885c830004fe0b3c");
+//getAppliedJobs("5fb358bd885c830004fe0b3c");
 // Get list job which a client applied
 async function getApprovedJobs(user_id){
     let listJobs = await task.find({
@@ -468,30 +467,33 @@ async function getTaskManage(task_owner_id, number_task, skip){
 //getTaskManage("5fb378656eae3400041711a3",10,0)
 // Client send approve work 
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id){
-    let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list"]);
-    if(pricelist){
-        let price = await pricelist.task_candidate_apply_list.price;
-        let user = await userController.getInformation(employee_id);
-        let result = await task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id},
-        {
-            $push : {
-                "work_employee_list" : {
-                    "employee_id" : employee_id,
-                    "price" : price,
-                    "employee_first_name" : user.first_name,
-                    "employee_last_name" : user.last_name,
-                    "employee_avatar" : user.avatar
+    try{
+        let pricelist = await task.findOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id}, ["task_candidate_apply_list"]);
+        if(pricelist){
+            let price = await pricelist.task_candidate_apply_list.price;
+            let user = await userController.getInformation(employee_id);
+            let result = await task.updateOne({"_id" : task_id, "task_owner_id" : task_owner_id, "task_candidate_apply_list.candidate_id" : employee_id},
+            {
+                $push : {
+                    "work_employee_list" : {
+                        "employee_id" : employee_id,
+                        "price" : price,
+                        "employee_first_name" : user.first_name,
+                        "employee_last_name" : user.last_name,
+                        "employee_avatar" : user.avatar
+                    }
                 }
+            });
+            if(result !== null){
+                return {"success" : true};
+            }else{
+                return {"success" : false};
             }
-        });
-        if(result !== null){
-            return {"success" : true};
-        }else{
-            return {"success" : false};
         }
+        return {"success" : false};
+    }catch(err){
+        throw("Apply error");
     }
-    return {"success" : false};
-    
 }
 //approveEmployeeToWork()
 

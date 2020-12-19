@@ -2007,16 +2007,11 @@ io.sockets.on('connection',function(socket){
 						let result = await tasksController.approveEmployeeToWork(decoded._id, data.task_id, data.employee_id);
 						socket.emit("sv-approve-employee-to-work", result);
 						notificationController.addNotification(data.employee_id, "approved you to work", "approved", data.task_id, decoded._id);
-						if(checkExist(data.user_id)){
-							let socketUserId = await getSocketID(decoded._id);
-							let result = await notificationController.getTotalUnreadNotification(data.employee_id);
-							io.to(socketUserId).emit("sv-get-total-unread-notification", result);
-						}
 					}
 				});
 			}
 		}catch(e){
-			socket.emit("sv-approve-employee-to-work", {"success" : false, "errors" : {"message" : "Undefiend error"}});
+			socket.emit("sv-approve-employee-to-work", {"success" : false, "errors" : e});
 		}
 	});
 	
