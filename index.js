@@ -1183,22 +1183,12 @@ io.sockets.on('connection',function(socket){
 	socket.on("cl-get-followers", async(data)=>{
 		try {
 			const v=new niv.Validator(data, {
-				secret_key : 'required'
+				user_id : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
-				if(await checkExist(decoded._id) == false){
-					addToList(decoded._id, socket.id);
-				}
-				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
-					if(err){
-						socket.emit("sv-get-followers",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
-					}
-					if(decoded){
-						let result = await userController.getFollowerList(decoded._id);
-						socket.emit("sv-get-followers", result);
-					}
-				})
+				let result = await userController.getFollowerList(data.user_id);
+				socket.emit("sv-get-followers", result);
 			}
 		} catch (e) {
 			socket.emit("sv-get-followers", {"success" : false, "errors" : {"message" : "Undefined error"}});
