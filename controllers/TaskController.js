@@ -448,7 +448,7 @@ async function setTaskDone(task_owner_id, task_id){
 // Get task manage
 async function getTaskManage(task_owner_id, number_task, skip){
     try{
-        let result = await task.find({"task_owner_id" : task_owner_id}, ["task_title", "created_time"],{limit : number_task, skip: skip}).sort({"created_time" : -1});
+        let result = await task.find({"task_owner_id" : task_owner_id}, ["task_title", "created_time", "task_owner_avatar"],{limit : number_task, skip: skip}).sort({"created_time" : -1});
         if(result)
         {
             let list = []
