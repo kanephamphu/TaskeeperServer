@@ -2120,6 +2120,36 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 	 
+	// Send work invitation
+	socket.on("cl-send-work-invitation", async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				secret_key : 'required',
+				task_id : 'required',
+				invitee_id : 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(err){
+						socket.emit("sv-get-work-employee-job",{"success":false, "errors":{"message": "Token error", "rule" : "token"}});
+					}
+					if(decoded){
+						if(await checkExist(decoded._id) == false){
+							addToList(decoded._id, socket.id);
+						}
+						let result = await notification.addNotification(invitee_id, "Invite to work", "invite", task_id, decoded._id);
+						socket.emit("sv-get-send-work-invitation", result);
+					}
+				});
+			}else{
+				socket.emit("sv-send-work-invitation", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-send-work-invitation", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);
