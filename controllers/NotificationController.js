@@ -23,7 +23,7 @@ async function addNotification(user_id, description, type ,task_id, related_user
 // Get notifications
 async function getNotification(user_id, number_notification, skip){
     let result = await notification.find({
-        "user_id" : user_id},{}, {limit : number_notification, skip: skip});
+        "user_id" : user_id},{}, {limit : number_notification, skip: skip}).sort({created_time: -1});
     console.log(result)
         if(result){
         return {"success" : true, "data" : result};
