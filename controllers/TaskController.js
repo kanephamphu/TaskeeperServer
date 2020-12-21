@@ -24,6 +24,7 @@ async function addFreelanceTask(task_title,task_description, task_description, t
                     var taskDocs = {
                         "task_title" : task_title,
                         "task_description" : task_description,
+                        "task_requirement" : task_requirement,
                         "task_owner_id" : task_owner_id,
                         "tags" : tags,
                         "price.price_type" : price_type,
@@ -49,6 +50,7 @@ async function addFreelanceTask(task_title,task_description, task_description, t
                 var taskDocs = {
                     "task_title" : task_title,
                     "task_description" : task_description,
+                    "task_requirement" : task_requirement,
                     "task_owner_id" : task_owner_id,
                     "tags" : tags,
                     "price.price_type" : price_type,
@@ -90,6 +92,7 @@ async function addTask(task_title,task_description, task_requirement, task_owner
                 var taskDocs = {
                     "task_title" : task_title,
                     "task_description" : task_description,
+                    "task_requirement" : task_requirement,
                     "task_owner_id" : task_owner_id,
                     "tags" : tags,
                     "price.price_type" : price_type,
