@@ -686,6 +686,25 @@ async function recommendCandidate(task_id){
     }
 }
 
+async function getNearTask(coordinates){
+    const listTasks = await task.find({
+        "location.geometry.location.coordinates" : {
+            $near : {
+                $geometry : { type: "Point",  coordinates: coordinates },
+                $minDistance: 0,
+                $maxDistance: 5000
+            }
+        }
+    }, ["task_owner_avatar", "task_title", "task_type", "location.geometry.location.coordinates"], {limit: 10});
+    if(listTasks){
+        return {"success": true, "data" : listTasks};
+    }
+    return {"success" : false};
+}
+
+//getNearTask("sdfsf");
+
+
 //recommendTask("5f2546def9ca2b000466c467");
 //recommendCandidate("5fc0c03f98802000044a3f39")
 // Popular by ID news
@@ -749,3 +768,4 @@ module.exports.getAllTask = getAllTask;
 module.exports.getTaskDetail = getTaskDetail;
 module.exports.recommendTaskBasedOnTaskID = recommendTaskBasedOnTaskID;
 module.exports.getApprovedJobs = getApprovedJobs;
+module.exports.getNearTask = getNearTask;
