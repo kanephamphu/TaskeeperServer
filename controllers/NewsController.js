@@ -3,6 +3,7 @@ const user = require('../models/UsersModel');
 const task = require('../models/TasksModel');
 const userController = require('../controllers/UsersController');
 const taskController = require('../controllers/TaskController');
+const _ = require("lodash");
 // Add new news 
 async function addNewNews(user_id){
     let result = await news.create(
@@ -114,9 +115,9 @@ async function getNewsData(user_id, number_task, skip){
             $in : list_task_id
         }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", 
         "task_owner_first_name", "task_owner_last_name", "task_owner_avatar", 
-        "end_day", "end_month", "end_year", "working_time"]);
+        "end_day", "end_month", "end_year", "working_time"]).sort({created_time : -1});
         if(result){
-            var data = [];
+            let data = [];
             for(let i of result){
                 let isSaved = await userController.checkTaskSaved(user_id, i._id);
                 let isApplied = await taskController.checkApplied(user_id, i._id);
@@ -144,6 +145,7 @@ async function getNewsData(user_id, number_task, skip){
                     data.push(docs);
                 }
             }
+
             return {"success" : true, "data" : data};
         }else{
             return {"success" : false};
@@ -154,7 +156,7 @@ async function getNewsData(user_id, number_task, skip){
 }
 
 //addFollowers("5f15dee66d224e19dcbf6bbf","5f1c5df095199238c4282655");
-//getNewsData("5f2546def9ca2b000466c467",10,0)
+getNewsData("5f2546def9ca2b000466c467",10,0)
 /*async function test(){
     //let te = await addNews("123","3443","2342346","Tai", "sdfsf", "Thanh An", "unextract", 34, 67, "freelance", "Taa", 123123);
     //console.log(te);
