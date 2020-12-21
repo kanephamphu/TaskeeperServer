@@ -2144,11 +2144,12 @@ io.sockets.on('connection',function(socket){
 	socket.on("cl-get-near-job", async(data)=>{
 		try{
 			const v=new niv.Validator(data, {
-				coordinates: 'required'
+				lat: 'required',
+				lng : 'required'
 			});
 			const matched = await v.check();
 			if(matched){
-				const jobLists = await tasksController.getNearTask(coordinates);
+				const jobLists = await tasksController.getNearTask([lat,lng]);
 				console.log(jobLists);
 				socket.emit("sv-get-near-job",jobLists);
 
