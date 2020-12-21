@@ -2148,6 +2148,7 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = await v.check();
 			if(matched){
+				console.log(data.coordinates);
 				const jobLists = await tasksController.getNearTask(coordinates);
 				socket.emit("sv-get-near-job",jobLists);
 
