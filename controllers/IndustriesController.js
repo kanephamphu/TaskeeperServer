@@ -19,7 +19,9 @@ async function addNewCareer(industryName, careerName, language){
         return {"success" : false};
     }
 }
-
+//addNewCareer("Law", "Lawyer", "en");
+//addNewCareer("Medical", "Nurse", "en");
+//addNewCareer("Medical", "Nurse", "en");
 async function getIndustries(language){
     let result = await industry.find({"language" : language});
     if(result){

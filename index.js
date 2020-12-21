@@ -2140,6 +2140,31 @@ io.sockets.on('connection',function(socket){
 		}
 	});
 
+	// Send work invitation
+	socket.on("cl-get-near-job", async(data)=>{
+		try{
+			const v=new niv.Validator(data, {
+				coordinates: 'required'
+			});
+			const matched = await v.check();
+			if(matched){
+				const jobLists = await tasksController.getNearTask(coordinates);
+				socket.emit("sv-get-near-job",jobLists);
+
+				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
+					if(decoded){
+						userController.addNewLocationInformation(decoded._id, coordinates);
+					}
+				});
+				
+			}else{
+				socket.emit("sv-get-near-job", {"success": false, "errors" : v.errors});
+			}
+		}catch(e){
+			socket.emit("sv-get-near-job", {"success" : false, "errors" : {"message" : "Undefined error"}});
+		}
+	});
+
 	//Disconnect
 	socket.on('disconnect', function () {
 		removeFromList(socket.id);

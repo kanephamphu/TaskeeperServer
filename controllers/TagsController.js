@@ -41,7 +41,8 @@ async function searchTags(tag_query){
     //console.log(tagList)
     return tagList;
 }
-//addNewTag("Nodejs");
+//addNewTag("Hướng Dẫn Viên Du Lịch");
+
 
 module.exports.addNewTag = addNewTag;
 module.exports.searchTags = searchTags;
