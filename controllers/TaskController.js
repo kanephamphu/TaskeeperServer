@@ -702,7 +702,7 @@ async function getNearTask(coordinates){
     return {"success" : false};
 }
 
-//getNearTask("sdfsf");
+//getNearTask([-73.9667, 40.78]);
 
 
 //recommendTask("5f2546def9ca2b000466c467");

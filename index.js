@@ -2148,8 +2148,8 @@ io.sockets.on('connection',function(socket){
 			});
 			const matched = await v.check();
 			if(matched){
-				console.log(data.coordinates);
 				const jobLists = await tasksController.getNearTask(coordinates);
+				console.log(jobLists);
 				socket.emit("sv-get-near-job",jobLists);
 
 				jwt.verify(data.secret_key,process.env.login_secret_key,async (err,decoded)=>{
