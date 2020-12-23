@@ -72,7 +72,7 @@ async function verifyCreator(user_id) {
     },
     async (err, key) => {
       let keyToken = key;
-      let verifyNumber = await Math.floor(Math.random() * (9999 - 1000) + 1000);
+      let verifyNumber = Math.floor(Math.random() * (9999 - 1000) + 1000);
       user
         .updateOne(
           { _id: user_id },
@@ -239,11 +239,11 @@ async function register(first_name, last_name, email, phone_number, password) {
         const result = await user.create(userdocs);
 
         if (result) {
+          sendVerifyUser(result._id);
           let newsAdded = await news.addNewNews(result._id);
           let wallAdded = await wall.addNewWall(result._id);
           if (wallAdded && newsAdded) {
             if (wallAdded.success == true && newsAdded.success == true) {
-              sendVerifyUser(result._id);
             }
           }
           return { success: true };
