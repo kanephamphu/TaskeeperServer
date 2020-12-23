@@ -17,7 +17,7 @@ async function searchSkills(skill_query){
         $text : {
             $search : skill_query
         }
-    },["_id","name"],{limit : 5});
+    },["_id","name"],{limit : 20});
     return skillList;
 }
 //searchSkills("Ly");
