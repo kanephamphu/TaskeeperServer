@@ -1000,7 +1000,7 @@ io.sockets.on("connection", function (socket) {
                 );
                 notificationController.addNotification(
                   task_owner_id,
-                  "applied you to work",
+                  "applied to your job",
                   "applied",
                   data.task_id,
                   decoded._id
@@ -2493,7 +2493,7 @@ io.sockets.on("connection", function (socket) {
                 errors: { message: "Token error", rule: "token" },
               });
             }
-            if (decoded) {
+            if (decoded) { 
               if ((await checkExist(decoded._id)) == false) {
                 addToList(decoded._id, socket.id);
               }
