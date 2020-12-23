@@ -134,8 +134,8 @@ io.sockets.on("connection", function (socket) {
   socket.on("cl-send-register-req", async (data) => {
     try {
       const v = new niv.Validator(data, {
-        first_name: "required|maxLength:50|regex:[a-z]",
-        last_name: "required|maxLength:50|regex:[a-z]",
+        first_name: "required|maxLength:50",
+        last_name: "required|maxLength:50",
         password: "required|minLength:8",
         email: "required|email",
         phone_number: "required|phoneNumber",
