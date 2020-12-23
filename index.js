@@ -3114,10 +3114,10 @@ io.sockets.on("connection", function (socket) {
             }
             if (decoded) {
               let result = await notificationController.addNotification(
-                invitee_id,
+                data.invitee_id,
                 "Invite to work",
                 "invite",
-                task_id,
+                data.task_id,
                 decoded._id
               );
               socket.emit("sv-send-work-invitation", result);
