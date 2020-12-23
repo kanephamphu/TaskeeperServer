@@ -585,7 +585,6 @@ async function getTaskManage(task_owner_id, number_task, skip) {
           task_owner_avatar: i.task_owner_avatar,
         });
       }
-      console.log(list);
       return { success: true, data: result };
     } else return { success: false };
   } catch (e) {
