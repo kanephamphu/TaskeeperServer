@@ -8,6 +8,7 @@ const rtg = require("random-token-generator");
 const isValidDay = require("is-valid-date");
 const fetch = require("node-fetch");
 const { URLSearchParams } = require("url");
+const { resolve } = require("path");
 //Send verify account email
 async function sendVerifyAccountEMail(user_id) {
   try {
@@ -63,7 +64,7 @@ async function getVerifyInfo(user_id) {
 //getVerifyInfo("5f15dee66d224e19dcbf6bbf");
 // Created verify token for user
 async function verifyCreator(user_id) {
-  let result = await rtg.generateKey(
+  rtg.generateKey(
     {
       len: 32,
       string: true,
@@ -73,7 +74,7 @@ async function verifyCreator(user_id) {
     async (err, key) => {
       let keyToken = key;
       let verifyNumber = Math.floor(Math.random() * (9999 - 1000) + 1000);
-      user
+      await user
         .updateOne(
           { _id: user_id },
           {
@@ -85,10 +86,6 @@ async function verifyCreator(user_id) {
         .exec();
     }
   );
-  if(result){
-    return {"success" : true};
-  }
-  return {"success" : false};
 }
 
 // Check token for verify account
@@ -277,11 +274,10 @@ async function register(first_name, last_name, email, phone_number, password) {
 // Verify send
 async function sendVerifyUser(user_id) {
   const result = await verifyCreator(user_id);
-  console.log(result);
-  if(result.success){
-    console.log(result.success);
+  setTimeout(()=>{
     sendVerifyAccountEMail(user_id);
-  }
+  },2000);
+  
 }
 
 //Get Group User
