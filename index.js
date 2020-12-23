@@ -3120,7 +3120,7 @@ io.sockets.on("connection", function (socket) {
                 task_id,
                 decoded._id
               );
-              socket.emit("sv-get-send-work-invitation", result);
+              socket.emit("sv-send-work-invitation", result);
             }
           }
         );
