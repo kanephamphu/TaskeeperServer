@@ -72,7 +72,7 @@ async function searchUser(search_string){
 
 // Get search trend
 async function getSearchTrend(){
-    let result = await searchquery.find({},["query_string"], {limit : 4}).sort({"search_count_recently" : -1});
+    let result = await searchquery.find({},["query_string"], {limit : 10}).sort({"search_count_recently" : -1});
     return result;
 }
 // Test
