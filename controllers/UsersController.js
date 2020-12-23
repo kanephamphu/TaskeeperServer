@@ -271,7 +271,7 @@ async function register(first_name, last_name, email, phone_number, password) {
 }
 
 // Verify send
-function sendVerifyUser(user_id) {
+async function sendVerifyUser(user_id) {
   const result = await verifyCreator(user_id);
   sendVerifyUser(user_id);
 }

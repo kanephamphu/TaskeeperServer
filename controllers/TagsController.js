@@ -32,6 +32,7 @@ async function addNewTag(tag){
     }
 }
 
+
 async function searchTags(tag_query){
     let tagList = await tags.find({
         $text : {
