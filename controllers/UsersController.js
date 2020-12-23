@@ -124,6 +124,7 @@ async function checkVerifyNumber(user_id, verifyNumber) {
 }
 // Set activate by token
 async function setActivateByVerifyNumber(user_id, verifyNumber) {
+  
   try {
     let isValid = await checkVerifyNumber(user_id, verifyNumber);
     if (isValid.success == true) {
@@ -271,9 +272,8 @@ async function register(first_name, last_name, email, phone_number, password) {
 
 // Verify send
 function sendVerifyUser(user_id) {
-  verifyCreator(user_id).then(() => {
-    sendVerifyAccountEMail(user_id);
-  });
+  let result = await verifyCreator(user_id);
+  sendVerifyUser(user_id);
 }
 
 //Get Group User
