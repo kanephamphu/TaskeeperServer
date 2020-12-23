@@ -156,7 +156,7 @@ async function getNewsData(user_id, number_task, skip){
 }
 
 //addFollowers("5f15dee66d224e19dcbf6bbf","5f1c5df095199238c4282655");
-getNewsData("5f2546def9ca2b000466c467",10,0)
+//getNewsData("5f2546def9ca2b000466c467",10,0)
 /*async function test(){
     //let te = await addNews("123","3443","2342346","Tai", "sdfsf", "Thanh An", "unextract", 34, 67, "freelance", "Taa", 123123);
     //console.log(te);

@@ -3098,7 +3098,7 @@ io.sockets.on("connection", function (socket) {
       const v = new niv.Validator(data, {
         secret_key: "required",
         task_id: "required",
-        invitee_id: "required",
+        invitee_id: "required"
       });
       const matched = await v.check();
       if (matched) {
@@ -3109,14 +3109,14 @@ io.sockets.on("connection", function (socket) {
             if (err) {
               socket.emit("sv-get-work-employee-job", {
                 success: false,
-                errors: { message: "Token error", rule: "token" },
+                errors: { message: "Token error", rule: "token" }
               });
             }
             if (decoded) {
               if ((await checkExist(decoded._id)) == false) {
                 addToList(decoded._id, socket.id);
               }
-              let result = await notification.addNotification(
+              let result = await notificationController.addNotification(
                 invitee_id,
                 "Invite to work",
                 "invite",
