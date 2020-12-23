@@ -1,15 +1,15 @@
-var express = require("express");
-var app = express();
-var server = require("http").createServer(app);
-var io = require("socket.io").listen(server);
+const express = require("express");
+const app = express();
+const server = require("http").createServer(app);
+const io = require("socket.io").listen(server);
 const rateLimit = require("express-rate-limit");
-var bodyparser = require("body-parser");
-var userController = require("./controllers/UsersController");
-var jwt = require("jsonwebtoken");
-var checker = require("./controllers/Check");
+const bodyparser = require("body-parser");
+const userController = require("./controllers/UsersController");
+const jwt = require("jsonwebtoken");
+const checker = require("./controllers/Check");
 const helmet = require("helmet");
-var tasksController = require("./controllers/TaskController");
-var searchqueryController = require("./controllers/SearchQueryController");
+const tasksController = require("./controllers/TaskController");
+const searchqueryController = require("./controllers/SearchQueryController");
 const niv = require("node-input-validator");
 const { match } = require("assert");
 const upload = require("express-fileupload");
@@ -22,7 +22,7 @@ const notificationController = require("./controllers/NotificationController");
 const notification = require("./models/NotificationModel");
 const message = require("./models/MessageModel");
 const moneytransactionController = require("./controllers/MoneyTransactionController");
-var paypal = require("paypal-rest-sdk");
+const paypal = require("paypal-rest-sdk");
 const { json } = require("body-parser");
 const moneytransaction = require("./models/MoneyTransactionModel");
 const industriesController = require("./controllers/IndustriesController");
@@ -56,7 +56,7 @@ app.use(helmet());
 app.use(express.static("./public"));
 app.use(upload());
 app.use(express.json({ limit: "300kb" })); // body-parser defaults to a body size limit of 300kb
-var clients = [];
+let clients = [];
 io.sockets.on("connection", function (socket) {
   console.log(socket.id + " is connecting");
   //Login server listener, if the account status is unActive send result unActive to client
@@ -91,7 +91,7 @@ io.sockets.on("connection", function (socket) {
               if (err) {
                 console.log(err);
               }
-              var loginresult = {
+              const loginresult = {
                 success: true,
                 secret_key: token,
               };
@@ -101,7 +101,7 @@ io.sockets.on("connection", function (socket) {
             }
           );
         } else {
-          var loginresult = {
+          const loginresult = {
             success: false,
             errors: {
               result,
@@ -192,7 +192,7 @@ io.sockets.on("connection", function (socket) {
               const matched = await v.check();
               if (matched) {
                 if (checker.encrypt(data.old_password) == decoded.password) {
-                  var changepassword = await userController.changePassword(
+                  const changepassword = await userController.changePassword(
                     decoded._id,
                     data.new_password
                   );
@@ -277,7 +277,7 @@ io.sockets.on("connection", function (socket) {
                           },
                         });
                       } else {
-                        var result = await tasksController.addTask(
+                        const result = await tasksController.addTask(
                           data.task_title,
                           data.task_description,
                           data.task_requirement,
@@ -328,7 +328,7 @@ io.sockets.on("connection", function (socket) {
                     }
                     //Handle the dealing price type
                   } else if (data.price_type == "dealing") {
-                    var result = await tasksController.addTask(
+                    const result = await tasksController.addTask(
                       data.task_title,
                       data.task_description,
                       data.task_requirement,
@@ -2497,7 +2497,7 @@ io.sockets.on("connection", function (socket) {
               if ((await checkExist(decoded._id)) == false) {
                 addToList(decoded._id, socket.id);
               }
-              var create_payment_json = {
+              const create_payment_json = {
                 intent: "sale",
                 payer: {
                   payment_method: "paypal",
@@ -3256,8 +3256,8 @@ app.post("/avataruploader", (req, res) => {
           res.send({ success: false });
         }
         if (decoded) {
-          var file = req.files.file;
-          var allowedExtension = [
+          const file = req.files.file;
+          const allowedExtension = [
             "image/jpeg",
             "image/jpg",
             "image/png",
@@ -3339,15 +3339,15 @@ async function getSocketID(userId) {
   }
 }
 async function addToList(userId, socketId) {
-  var clientInfo = new Object();
+  let clientInfo = new Object();
   clientInfo.userId = userId;
   clientInfo.socketId = socketId;
   clients.push(clientInfo);
 }
 
 async function removeFromList(socketId) {
-  for (var i = 0, len = clients.length; i < len; ++i) {
-    var c = clients[i];
+  for (let i = 0, len = clients.length; i < len; ++i) {
+    const c = clients[i];
 
     if (c.socketId == socketId) {
       clients.splice(i, 1);
