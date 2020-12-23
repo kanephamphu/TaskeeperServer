@@ -128,7 +128,7 @@ async function getNewsData(user_id, number_task, skip){
                         "task_description" : i.task_description,
                         "created_time" : i.created_time,
                         "location" : i.location,
-                        "price." : {
+                        "price" : {
                             "price_type" : i.price.price_type,
                             "floor_price" : i.price.floor_price,
                             "ceiling_price" : i.price.ceiling_price,
