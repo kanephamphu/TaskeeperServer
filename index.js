@@ -2923,13 +2923,16 @@ io.sockets.on("connection", function (socket) {
                 data.employee_id
               );
               socket.emit("sv-approve-employee-to-work", result);
-              notificationController.addNotification(
-                data.employee_id,
-                "approved you to work",
-                "approved",
-                data.task_id,
-                decoded._id
-              );
+              if(result.success){
+                notificationController.addNotification(
+                  data.employee_id,
+                  "approved you to work",
+                  "approved",
+                  data.task_id,
+                  decoded._id
+                );
+              }
+              
             }
           }
         );
