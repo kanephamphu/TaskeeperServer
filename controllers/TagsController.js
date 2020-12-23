@@ -32,13 +32,12 @@ async function addNewTag(tag){
     }
 }
 
-
 async function searchTags(tag_query){
     let tagList = await tags.find({
         $text : {
             $search : tag_query
         }
-    },["_id","name"],{limit : 5});
+    },["_id","name"],{limit : 20});
     //console.log(tagList)
     return tagList;
 }
