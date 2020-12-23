@@ -3107,7 +3107,7 @@ io.sockets.on("connection", function (socket) {
           process.env.login_secret_key,
           async (err, decoded) => {
             if (err) {
-              socket.emit("sv-get-work-employee-job", {
+              socket.emit("sv-send-work-invitation", {
                 success: false,
                 errors: { message: "Token error", rule: "token" }
               });
