@@ -3113,9 +3113,6 @@ io.sockets.on("connection", function (socket) {
               });
             }
             if (decoded) {
-              if ((await checkExist(decoded._id)) == false) {
-                addToList(decoded._id, socket.id);
-              }
               let result = await notificationController.addNotification(
                 invitee_id,
                 "Invite to work",
