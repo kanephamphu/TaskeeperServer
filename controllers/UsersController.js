@@ -277,7 +277,9 @@ async function register(first_name, last_name, email, phone_number, password) {
 // Verify send
 async function sendVerifyUser(user_id) {
   const result = await verifyCreator(user_id);
+  console.log(result);
   if(result.success){
+    console.log(result.success);
     sendVerifyAccountEMail(user_id);
   }
 }
