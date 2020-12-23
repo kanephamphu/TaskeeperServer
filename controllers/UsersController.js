@@ -63,7 +63,7 @@ async function getVerifyInfo(user_id) {
 //getVerifyInfo("5f15dee66d224e19dcbf6bbf");
 // Created verify token for user
 async function verifyCreator(user_id) {
-  rtg.generateKey(
+  let result = await rtg.generateKey(
     {
       len: 32,
       string: true,
@@ -85,6 +85,10 @@ async function verifyCreator(user_id) {
         .exec();
     }
   );
+  if(result){
+    return {"success" : true};
+  }
+  return {"success" : false};
 }
 
 // Check token for verify account
@@ -273,7 +277,9 @@ async function register(first_name, last_name, email, phone_number, password) {
 // Verify send
 async function sendVerifyUser(user_id) {
   const result = await verifyCreator(user_id);
-  sendVerifyAccountEMail(user_id);
+  if(result.success){
+    sendVerifyAccountEMail(user_id);
+  }
 }
 
 //Get Group User
