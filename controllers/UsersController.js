@@ -536,8 +536,8 @@ async function editWorkingInformation(
             "working_information.$.position": position,
             "working_information.$.description": description,
             "working_information.$.time_period.time_type": "present",
-            "working_information.$.time_period.from_time": null,
-            "working_information.$.time_period.to_time": to_time,
+            "working_information.$.time_period.from_time": from_time,
+            "working_information.$.time_period.to_time": null,
           },
         }
       );
@@ -593,8 +593,8 @@ async function addNewEducationInformation(
         school_name: school_name,
         description: description,
         "time_period.time_type": "present",
-        "time_period.from_time": null,
-        "time_period.to_time": to_time,
+        "time_period.from_time": from_time,
+        "time_period.to_time": null,
       };
     }
     let result = await user.updateOne(
