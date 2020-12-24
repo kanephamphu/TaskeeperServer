@@ -537,14 +537,12 @@ async function getAppliedJobs(user_id) {
 //getAppliedJobs("5fb358bd885c830004fe0b3c");
 // Get list job which a client applied
 async function getApprovedJobs(user_id) {
-  let listJobs = await task
-    .find(
-      {
-        "work_employee_list.employee_id": user_id,
-      },
-      ["task_title", "task_type", "position", "task_owner_avatar"]
-    )
-    .exec();
+  let listJobs = await task.find(
+    {
+      "work_employee_list.employee_id": user_id,
+    },
+    ["task_title", "task_type", "position", "task_owner_avatar"]
+  );
   if (listJobs) {
     return { success: true, data: listJobs };
   } else {
@@ -602,7 +600,6 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id) {
     },
     "task_candidate_apply_list"
   );
-  console.log(applyInfo);
   if (applyInfo) {
     let price = applyInfo.task_candidate_apply_list.price;
     let user = await userController.getInformation(employee_id);
@@ -626,9 +623,8 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id) {
     );
     if (result) {
       return { success: true };
-    } else {
-      return { success: false };
     }
+    return { success: false };
   }
   return { success: false };
 }

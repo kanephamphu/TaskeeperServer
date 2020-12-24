@@ -125,7 +125,6 @@ async function checkVerifyNumber(user_id, verifyNumber) {
 }
 // Set activate by token
 async function setActivateByVerifyNumber(user_id, verifyNumber) {
-  
   try {
     let isValid = await checkVerifyNumber(user_id, verifyNumber);
     if (isValid.success == true) {
@@ -274,10 +273,9 @@ async function register(first_name, last_name, email, phone_number, password) {
 // Verify send
 async function sendVerifyUser(user_id) {
   const result = await verifyCreator(user_id);
-  setTimeout(()=>{
+  setTimeout(() => {
     sendVerifyAccountEMail(user_id);
-  },2000);
-  
+  }, 2000);
 }
 
 //Get Group User
@@ -551,6 +549,7 @@ async function editWorkingInformation(
             "working_information.$.description": description,
             "working_information.$.time_period.time_type": "present",
             "working_information.$.time_period.from_time": from_time,
+            "working_information.$.time_period.to_time": null,
           },
         }
       );
@@ -607,6 +606,7 @@ async function addNewEducationInformation(
         description: description,
         "time_period.time_type": "present",
         "time_period.from_time": from_time,
+        "time_period.to_time": null,
       };
     }
     let result = await user.updateOne(
