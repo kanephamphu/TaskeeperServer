@@ -287,24 +287,11 @@ async function getGroupUser(id) {
   }
 }
 
-async function editName(user_id, first_name, last_name) {
-  let userDocs = {
-    first_name: first_name,
-    last_name: last_name,
-  };
-  let result = await user.updateOne({ _id: user_id }, userDocs);
-  if (result) {
-    updateUserOfNameData(user_id, first_name, last_name);
-    taskController.updateUserNameTaskData(user_id, first_name, last_name);
-    return { success: true };
-  } else {
-    return { success: false };
-  }
-}
-
 // Edit personal information
 async function editPersonalInfo(
   user_id,
+  first_name,
+  last_name,
   phone_number,
   gender,
   day_of_birth,
@@ -322,6 +309,8 @@ async function editPersonalInfo(
       );
       if (validDay) {
         let userDocs = {
+          first_name: first_name,
+          last_name: last_name,
           "phone_number.current_phone_number": phone_number,
           gender: gender,
           day_of_birth: day_of_birth,

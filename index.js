@@ -2493,7 +2493,7 @@ io.sockets.on("connection", function (socket) {
                 errors: { message: "Token error", rule: "token" },
               });
             }
-            if (decoded) { 
+            if (decoded) {
               if ((await checkExist(decoded._id)) == false) {
                 addToList(decoded._id, socket.id);
               }
@@ -2923,7 +2923,7 @@ io.sockets.on("connection", function (socket) {
                 data.employee_id
               );
               socket.emit("sv-approve-employee-to-work", result);
-              if(result.success){
+              if (result.success) {
                 notificationController.addNotification(
                   data.employee_id,
                   "approved you to work",
@@ -2932,7 +2932,6 @@ io.sockets.on("connection", function (socket) {
                   decoded._id
                 );
               }
-              
             }
           }
         );
@@ -3101,7 +3100,7 @@ io.sockets.on("connection", function (socket) {
       const v = new niv.Validator(data, {
         secret_key: "required",
         task_id: "required",
-        invitee_id: "required"
+        invitee_id: "required",
       });
       const matched = await v.check();
       if (matched) {
@@ -3112,7 +3111,7 @@ io.sockets.on("connection", function (socket) {
             if (err) {
               socket.emit("sv-send-work-invitation", {
                 success: false,
-                errors: { message: "Token error", rule: "token" }
+                errors: { message: "Token error", rule: "token" },
               });
             }
             if (decoded) {
