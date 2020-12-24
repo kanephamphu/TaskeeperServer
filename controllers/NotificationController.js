@@ -47,6 +47,8 @@ async function getNotification(user_id, number_notification, skip) {
 
 // Set readed notifications
 async function setReaded(user_id, notification_id) {
+  console.log(user_id);
+  console.log(notification_id);
   let result = await notification.updateOne(
     { user_id: user_id, _id: notification_id },
     { is_readed: true }
@@ -58,7 +60,7 @@ async function setReaded(user_id, notification_id) {
     return { success: false };
   }
 }
-setReaded("5fb378656eae3400041711a3","5fbe97df7de85600041e61cb");
+//setReaded("5fb378656eae3400041711a3","5fbe97df7de85600041e61cb");
 
 // Set notification readed
 async function setReadedAll(user_id) {
