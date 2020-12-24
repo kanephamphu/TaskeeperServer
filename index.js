@@ -1443,6 +1443,7 @@ io.sockets.on("connection", function (socket) {
         month_of_birth: "required|integer",
         year_of_birth: "required|integer",
       });
+      console.log(data);
       const matched = await v.check();
       if (matched) {
         jwt.verify(

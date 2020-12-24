@@ -317,6 +317,7 @@ async function editPersonalInfo(
           month_of_birth: month_of_birth,
           year_of_birth: year_of_birth,
         };
+        console.log(userDocs);
         let result = await user.updateOne({ _id: user_id }, userDocs);
         if (result) {
           return { success: true };
