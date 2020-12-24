@@ -658,6 +658,7 @@ async function editEducationInformation(
               time_type: time_type,
               from_time: from_time,
             },
+          },
         }
       );
     }
