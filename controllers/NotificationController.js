@@ -51,12 +51,14 @@ async function setReaded(user_id, notification_id) {
     { user_id: user_id, _id: notification_id },
     { is_readed: true }
   );
+  console.log(result);
   if (result) {
     return { success: true };
   } else {
     return { success: false };
   }
 }
+setReaded("5fb378656eae3400041711a3","5fbe97df7de85600041e61cb");
 
 // Set notification readed
 async function setReadedAll(user_id) {
