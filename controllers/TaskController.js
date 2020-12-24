@@ -592,43 +592,52 @@ async function getTaskManage(task_owner_id, number_task, skip) {
 //getTaskManage("5fb378656eae3400041711a3",10,0)
 // Client send approve work
 async function approveEmployeeToWork(task_owner_id, task_id, employee_id) {
-  let applyInfo = await task.findOne(
-    {
-      _id: task_id,
-      task_owner_id: task_owner_id,
-      "task_candidate_apply_list.candidate_id": employee_id,
-    },
-    "task_candidate_apply_list"
-  );
-  if (applyInfo) {
-    let price = applyInfo.task_candidate_apply_list.price;
-    let user = await userController.getInformation(employee_id);
-    let result = await task.updateOne(
+  let approved = await task.findOne({
+    _id: task_id,
+    task_owner_id: task_owner_id,
+    "work_employee_list.employee_id": employee_id,
+  },
+  "_id");
+  if(approved == null){
+    let applyInfo = await task.findOne(
       {
         _id: task_id,
         task_owner_id: task_owner_id,
         "task_candidate_apply_list.candidate_id": employee_id,
       },
-      {
-        $push: {
-          work_employee_list: {
-            employee_id: employee_id,
-            price: price,
-            employee_first_name: user.first_name,
-            employee_last_name: user.last_name,
-            employee_avatar: user.avatar,
-          },
-        },
-      }
+      "task_candidate_apply_list"
     );
-    if (result) {
-      return { success: true };
+    if (applyInfo) {
+      let price = applyInfo.task_candidate_apply_list.price;
+      let user = await userController.getInformation(employee_id);
+      let result = await task.updateOne(
+        {
+          _id: task_id,
+          task_owner_id: task_owner_id,
+          "task_candidate_apply_list.candidate_id": employee_id,
+        },
+        {
+          $push: {
+            work_employee_list: {
+              employee_id: employee_id,
+              price: price,
+              employee_first_name: user.first_name,
+              employee_last_name: user.last_name,
+              employee_avatar: user.avatar,
+            },
+          },
+        }
+      );
+      if (result) {
+        return { success: true };
+      }
+      return { success: false, };
     }
-    return { success: false };
+    return { success: false, "erros" : {"message" : "Didn't apply"}};
   }
-  return { success: false };
+  return { success: false, "erros" : {"message" : "Already Aprove"}};
 }
-//approveEmployeeToWork("5f2546def9ca2b000466c467","5fdb9a176209a600049c299d","5fb358bd885c830004fe0b3c");
+
 
 // Get candidate list
 async function getCandidateNumber(task_id) {
@@ -665,13 +674,7 @@ async function testviewJob() {
   //var result = await getAppliedJobs("5f19a81b1cc2f7000458a566");
   //var result = await addApplicationJob("5f2ac25e8e857e00041dc2b8","5f1c581dcde7010774853652", "Hddd",34, 65);
   //console.log(result);
-  let t = await task.updateMany(
-    { task_owner_id: "5fb378656eae3400041711a3" },
-    {
-      task_owner_avatar:
-        "https://pbs.twimg.com/profile_images/1033521116965289984/r-sCBamh.jpg",
-    }
-  );
+  let t = await approveEmployeeToWork("5fb378656eae3400041711a3","5fe38eee0aa6a70004aac622","5fb358bd885c830004fe0b3c");
   console.log(t);
 }
 //testviewJob()
