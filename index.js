@@ -2921,6 +2921,7 @@ io.sockets.on("connection", function (socket) {
                 data.task_id,
                 data.employee_id
               );
+              console.log(result);
               socket.emit("sv-approve-employee-to-work", result);
               if (result.success) {
                 notificationController.addNotification(
