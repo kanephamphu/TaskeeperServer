@@ -620,8 +620,8 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id) {
             employee_first_name: user.first_name,
             employee_last_name: user.last_name,
             employee_avatar: user.avatar,
-          }
-        }
+          },
+        },
       }
     );
     if (result) {
@@ -912,7 +912,7 @@ async function getNearTask(coordinates) {
         $near: {
           $geometry: { type: "Point", coordinates: coordinates },
           $minDistance: 0,
-          $maxDistance: 5000,
+          $maxDistance: 20000,
         },
       },
     },
