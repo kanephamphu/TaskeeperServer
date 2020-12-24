@@ -519,9 +519,11 @@ async function editWorkingInformation(
             "working_information.$.company_name": company_name,
             "working_information.$.position": position,
             "working_information.$.description": description,
-            "working_information.$.time_period.time_type": time_type,
-            "working_information.$.time_period.from_time": from_time,
-            "working_information.$.time_period.to_time": to_time,
+            "working_information.$.time_period": {
+              time_type: time_type,
+              from_time: from_time,
+              to_time: to_time,
+            },
           },
         }
       );
@@ -536,9 +538,10 @@ async function editWorkingInformation(
             "working_information.$.company_name": company_name,
             "working_information.$.position": position,
             "working_information.$.description": description,
-            "working_information.$.time_period.time_type": "present",
-            "working_information.$.time_period.from_time": from_time,
-            "working_information.$.time_period.to_time": null,
+            "working_information.$.time_period": {
+              time_type: time_type,
+              from_time: from_time,
+            },
           },
         }
       );
@@ -651,9 +654,10 @@ async function editEducationInformation(
           $set: {
             "education_information.$.school_name": school_name,
             "education_information.$.description": description,
-            "education_information.$.time_period.time_type": "present",
-            "education_information.$.time_period.from_time": from_time,
-          },
+            "education_information.$.time_period": {
+              time_type: time_type,
+              from_time: from_time,
+            },
         }
       );
     }
