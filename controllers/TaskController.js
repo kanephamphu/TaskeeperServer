@@ -633,9 +633,9 @@ async function approveEmployeeToWork(task_owner_id, task_id, employee_id) {
       }
       return { success: false, };
     }
-    return { success: false, "erros" : {"message" : "Didn't apply"}};
+    return { success: false, "errors" : {"message" : "Didn't apply"}};
   }
-  return { success: false, "erros" : {"message" : "Already Aprove"}};
+  return { success: false, "errors" : {"message" : "Already Aprove"}};
 }
 
 

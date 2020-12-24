@@ -2133,13 +2133,11 @@ io.sockets.on("connection", function (socket) {
               });
             }
             if (decoded) {
-              if ((await checkExist(decoded._id)) == false) {
-                addToList(decoded._id, socket.id);
-              }
               let result = await notificationController.setReaded(
                 decoded._id,
                 data.notification_id
               );
+              console.log(result);
               socket.emit("sv-readed-notification", result);
             }
           }
@@ -2916,6 +2914,7 @@ io.sockets.on("connection", function (socket) {
             }
             if (decoded) {
               console.log(data);
+              console.log()
               let result = await tasksController.approveEmployeeToWork(
                 decoded._id,
                 data.task_id,
