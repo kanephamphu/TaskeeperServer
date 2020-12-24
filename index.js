@@ -2915,7 +2915,7 @@ io.sockets.on("connection", function (socket) {
               });
             }
             if (decoded) {
-              console.log(decoded._id);
+              console.log(data);
               let result = await tasksController.approveEmployeeToWork(
                 decoded._id,
                 data.task_id,
