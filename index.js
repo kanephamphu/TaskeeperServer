@@ -1456,9 +1456,6 @@ io.sockets.on("connection", function (socket) {
               });
             }
             if (decoded) {
-              if ((await checkExist(decoded._id)) == false) {
-                addToList(decoded._id, socket.id);
-              }
               let result = await userController.editPersonalInfo(
                 decoded._id,
                 data.first_name,

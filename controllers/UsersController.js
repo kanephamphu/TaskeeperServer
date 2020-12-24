@@ -331,7 +331,6 @@ async function editPersonalInfo(
       }
     } else {
       let userDocs = {
-        "email.current_email": email,
         "phone_number.current_phone_number": phone_number,
         gender: gender,
       };
