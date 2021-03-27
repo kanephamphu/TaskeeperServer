@@ -2,6 +2,12 @@ const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io").listen(server);
+const session = require("express-session")({
+  secret: "my-secret",
+  resave: true,
+  saveUninitialized: true
+});
+const sharedsession = require("express-socket.io-session");
 const rateLimit = require("express-rate-limit");
 const bodyparser = require("body-parser");
 const userController = require("./controllers/UsersController");
@@ -34,6 +40,7 @@ const media = require("./models/MediaModel");
 const user = require("./models/UsersModel");
 const api_key = process.env.APIKEY || "Taibodoiqua";
 const cors = require("cors");
+
 server.listen(process.env.PORT || 3000);
 require("dotenv").config();
 
@@ -52,13 +59,14 @@ app.use(bodyparser.json());
 app.use(limiter);
 app.use(cors());
 app.use(helmet());
+app.use(session);
+io.use(sharedsession(session));
 //setting middleware
 app.use(express.static("./public"));
 app.use(upload());
 app.use(express.json({ limit: "300kb" })); // body-parser defaults to a body size limit of 300kb
 let clients = [];
 io.sockets.on("connection", function (socket) {
-  console.log(socket.id + " is connecting");
   //Login server listener, if the account status is unActive send result unActive to client
   socket.on("cl-send-login-req", async function (data) {
     try {
@@ -108,6 +116,8 @@ io.sockets.on("connection", function (socket) {
             },
           };
           socket.emit("sv-send-login-res", loginresult);
+          socket.handshake.session.data = data;
+          socket.handshake.session.save();
         }
       } else {
         console.log(v.errors);
@@ -129,6 +139,10 @@ io.sockets.on("connection", function (socket) {
   //Client send logout request
   socket.on("client-send-logout-request", (token) => {
     if (socket.token == token) console.log("authenticated");
+    if (socket.handshake.session.data) {
+      delete socket.handshake.session.userdata;
+      socket.handshake.session.save();
+  }
   });
   //Client send register request
   socket.on("cl-send-register-req", async (data) => {

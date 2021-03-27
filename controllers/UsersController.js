@@ -401,7 +401,6 @@ async function getInformation(_id) {
     ]);
     return information;
   } catch (e) {
-    console.log(e);
     throw e;
   }
 }

@@ -11,7 +11,6 @@ async function addNewTag(tag){
                 "tag_month_using_count" : 1
             }
         });
-        console.log(updateResult);
         if(updateResult){
             return {"success" : true}
         }else{

@@ -34,7 +34,6 @@ async function addFreelanceTask(
     if (task_type == "freelance") {
       if (endDay != null && endMonth != null && endYear != null) {
         let validDay = isValidDay(endDay + "/" + endMonth + "/" + endYear);
-        console.log(validDay);
         if (validDay) {
           console.log(validDay);
           var taskDocs = {
