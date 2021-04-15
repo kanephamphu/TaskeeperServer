@@ -3361,10 +3361,10 @@ app.get("/get-all-user", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await userController.getAllUser();
-    res.send(result);
+    const result = await userController.getAllUser();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 
@@ -3374,10 +3374,10 @@ app.get("/get-all-task", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await tasksController.getAllTask();
-    res.send(result);
+    const result = await tasksController.getAllTask();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 
@@ -3388,11 +3388,11 @@ app.get("/set-suspended-user", async (req, res) => {
    * user_id
    */
   if (req.query.api_key == api_key) {
-    let user_id = await req.query.user_id;
-    let result = await userController.setSuspended(user_id);
-    res.send(result);
+    const user_id = await req.query.user_id;
+    const result = await userController.setSuspended(user_id);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 
@@ -3403,11 +3403,11 @@ app.get("/set-active-user", async (req, res) => {
    * user_id
    */
   if (req.query.api_key == api_key) {
-    let user_id = await req.query.user_id;
-    let result = await userController.setActive(user_id);
-    res.send(result);
+    const user_id = await req.query.user_id;
+    const result = await userController.setActive(user_id);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 
@@ -3418,11 +3418,11 @@ app.get("/get-all-user-information", async (req, res) => {
    * user_id
    */
   if (req.query.api_key == api_key) {
-    let user_id = await req.query.user_id;
-    let result = await userController.getAllDetail(user_id);
-    res.send(result);
+    const user_id = await req.query.user_id;
+    const result = await userController.getAllDetail(user_id);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 
@@ -3435,11 +3435,11 @@ app.get("/get-all-task-information", async (req, res) => {
    * task_id
    */
   if (req.query.api_key == api_key) {
-    let task_id = await req.query.task_id;
-    let result = await tasksController.getTaskDetail(task_id);
-    res.send(result);
+    const task_id = await req.query.task_id;
+    const result = await tasksController.getTaskDetail(task_id);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 app.get("/get-apply-task", async (req, res) => {
@@ -3447,11 +3447,11 @@ app.get("/get-apply-task", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let task_id = await req.query.task_id;
-    let result = await tasksController.getApprovedJobs(task_id);
-    res.send(result);
+    const task_id = await req.query.task_id;
+    const result = await tasksController.getApprovedJobs(task_id);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-delete-task
@@ -3460,11 +3460,11 @@ app.get("/admin-delete-task", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let task_id = await req.query.task_id;
-    let result = await adminController.deleteTask(task_id);
-    res.send(result);
+    const task_id = await req.query.task_id;
+    const result = await adminController.deleteTask(task_id);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-delete-user
@@ -3473,11 +3473,11 @@ app.get("/admin-delete-user", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let user_id = await req.query.user_id;
-    let result = await adminController.deleteUser(user_id);
-    res.send(result);
+    const user_id = await req.query.user_id;
+    const result = await adminController.deleteUser(user_id);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-getTypejob
@@ -3486,86 +3486,86 @@ app.get("/admin-get-typejob", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let type_job= await req.query.type_job;
-    let result = await adminController.getTypeJobs(type_job);
-    res.send(result);
+    const type_job= await req.query.type_job;
+    const result = await adminController.getTypeJobs(type_job);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-staticalByMonth
-app.get("/admin-statical-month", async (req, res) => {
+app.get("/admin-get-statical-month", async (req, res) => {
   /**
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let key_month =req.query.key_month;
-    let key_year =req.query.key_year;
-    let result = await adminController.statisticalByMonth(key_month,key_year);
-    res.send(result);
+    const month =req.query.month;
+    const year =req.query.year;
+    const result = await adminController.handleStatisticalByMonth(month,year);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-staticalByYear
-app.get("/admin-statical-year", async (req, res) => {
+app.get("/admin-get-statical-year", async (req, res) => {
   /**
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let key_year =req.query.key_year;
-    let result = await adminController.statisticalByYear(key_year);
-    res.send(result);
+    const year =req.query.year;
+    const result = await adminController.handleStatisticalByYear(year);
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //apply-rank
-app.get("/admin-rank-apply-task", async (req, res) => {
+app.get("/admin-get-rank-apply-task", async (req, res) => {
   /**
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await adminController.rankApplyTask();
-    res.send(result);
+    const result = await adminController.rankApplyTask();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //approve-rank
-app.get("/admin-rank-approve-task", async (req, res) => {
+app.get("/admin-get-rank-approve-task", async (req, res) => {
   /**
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await adminController.rankApproceTask();
-    res.send(result);
+    const result = await adminController.rankApproveTask();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //vote-rank-user
-app.get("/admin-rank-vote-user", async (req, res) => {
+app.get("/admin-get-rank-vote-user", async (req, res) => {
   /**
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await adminController.rankVoteUser();
-    res.send(result);
+    const result = await adminController.rankVoteUser();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //vote-interactive-user
-app.get("/admin-rank-interactive-user", async (req, res) => {
+app.get("/admin-get-rank-interactive-user", async (req, res) => {
   /**
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await adminController.rankInteractiveUser();
-    res.send(result);
+    const result = await adminController.rankInteractiveUser();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-manage-vote
@@ -3574,10 +3574,10 @@ app.get("/admin-manage-vote", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await adminController.getVote();
-    res.send(result);
+    const result = await adminController.getVote();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-get-account-isActive
@@ -3586,10 +3586,10 @@ app.get("/admin-get-account-isActive", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await adminController.getAccountIsActive();
-    res.send(result);
+    const result = await adminController.getAccountIsActive();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-get-account-unActive
@@ -3598,10 +3598,10 @@ app.get("/admin-get-account-unActive", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await adminController.getAccountUnActive();
-    res.send(result);
+    const result = await adminController.getAccountUnActive();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-get-rank-search
@@ -3610,10 +3610,10 @@ app.get("/admin-get-rank-search", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await adminController.rankSearch();
-    res.send(result);
+    const result = await adminController.rankSearch();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });
 //admin-get-rank-search-recently
@@ -3622,9 +3622,21 @@ app.get("/admin-get-rank-search-recently", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    let result = await adminController.rankSearchRecently();
-    res.send(result);
+    const result = await adminController.rankSearchRecently();
+    res.status(200).send(result);
   } else {
-    res.send({ success: false, message: "API key error" });
+    res.status(404).send({ success: false, message: "API key error" });
+  }
+});
+app.get("/admin-test-query", async (req, res) => {
+  /**
+   * api_key
+   */
+  if (req.query.api_key == api_key) {
+    const day= req.query.day;
+    const result = await adminController.testquery(day);
+    res.status(200).send(result);
+  } else {
+    res.status(404).send({ success: false, message: "API key error" });
   }
 });

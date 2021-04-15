@@ -1,20 +1,11 @@
-var validator = require("validator");
-var checker = require("./Check");
+
 const tasks = require("../models/TasksModel");
 const users = require("../models/UsersModel");
 const search = require("../models/SearchQueryModel");
-var taskController = require("./TaskController");
-const news = require("../controllers/NewsController");
-const wall = require("../controllers/WallController");
-const rtg = require("random-token-generator");
-const isValidDay = require("is-valid-date");
-const fetch = require("node-fetch");
-const { URLSearchParams } = require("url");
-const { resolve } = require("path");
 //delete Task
 async function deleteTask(task_id) {
   try {
-    let result = await tasks.deleteOne({ _id: task_id });
+    const result = await tasks.deleteOne({ _id: task_id });
     if (result) return { success: true };
     else return { success: false };
   } catch (e) {
@@ -22,9 +13,9 @@ async function deleteTask(task_id) {
   }
 }
 // delete User
-async function deleteUser(User_id) {
+async function deleteUser(user_id) {
   try {
-    let result = await users.deleteOne({ _id: User_id });
+    const result = await users.deleteOne({ _id: user_id });
     if (result) return { success: true };
     else return { success: false };
   } catch (e) {
@@ -43,15 +34,17 @@ async function getTypeJobs(type_job) {
   }
 }
 //getTaskMonth
-async function getTaskMonth(key_month, key_year) {
+//year :the year you want to get
+//month: month of that year you wan to get
+async function getTaskMonth(month,year) {
   try {
     let taskList = await tasks.find({}, {});
     let data = [];
     if (taskList) {
       for (let i = 0; i < taskList.length; i++) {
         let day = new Date(taskList[i].created_time);
-        if (day.getFullYear() == key_year) {
-          if (day.getMonth() == key_month) {
+        if (day.getFullYear() == year) {
+          if (day.getMonth() == month) {
             data.push(taskList[i]);
           }
         }
@@ -63,9 +56,11 @@ async function getTaskMonth(key_month, key_year) {
   }
 }
 //staticalbymonth
-async function statisticalByMonth(key_month, key_year) {
+//year :the year you want to get
+//month: month of that year you wan to get
+async function handleStatisticalByMonth(month,year) {
   try {
-    let taskList = await getTaskMonth(key_month, key_year);
+    let taskList = await getTaskMonth(month,year);
     if (taskList) {
       return { success: true, data: taskList };
     } else return { success: false };
@@ -74,14 +69,15 @@ async function statisticalByMonth(key_month, key_year) {
   }
 }
 //getTaskYear
-async function getTaskYear(key_year) {
+//year :the year you want to get
+async function getTaskYear(year) {
   try {
     let taskList = await tasks.find({}, {});
     let data = [];
     if (taskList) {
       for (let i = 0; i < taskList.length; i++) {
         let day = new Date(taskList[i].created_time);
-        if (day.getFullYear() == key_year) {
+        if (day.getFullYear() == year) {
           data.push(taskList[i]);
         }
       }
@@ -92,9 +88,10 @@ async function getTaskYear(key_year) {
   }
 }
 //staticalbyYear
-async function statisticalByYear(key_year) {
+//year :the year you want to get
+async function handleStatisticalByYear(year) {
   try {
-    let taskList = await getTaskYear(key_year);
+    let taskList = await getTaskYear(year);
     if (taskList) {
       return { success: true, data: taskList };
     } else return { success: false };
@@ -147,7 +144,7 @@ async function rankApplyTask() {
   }
 }
 //approve-rank
-async function rankApproceTask() {
+async function rankApproveTask() {
   try {
     let taskList = await tasks.find({},{});
     let data = [];
@@ -168,20 +165,13 @@ async function sortRankUser(arrData,type) {
     if (arrData) {
       for (let i = 0; i < arrData.length - 1; i++) {
         for (let j = i + 1; j < arrData.length; j++) {
-          if(type=="vote"){
-            if (arrData[i].votes.vote_point_average < arrData[j].votes.vote_point_average) {
-              temp = arrData[i];
-              arrData[i] = arrData[j];
-              arrData[j] = temp;
-            }
-          }else if(type=="interactive"){
+        if(type=="interactive"){
             if ((arrData[i].task_view_history.length+arrData[i].task_saved.length) < (arrData[j].task_view_history.length+arrData[j].task_saved.length)) {
               temp = arrData[i];
               arrData[i] = arrData[j];
               arrData[j] = temp;
             }
           }
-          
         }
       }
       return true;
@@ -192,14 +182,9 @@ async function sortRankUser(arrData,type) {
 }
 async function rankVoteUser()  {
   try {
-    let userList = await users.find({},{});
-    let data = [];
+    let userList = await users.find().sort({"votes.vote_point_average":-1});
     if (userList) {
-      for (let i = 0; i < userList.length; i++) {
-          data.push(userList[i]);
-      }
-      sortRankUser(data,"vote");
-      return { success: true, data: data };
+      return { success: true, data: userList };
     } else return { success: false };
   } catch (e) {
     throw e;
@@ -236,15 +221,9 @@ async function getVote()  {
 }
 async function getAccountIsActive()  {
   try {
-    let userList = await users.find({},{});
-    let data = [];
+    let userList = await users.find({status:"isActive"},{});
     if (userList) {
-      for (let i = 0; i < userList.length; i++) {
-         if(userList[i].status=="isActive"){
-            data.push(userList[i]);
-         }
-      }
-      return { success: true, data: data };
+      return { success: true, data: userList };
     } else return { success: false };
   } catch (e) {
     throw e;
@@ -252,44 +231,11 @@ async function getAccountIsActive()  {
 }
 async function getAccountUnActive()  {
   try {
-    let userList = await users.find({},{});
+    let userList = await users.find({status:"unActive"},{});
     let data = [];
     if (userList) {
-      for (let i = 0; i < userList.length; i++) {
-         if(userList[i].status=="unActive"){
-            data.push(userList[i]);
-         }
-      }
-      return { success: true, data: data };
+      return { success: true, data: userList };
     } else return { success: false };
-  } catch (e) {
-    throw e;
-  }
-}
-async function sortRankSearch(arrData,type) {
-  try {
-    let temp = arrData[0];
-    if (arrData) {
-      for (let i = 0; i < arrData.length - 1; i++) {
-        for (let j = i + 1; j < arrData.length; j++) {
-          if(type=="search_count"){
-            if (arrData[i].search_count < arrData[j].search_count) {
-              temp = arrData[i];
-              arrData[i] = arrData[j];
-              arrData[j] = temp;
-            }
-          }else if(type=="search_count_recently"){
-            if (arrData[i].search_count_recently < arrData[j].search_count_recently) {
-              temp = arrData[i];
-              arrData[i] = arrData[j];
-              arrData[j] = temp;
-            }
-          }
-          
-        }
-      }
-      return true;
-    } else return false;
   } catch (e) {
     throw e;
   }
@@ -297,14 +243,9 @@ async function sortRankSearch(arrData,type) {
 //rank - search
 async function rankSearch()  {
   try {
-    let searchList = await search.find({},{});
-    let data = [];
+    let searchList = await search.find().sort({"search_count":-1});
     if (searchList) {
-      for (let i = 0; i < searchList.length; i++) {
-            data.push(searchList[i]);     
-      }
-      sortRankSearch(data,"search_count")
-      return { success: true, data: data };
+      return { success: true, data: searchList };
     } else return { success: false };
   } catch (e) {
     throw e;
@@ -312,30 +253,38 @@ async function rankSearch()  {
 }
 async function rankSearchRecently()  {
   try {
-    let searchList = await search.find({},{});
-    let data = [];
+    let searchList = await search.find().sort({"search_count_recently":-1});
     if (searchList) {
-      for (let i = 0; i < searchList.length; i++) {
-            data.push(searchList[i]);     
-      }
-      sortRankSearch(data,"search_count_recently")
-      return { success: true, data: data };
+      return { success: true, data: searchList };
     } else return { success: false };
   } catch (e) {
     throw e;
   }
 }
+async function testquery(day_key)  {
+  try {
+    let day = new Date(day_key);
+    let tasklist = await search.find({created_time:-1},{});
+  
+    if (tasklist) {
+      return { success: true, data: tasklist };
+    } else return { success: false };
+  } catch (e) {
+    throw e;
+  }
+}
+module.exports.testquery = testquery;
 module.exports.rankSearchRecently = rankSearchRecently;
-module.exports.rankSearch= rankSearch;
-module.exports.getAccountUnActive= getAccountUnActive;
-module.exports.getAccountIsActive= getAccountIsActive;
-module.exports.rankInteractiveUser=rankInteractiveUser;
-module.exports.rankVoteUser=rankVoteUser;
-module.exports.rankApproceTask=rankApproceTask;
+module.exports.rankSearch = rankSearch;
+module.exports.getAccountUnActive = getAccountUnActive;
+module.exports.getAccountIsActive = getAccountIsActive;
+module.exports.rankInteractiveUser = rankInteractiveUser;
+module.exports.rankVoteUser = rankVoteUser;
+module.exports.rankApproveTask = rankApproveTask;
 module.exports.rankApplyTask = rankApplyTask;
-module.exports.statisticalByYear = statisticalByYear;
-module.exports.statisticalByMonth = statisticalByMonth;
+module.exports.handleStatisticalByYear = handleStatisticalByYear;
+module.exports.handleStatisticalByMonth = handleStatisticalByMonth;
 module.exports.getTypeJobs = getTypeJobs;
 module.exports.deleteTask = deleteTask;
 module.exports.deleteUser = deleteUser;
-module.exports.getVote=getVote;
+module.exports.getVote = getVote;
