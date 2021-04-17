@@ -3628,13 +3628,25 @@ app.get("/admin-get-rank-search-recently", async (req, res) => {
     res.status(404).send({ success: false, message: "API key error" });
   }
 });
-app.get("/admin-test-query", async (req, res) => {
+//admin-get-all-transaction
+app.get("/admin-get-all-transaction", async (req, res) => {
   /**
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const day= req.query.day;
-    const result = await adminController.testquery(day);
+    const result = await adminController.getTransaction();
+    res.status(200).send(result);
+  } else {
+    res.status(404).send({ success: false, message: "API key error" });
+  }
+});
+//admin-get-rank-tags-choosed
+app.get("/admin-get-rank-tags-choosed", async (req, res) => {
+  /**
+   * api_key
+   */
+  if (req.query.api_key == api_key) {
+    const result = await adminController.getRankTags();
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });

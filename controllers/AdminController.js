@@ -2,6 +2,8 @@
 const tasks = require("../models/TasksModel");
 const users = require("../models/UsersModel");
 const search = require("../models/SearchQueryModel");
+const tags = require("../models/TagsModel");
+const transaction = require("../models/MoneyTransactionModel");
 //delete Task
 async function deleteTask(task_id) {
   try {
@@ -232,7 +234,7 @@ async function getAccountIsActive()  {
 async function getAccountUnActive()  {
   try {
     let userList = await users.find({status:"unActive"},{});
-    let data = [];
+    
     if (userList) {
       return { success: true, data: userList };
     } else return { success: false };
@@ -251,6 +253,7 @@ async function rankSearch()  {
     throw e;
   }
 }
+//rank - search- recently
 async function rankSearchRecently()  {
   try {
     let searchList = await search.find().sort({"search_count_recently":-1});
@@ -261,19 +264,91 @@ async function rankSearchRecently()  {
     throw e;
   }
 }
-async function testquery(day_key)  {
+// get - transaction
+async function getTransaction() {
   try {
-    let day = new Date(day_key);
-    let tasklist = await search.find({created_time:-1},{});
-  
-    if (tasklist) {
-      return { success: true, data: tasklist };
+    let transactionlist = await transaction.find({},{});
+    if (transactionlist) {
+      return { success: true, data: transactionlist };
     } else return { success: false };
   } catch (e) {
     throw e;
   }
 }
-module.exports.testquery = testquery;
+// get - tags - type
+async function getTagsType() {
+  try {
+    let tagsList = await tags.find({},{"name":1});
+    if (tagsList) {
+      return tagsList;
+    } else return null;
+  } catch (e) {
+    throw e;
+  }
+}
+//get - all -tags
+async function getTags(){
+  try {
+    let tagsList = await tasks.find({},{"tags":1,"_id":0});
+    let data=[];
+    if (tagsList) {
+        for(let i=0 ;i < tagsList.length;i++){
+          for(let j=0 ;i < tagsList.length;i++){
+            data.push(tagsList[i].tags[j])
+          }
+        }
+      return data;
+    } else return null;
+  } catch (e) {
+    throw e;
+  }
+}
+// sort tags
+async function sortRankTags(arrData) {
+  try {
+    let temp = arrData[0];
+    if (arrData) {
+      for (let i = 0; i < arrData.length - 1; i++) {
+        for (let j = i + 1; j < arrData.length; j++) {
+            if (arrData[i].tag_count < arrData[j].tag_count) {
+              temp = arrData[i];
+              arrData[i] = arrData[j];
+              arrData[j] = temp;
+            }
+        }
+      }
+      return true;
+    } else return false;
+  } catch (e) {
+    throw e;
+  }
+}
+//get - rank - tags
+async function getRankTags() {
+  try {
+    let dataTag = await getTagsType();
+    let data= await getTags();
+    let datanew=[];
+    if (dataTag) {
+      for(let i=0;i<dataTag.length;i++) {
+        let dem=0;
+        for (let j = 0; j < data.length; j++) {
+          if(dataTag[i].name === data[j]) {
+            dem++;
+          }
+        }
+        datanew.push({name:dataTag[i].name,tag_count:dem,_id:dataTag[i]._id})
+        
+      }
+      sortRankTags(datanew);
+      return { success: true, data: datanew };
+    } else return { success: false };
+  } catch (e) {
+    throw e;
+  }
+}
+module.exports.getRankTags = getRankTags;
+module.exports.getTransaction = getTransaction;
 module.exports.rankSearchRecently = rankSearchRecently;
 module.exports.rankSearch = rankSearch;
 module.exports.getAccountUnActive = getAccountUnActive;
