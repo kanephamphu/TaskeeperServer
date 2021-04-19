@@ -35,72 +35,6 @@ async function getTypeJobs(type_job) {
     throw e;
   }
 }
-//getTaskMonth
-//year :the year you want to get
-//month: month of that year you wan to get
-async function getTaskMonth(month,year) {
-  try {
-    let taskList = await tasks.find({}, {});
-    let data = [];
-    if (taskList) {
-      for (let i = 0; i < taskList.length; i++) {
-        let day = new Date(taskList[i].created_time);
-        if (day.getFullYear() == year) {
-          if (day.getMonth() == month) {
-            data.push(taskList[i]);
-          }
-        }
-      }
-      return data;
-    } else return data;
-  } catch (e) {
-    throw e;
-  }
-}
-//staticalbymonth
-//year :the year you want to get
-//month: month of that year you wan to get
-async function handleStatisticalByMonth(month,year) {
-  try {
-    let taskList = await getTaskMonth(month,year);
-    if (taskList) {
-      return { success: true, data: taskList };
-    } else return { success: false };
-  } catch (e) {
-    throw e;
-  }
-}
-//getTaskYear
-//year :the year you want to get
-async function getTaskYear(year) {
-  try {
-    let taskList = await tasks.find({}, {});
-    let data = [];
-    if (taskList) {
-      for (let i = 0; i < taskList.length; i++) {
-        let day = new Date(taskList[i].created_time);
-        if (day.getFullYear() == year) {
-          data.push(taskList[i]);
-        }
-      }
-      return data;
-    } else return data;
-  } catch (e) {
-    throw e;
-  }
-}
-//staticalbyYear
-//year :the year you want to get
-async function handleStatisticalByYear(year) {
-  try {
-    let taskList = await getTaskYear(year);
-    if (taskList) {
-      return { success: true, data: taskList };
-    } else return { success: false };
-  } catch (e) {
-    throw e;
-  }
-}
 //apply-rank
 async function sortRankTask(arrData,type) {
   try {
@@ -182,9 +116,9 @@ async function sortRankUser(arrData,type) {
     throw e;
   }
 }
-async function rankVoteUser()  {
+async function rankVoteUser(number_user,skip)  {
   try {
-    let userList = await users.find().sort({"votes.vote_point_average":-1});
+    let userList = await users.find().sort({"votes.vote_point_average":-1}).limit(number_user).skip(skip);
     if (userList) {
       return { success: true, data: userList };
     } else return { success: false };
@@ -207,23 +141,19 @@ async function rankInteractiveUser()  {
     throw e;
   }
 }
-async function getVote()  {
+async function getVote(number,skip)  {
   try {
-    let userList = await users.find({},["first_name","last_name","votes"]);
-    let data = [];
-    if (userList) {
-      for (let i = 0; i < userList.length; i++) {
-          data.push(userList[i]);
-      }
-      return { success: true, data: data };
+    let userList = await users.find({},["first_name","last_name","votes"]).limit(number).skip(skip);
+    if (userList) {   
+      return { success: true, data: userList };
     } else return { success: false };
   } catch (e) {
     throw e;
   }
 }
-async function getAccountIsActive()  {
+async function getAccountIsActive(number,skip)  {
   try {
-    let userList = await users.find({status:"isActive"},{});
+    let userList = await users.find({status:"isActive"},{}).limit(number).skip(skip);
     if (userList) {
       return { success: true, data: userList };
     } else return { success: false };
@@ -231,9 +161,9 @@ async function getAccountIsActive()  {
     throw e;
   }
 }
-async function getAccountUnActive()  {
+async function getAccountUnActive(number,skip)  {
   try {
-    let userList = await users.find({status:"unActive"},{});
+    let userList = await users.find({status:"unActive"},{}).limit(number).skip(skip);
     
     if (userList) {
       return { success: true, data: userList };
@@ -243,9 +173,9 @@ async function getAccountUnActive()  {
   }
 }
 //rank - search
-async function rankSearch()  {
+async function rankSearch(number,skip)  {
   try {
-    let searchList = await search.find().sort({"search_count":-1});
+    let searchList = await search.find().sort({"search_count":-1}).limit(number).skip(skip);
     if (searchList) {
       return { success: true, data: searchList };
     } else return { success: false };
@@ -254,9 +184,9 @@ async function rankSearch()  {
   }
 }
 //rank - search- recently
-async function rankSearchRecently()  {
+async function rankSearchRecently(number,skip)  {
   try {
-    let searchList = await search.find().sort({"search_count_recently":-1});
+    let searchList = await search.find().sort({"search_count_recently":-1}).limit(number).skip(skip);
     if (searchList) {
       return { success: true, data: searchList };
     } else return { success: false };
@@ -265,9 +195,9 @@ async function rankSearchRecently()  {
   }
 }
 // get - transaction
-async function getTransaction() {
+async function getTransaction(number,skip) {
   try {
-    let transactionlist = await transaction.find({},{});
+    let transactionlist = await transaction.find().limit(number).skip(skip);
     if (transactionlist) {
       return { success: true, data: transactionlist };
     } else return { success: false };
@@ -347,6 +277,38 @@ async function getRankTags() {
     throw e;
   }
 }
+//getstaticalbymonth
+//year :the year you want to get
+//month: month of that year you wan to get
+async function getStatisticalByMonth(month,year) {
+  try {
+    let start = new Date(year,month,1);
+    let end = new Date(year,month,30);
+    let query = {created_time:{$gte:start,$lt:end}};
+    let thongke = await  tasks.find(query);
+    if (thongke) {
+      return { success: true, data: thongke };
+    } else return { success: false };
+  } catch (e) {
+    throw e;
+  }
+}
+//getTaskYear
+//year :the year you want to get
+async function getStatisticalByYear(year) {
+  try {
+    let start = new Date(year,0,1);
+    let end = new Date(year,11,30);
+    let query = {created_time:{$gte:start,$lt:end}};
+    let thongke = await  tasks.find(query);
+    if (thongke) {
+      return { success: true, data: thongke };
+    } else return { success: false };
+  } catch (e) {
+    throw e;
+  }
+}
+module.exports.getStatisticalByYear=getStatisticalByYear;
 module.exports.getRankTags = getRankTags;
 module.exports.getTransaction = getTransaction;
 module.exports.rankSearchRecently = rankSearchRecently;
@@ -357,8 +319,7 @@ module.exports.rankInteractiveUser = rankInteractiveUser;
 module.exports.rankVoteUser = rankVoteUser;
 module.exports.rankApproveTask = rankApproveTask;
 module.exports.rankApplyTask = rankApplyTask;
-module.exports.handleStatisticalByYear = handleStatisticalByYear;
-module.exports.handleStatisticalByMonth = handleStatisticalByMonth;
+module.exports.getStatisticalByMonth = getStatisticalByMonth;
 module.exports.getTypeJobs = getTypeJobs;
 module.exports.deleteTask = deleteTask;
 module.exports.deleteUser = deleteUser;

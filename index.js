@@ -3499,9 +3499,9 @@ app.get("/admin-get-statical-month", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const month =req.query.month;
-    const year =req.query.year;
-    const result = await adminController.handleStatisticalByMonth(month,year);
+    const month =parseInt(req.query.month);
+    const year = parseInt(req.query.year);
+    const result = await adminController.getStatisticalByMonth(month,year);
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });
@@ -3513,8 +3513,8 @@ app.get("/admin-get-statical-year", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const year =req.query.year;
-    const result = await adminController.handleStatisticalByYear(year);
+    const year = parseInt(req.query.year);
+    const result = await adminController.getStatisticalByYear(year);
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });
@@ -3550,7 +3550,9 @@ app.get("/admin-get-rank-vote-user", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const result = await adminController.rankVoteUser();
+    const number_user = parseInt(req.query.number_user, 10);
+    const skip = parseInt(req.query.skip);
+    const result = await adminController.rankVoteUser(number_user,skip);
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });
@@ -3574,7 +3576,9 @@ app.get("/admin-manage-vote", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const result = await adminController.getVote();
+    const number_vote = parseInt(req.query.number_vote, 10);
+    const skip = parseInt(req.query.skip);
+    const result = await adminController.getVote(number_vote,skip);
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });
@@ -3586,7 +3590,9 @@ app.get("/admin-get-account-isActive", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const result = await adminController.getAccountIsActive();
+    const number_account = parseInt(req.query.number_account, 10);
+    const skip = parseInt(req.query.skip);
+    const result = await adminController.getAccountIsActive(number_account,skip);
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });
@@ -3598,7 +3604,9 @@ app.get("/admin-get-account-unActive", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const result = await adminController.getAccountUnActive();
+    const number_account = parseInt(req.query.number_account, 10);
+    const skip = parseInt(req.query.skip);
+    const result = await adminController.getAccountUnActive(number_account,skip);
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });
@@ -3610,7 +3618,9 @@ app.get("/admin-get-rank-search", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const result = await adminController.rankSearch();
+    const number_search = parseInt(req.query.number_search, 10);
+    const skip = parseInt(req.query.skip);
+    const result = await adminController.rankSearch(number_search,skip);
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });
@@ -3622,7 +3632,9 @@ app.get("/admin-get-rank-search-recently", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const result = await adminController.rankSearchRecently();
+    const number_search = parseInt(req.query.number_search, 10);
+    const skip = parseInt(req.query.skip);
+    const result = await adminController.rankSearchRecently(number_search,skip);
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });
@@ -3634,7 +3646,9 @@ app.get("/admin-get-all-transaction", async (req, res) => {
    * api_key
    */
   if (req.query.api_key == api_key) {
-    const result = await adminController.getTransaction();
+    const number_transaction = parseInt(req.query.number_transaction,10);
+    const skip = parseInt(req.query.skip);
+    const result = await adminController.getTransaction(number_transaction,skip);
     res.status(200).send(result);
   } else {
     res.status(404).send({ success: false, message: "API key error" });
