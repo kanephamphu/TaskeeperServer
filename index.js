@@ -183,7 +183,7 @@ io.sockets.on("connection", function (socket) {
         socket.emit("serverSearchUsersAutoComplete", {success: false, errors: validator.errors});
       }
     }catch(error){
-      socket.emit("serverSearchUsersAutoComplete", {success: false, status: 500, errors: { message: "Internal error", error: error}});
+      socket.emit("serverSearchUsersAutoComplete", {success: false, status: 500, errors: { message: "Internal error", error: error.message}});
     }
   });
 
