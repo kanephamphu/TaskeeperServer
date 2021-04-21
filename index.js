@@ -168,7 +168,7 @@ io.sockets.on("connection", function (socket) {
     }
   });
 
-  socket.on("clientSearchUsersAutoComplete", (request)=>{
+  socket.on("clientSearchUsersAutoComplete", async(request)=>{
     try{
       const validator = new niv.Validator(request, {
         searchString: "required"
