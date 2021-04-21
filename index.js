@@ -176,7 +176,7 @@ io.sockets.on("connection", function (socket) {
       const matched = await validator.check();
       if(matched){
         const searchUsersResult = await userController.searchUserAutoComplete(request.searchString);
-        if(usersResult){
+        if(searchUsersResult){
           socket.emit("serverSearchUsersAutoComplete", searchUsersResult);
         }
       }else{
