@@ -409,6 +409,8 @@ UserChema.index({
   first_name: "text",
   last_name: "text",
   tags: "text",
+  "email.current_email": "text",
+  "phone_number.current_phone_number": "text"
 });
 const user = mongoose.model("User", UserChema);
 module.exports = user;

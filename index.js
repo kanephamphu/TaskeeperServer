@@ -168,6 +168,25 @@ io.sockets.on("connection", function (socket) {
     }
   });
 
+  socket.on("clientSearchUsersAutoComplete", (request)=>{
+    try{
+      const validator = new niv.Validator(request, {
+        searchString: "required"
+      });
+
+      if(validator.matched){
+        const searchUsersResult = await userController.searchUserAutoComplete(request.searchString);
+        if(usersResult){
+          socket.emit("serverSearchUsersAutoComplete", searchUsersResult);
+        }
+      }else{
+        socket.emit("serverSearchUsersAutoComplete", {success: false, errors: validator.errors});
+      }
+    }catch(error){
+      socket.emit("serverSearchUsersAutoComplete", {success: false, status: 500, errors: { message: "Internal error"}});
+    }
+  });
+
   //Change password
   socket.on("cl-change-password", (data) => {
     try {

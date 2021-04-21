@@ -35,16 +35,13 @@ async function addSearchQuery(query_string){
 
 // Search query autocomplete
 async function searchAutoComplete(search_string){
-    try{
-        let t = await searchquery.find({
-            $text : {
-                $search : search_string
-            }
-        },["_id","query_string"],{limit : 10}).sort({'search_count' : -1});
-        return t;
-    }catch(e){
-        throw(e);
-    }
+    let searchResult = await searchquery.find({
+        $text : {
+            $search : search_string
+        }
+    },["_id","query_string"],{limit : 10}).sort({'search_count' : -1});
+
+    return searchResult;    
 }
 
 async function test(){

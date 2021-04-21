@@ -1388,6 +1388,17 @@ async function getAllUser() {
     return { success: false, errors: e };
   }
 }
+
+async function searchUserAutoComplete(searchString){
+  const searchResult = await user.find({
+      $text : {
+          $search : searchString
+      }
+  },["_id", "first_name", "last_name", "avatar"],{limit : 10}).sort({'search_count' : -1});
+
+  return {success: true, status: 200, data: searchResult};    
+}
+
 //addTags("5f2546def9ca2b000466c467", "IT");
 //addNewTaskView("5f2546def9ca2b000466c467", "5fb422d241900d0004b6ee58")
 //addNewLocationInformation("5f2546def9ca2b000466c467", 165.3, 80)
@@ -1396,7 +1407,7 @@ async function getAllUser() {
 //testviewJob();
 //saveTask("5f2546def9ca2b000466c467","5f3629d61e62e1000425540e")
 //getSavedTask("5f2546def9ca2b000466c467",1,0)
-getAllUser();
+// getAllUser();
 module.exports.getAllUser = getAllUser;
 module.exports.addTags = addTags;
 module.exports.avatarChange = avatarChange;
@@ -1442,3 +1453,4 @@ module.exports.getTaskView = getTaskView;
 module.exports.addListTags = addListTags;
 module.exports.checkFollowed = checkFollowed;
 module.exports.checkTaskSaved = checkTaskSaved;
+module.exports.searchUserAutoComplete = searchUserAutoComplete;
