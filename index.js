@@ -174,7 +174,7 @@ io.sockets.on("connection", function (socket) {
         searchString: "required"
       });
 
-      if(validator.matched){
+      if(validator.checked()){
         const searchUsersResult = await userController.searchUserAutoComplete(request.searchString);
         if(usersResult){
           socket.emit("serverSearchUsersAutoComplete", searchUsersResult);
