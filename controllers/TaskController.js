@@ -969,7 +969,9 @@ async function checkApplied(user_id, task_id) {
   }
 }
 
-async function searchUser(userId, )
+async function searchUserByContactInformation(searchString){
+
+}
 
 
 //getWorkEmployee("5fb378656eae3400041711a3");
