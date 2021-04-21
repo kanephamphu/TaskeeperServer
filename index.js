@@ -173,7 +173,7 @@ io.sockets.on("connection", function (socket) {
       const validator = new niv.Validator(request, {
         searchString: "required"
       });
-      const matched = await v.check();
+      const matched = await validator.check();
       if(matched){
         const searchUsersResult = await userController.searchUserAutoComplete(request.searchString);
         if(usersResult){
