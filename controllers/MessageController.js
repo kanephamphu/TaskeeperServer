@@ -53,8 +53,6 @@ async function addMessage(sender_id,receiver_id, text, image, video, audio){
     
 }
 
-
-
 // Get newest message 
 async function getNewestMessage(sender_id, receiver_id){
     let newestmessage = await message.findOne( {"participants.user_id" : {$in : [sender_id, receiver_id]}},{},{limit: 1});
@@ -64,10 +62,6 @@ async function getNewestMessage(sender_id, receiver_id){
     return null;
 }
 
-//getNewestMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9");
-//addMessage("5f2ac6648e857e00041dc2b9","5f2546def9ca2b000466c467","He lô lại", null, null, null);
-//addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","He lô lại", null, null, null);
-//Read message 
 async function readMessage(user_id,number_message, skip){
     /*$or : [
         {
@@ -147,6 +141,7 @@ async function setAllReaded(user_id){
         return {"success" : false};
     }
 }
+
 //setReaded("5f2546def9ca2b000466c467","5f915297b7953d1910cb033b")
 //readMessage("5f2546def9ca2b000466c467",10,0);
 //readUserMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9",10,0)
@@ -250,6 +245,11 @@ async function getUnreadNumber(receiver_id, sender_id){
     let unread_number = await message.find({"sender_id" : sender_id, "receiver_id" : receiver_id, "is_readed" : false},{}).count();
     return unread_number;
 }
+
+//getNewestMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9");
+//addMessage("5f2ac6648e857e00041dc2b9","5f2546def9ca2b000466c467","He lô lại", null, null, null);
+//addMessage("5f2546def9ca2b000466c467","5f2ac6648e857e00041dc2b9","He lô lại", null, null, null);
+//Read message 
 
 // Get Total Unread Message
 async function getTotalUnreadMessage(receiver_id){

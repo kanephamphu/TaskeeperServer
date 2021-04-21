@@ -1507,7 +1507,7 @@ io.sockets.on("connection", function (socket) {
               if ((await checkExist(decoded._id)) == false) {
                 addToList(decoded._id, socket.id);
               }
-              let result = await messageController.addMessage(
+              const result = await messageController.addMessage(
                 decoded._id,
                 data.receiver_id,
                 data.text,
@@ -1517,8 +1517,8 @@ io.sockets.on("connection", function (socket) {
               );
               socket.emit("sv-send-message", result);
               if (checkExist(data.receiver_id)) {
-                let socketUserId = await getSocketID(data.user_id);
-                let newestMessage = await messageController.getNewestMessage(
+                const socketUserId = await getSocketID(data.user_id);
+                const newestMessage = await messageController.getNewestMessage(
                   decoded._id,
                   data.receiver_id
                 );
@@ -1564,7 +1564,7 @@ io.sockets.on("connection", function (socket) {
               if ((await checkExist(decoded._id)) == false) {
                 addToList(decoded._id, socket.id);
               }
-              let result = await messageController.setReaded(
+              const result = await messageController.setReaded(
                 decoded._id,
                 data.sender_id
               );
@@ -3267,7 +3267,7 @@ app.post("/avataruploader", (req, res) => {
             let uploaded = await mediaController.avatarUpload(
               decoded._id,
               file.mimetype,
-              file.size,
+              file.size || 0,
               "./public/images"
             );
             if (uploaded.success == true) {
@@ -3323,28 +3323,29 @@ app.get("/accountverify", async (req, res) => {
     }
   }
 });
-async function checkExist(userId) {
-  let id = await clients.find((el) => el.userId == userId);
+ function checkExist(userId) {
+  let id = clients.find((el) => el.userId == userId);
   if (id) {
     return true;
   }
   return false;
 }
 
-async function getSocketID(userId) {
-  let id = await clients.find((el) => el.userId == userId);
+function getSocketID(userId) {
+  let id = clients.find((el) => el.userId == userId);
   if (id) {
     return id["socketId"];
   }
 }
-async function addToList(userId, socketId) {
+
+function addToList(userId, socketId) {
   let clientInfo = new Object();
   clientInfo.userId = userId;
   clientInfo.socketId = socketId;
   clients.push(clientInfo);
 }
 
-async function removeFromList(socketId) {
+function removeFromList(socketId) {
   for (let i = 0, len = clients.length; i < len; ++i) {
     const c = clients[i];
 
@@ -3354,6 +3355,8 @@ async function removeFromList(socketId) {
     }
   }
 }
+
+
 
 // Get all user
 app.get("/get-all-user", async (req, res) => {
@@ -3570,6 +3573,7 @@ app.get("/admin-get-rank-interactive-user", async (req, res) => {
     res.status(404).send({ success: false, message: "API key error" });
   }
 });
+
 //admin-manage-vote
 app.get("/admin-manage-vote", async (req, res) => {
   /**
