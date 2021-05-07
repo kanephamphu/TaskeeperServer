@@ -3481,12 +3481,12 @@ app.get("/admin-delete-user", async (req, res) => {
   }
 });
 //admin-getTypejob
-app.get("/admin-get-typejob", async (req, res) => {
+app.get("/admin-get-type-jobs", async (req, res) => {
   /**
-   * api_key
+   * api_key 
    */
   if (req.query.api_key == api_key) {
-    const type_job= await req.query.type_job;
+    const type_job = await req.query.type_job;
     const result = await adminController.getTypeJobs(type_job);
     res.status(200).send(result);
   } else {

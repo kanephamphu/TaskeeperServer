@@ -4,6 +4,7 @@ const users = require("../models/UsersModel");
 const search = require("../models/SearchQueryModel");
 const tags = require("../models/TagsModel");
 const transaction = require("../models/MoneyTransactionModel");
+const _ = require("lodash");
 //delete Task
 async function deleteTask(task_id) {
   try {
@@ -27,9 +28,9 @@ async function deleteUser(user_id) {
 //getTypeJobs
 async function getTypeJobs(type_job) {
   try {
-    let result = await tasks.find({ task_type: type_job });
+    let taskList = await tasks.find({task_type:type_job},{});
 
-    if (result) return { success: true, data: results };
+    if (taskList) return { success: true, data: taskList };
     else return { success: false };
   } catch (e) {
     throw e;
@@ -270,8 +271,8 @@ async function getRankTags() {
         datanew.push({name:dataTag[i].name,tag_count:dem,_id:dataTag[i]._id})
         
       }
-      sortRankTags(datanew);
-      return { success: true, data: datanew };
+      let datasort = _.orderBy(datanew, ['tag_count'],['desc']);
+      return { success: true, data: datasort };
     } else return { success: false };
   } catch (e) {
     throw e;
