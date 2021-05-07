@@ -2018,7 +2018,7 @@ io.sockets.on("connection", function (socket) {
               let result = await messageController.readUserMessage(
                 decoded._id,
                 data.receiver_id,
-                10,
+                100,
                 data.skip
               );
               socket.emit("sv-get-private-message", result);

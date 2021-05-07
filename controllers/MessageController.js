@@ -62,7 +62,7 @@ async function getNewestMessage(sender_id, receiver_id){
     return null;
 }
 
-async function readMessage(user_id,number_message, skip){
+async function readMessage(userId,numberOfMessage, skip){
     /*$or : [
         {
             "user._id" : { $eq : user_id}
@@ -75,9 +75,9 @@ async function readMessage(user_id,number_message, skip){
             $match : {
                 $or : [
                     {
-                        "user._id" : mongoose.Types.ObjectId(user_id)
+                        "user._id" : mongoose.Types.ObjectId(userId)
                     },{
-                        "receiver_id" : mongoose.Types.ObjectId(user_id)
+                        "receiver_id" : mongoose.Types.ObjectId(userId)
                     }
                 ]
             }
@@ -87,7 +87,7 @@ async function readMessage(user_id,number_message, skip){
                 _id : {"room" : "$room"}
             }
         }, {
-            $limit : 10
+            $limit : numberOfMessage
         },{
             "createdAt" : -1
         }
