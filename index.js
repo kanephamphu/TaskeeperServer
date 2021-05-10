@@ -1026,6 +1026,7 @@ io.sockets.on("connection", function (socket) {
                   decoded._id
                 );
                 if (checkExist(data.user_id)) {
+                  console.log(data.user_id);
                   let socketUserId = await getSocketID(task_owner_id);
                   let result = await notificationController.getTotalUnreadNotification(
                     task_owner_id
