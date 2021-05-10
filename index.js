@@ -2505,7 +2505,7 @@ io.sockets.on("connection", function (socket) {
           process.env.login_secret_key,
           async (err, decoded) => {
             if (err) {
-              socket.emit("sv-remove-saved-task", {
+              socket.emit("sv-add-fund", {
                 success: false,
                 errors: { message: "Token error", rule: "token" },
               });
