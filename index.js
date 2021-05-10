@@ -1537,7 +1537,7 @@ io.sockets.on("connection", function (socket) {
               );
               socket.emit("sv-send-message", result);
               if (checkExist(data.receiver_id)) {
-                const socketUserId = await getSocketID(data.user_id);
+                const socketUserId = await getSocketID(data.receiver_id);
                 const newestMessage = await messageController.getNewestMessage(
                   decoded._id,
                   data.receiver_id
