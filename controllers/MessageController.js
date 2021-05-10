@@ -92,7 +92,6 @@ async function readMessage(userId,numberOfMessage, skip){
             "createdAt" : -1
         }
     ]);
-    console.log(result)
     if(result){
         return {"success" : true, "data" : result};
     }else{
@@ -105,7 +104,6 @@ async function readUserMessage(user_id, sender_id, number_message, skip){
     let result = await message.find(
             {"user._id" : {$in : [user_id, sender_id]}},
     {},{limit : number_message, skip: skip});
-    console.log(result)
     if(result){
         return {"success" : true, "data" : result};
     }else{
