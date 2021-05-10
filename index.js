@@ -1209,6 +1209,7 @@ io.sockets.on("connection", function (socket) {
                 decoded._id
               );
               if (checkExist(data.user_id)) {
+                const socketUserId = await getSocketID(data.receiver_id);
                 let result = await notificationController.getTotalUnreadNotification(
                   data.user_id
                 );
@@ -1538,6 +1539,7 @@ io.sockets.on("connection", function (socket) {
               socket.emit("sv-send-message", result);
               if (checkExist(data.receiver_id)) {
                 const socketUserId = await getSocketID(data.receiver_id);
+                console.log(socketUserId);
                 const newestMessage = await messageController.getNewestMessage(
                   decoded._id,
                   data.receiver_id
