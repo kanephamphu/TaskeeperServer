@@ -3352,7 +3352,7 @@ function getSocketID(userId) {
 
 function addToList(userId, socketId) {
   console.log(userId);
-  console.log(heckExist(userId));
+  console.log(checkExist(userId));
   if(checkExist(userId) !== false){
     let clientInfo = new Object();
     clientInfo.userId = userId;
