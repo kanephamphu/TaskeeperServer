@@ -3351,10 +3351,13 @@ function getSocketID(userId) {
 }
 
 function addToList(userId, socketId) {
-  let clientInfo = new Object();
-  clientInfo.userId = userId;
-  clientInfo.socketId = socketId;
-  clients.push(clientInfo);
+  if(checkExist(userId) !== false){
+    let clientInfo = new Object();
+    clientInfo.userId = userId;
+    clientInfo.socketId = socketId;
+    clients.push(clientInfo);
+    console.log(clients);
+  }
 }
 
 function removeFromList(socketId) {
