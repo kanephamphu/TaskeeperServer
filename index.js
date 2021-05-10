@@ -3353,11 +3353,12 @@ function getSocketID(userId) {
 function addToList(userId, socketId) {
   console.log(userId);
   console.log(checkExist(userId));
-  if(checkExist(userId) !== false){
+  if(checkExist(userId) != false){
     let clientInfo = new Object();
     clientInfo.userId = userId;
     clientInfo.socketId = socketId;
     clients.push(clientInfo);
+    console.log(clients);
   }
 }
 
