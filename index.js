@@ -3354,12 +3354,13 @@ function addToList(userId, socketId) {
   console.log(userId);
   console.log(checkExist(userId));
   if(checkExist(userId) != false){
+    console.log(userId);
     let clientInfo = new Object();
     clientInfo.userId = userId;
     clientInfo.socketId = socketId;
     clients.push(clientInfo);
-    console.log(clients);
   }
+  console.log(clients);
 }
 
 function removeFromList(socketId) {
