@@ -97,7 +97,6 @@ io.sockets.on("connection", function (socket) {
                 secret_key: token,
               };
               addToList(ID, socket.id);
-              console.log(clients);
               socket.emit("sv-send-login-res", loginresult);
             }
           );
@@ -116,7 +115,6 @@ io.sockets.on("connection", function (socket) {
           success: false,
           errors: v.errors,
         };
-        console.log(loginresult);
         socket.emit("sv-send-login-res", loginresult);
       }
     } catch (e) {
@@ -320,7 +318,6 @@ io.sockets.on("connection", function (socket) {
                           data.working_time
                         );
                         if (typeof result !== "undefined") {
-                          console.log(result);
                           socket.emit("sv-new-tasks", result);
                           // Add tasks to news feed of followers, and add to wall
                           if ((result.success = true)) {
@@ -925,7 +922,6 @@ io.sockets.on("connection", function (socket) {
         socket.emit("sv-edu-info-detail", { success: false, errors: v.errors });
       } else {
         let eduInfo = await userController.getEduInfo(data._user_id);
-        console.log(eduInfo);
         socket.emit("sv-edu-info-detail", eduInfo);
       }
     } catch (e) {
@@ -1027,7 +1023,6 @@ io.sockets.on("connection", function (socket) {
                 );
                 if (checkExist(data.user_id)) {
                   let socketUserId = getSocketID(task_owner_id);
-                  console.log(socketUserId);
                   let result = await notificationController.getTotalUnreadNotification(
                     task_owner_id
                   );
@@ -1537,8 +1532,10 @@ io.sockets.on("connection", function (socket) {
                 null
               );
               socket.emit("sv-send-message", result);
+              console.log(data.receiver_id);
+              console.log(getSocketID(data.receiver_id));
               if (checkExist(data.receiver_id)) {
-                const socketUserId = await getSocketID(data.receiver_id);
+                const socketUserId = getSocketID(data.receiver_id);
                 console.log(socketUserId);
                 const newestMessage = await messageController.getNewestMessage(
                   decoded._id,
@@ -2160,7 +2157,6 @@ io.sockets.on("connection", function (socket) {
                 decoded._id,
                 data.notification_id
               );
-              console.log(result);
               socket.emit("sv-readed-notification", result);
             }
           }
@@ -2273,9 +2269,7 @@ io.sockets.on("connection", function (socket) {
         secret_key: "required",
         task_id: "required",
       });
-      console.log(data);
       const matched = await v.check();
-      console.log(matched);
       if (matched) {
         jwt.verify(
           data.secret_key,
@@ -2936,14 +2930,11 @@ io.sockets.on("connection", function (socket) {
               });
             }
             if (decoded) {
-              console.log(data);
-              console.log()
               let result = await tasksController.approveEmployeeToWork(
                 decoded._id,
                 data.task_id,
                 data.employee_id
               );
-              console.log(result);
               socket.emit("sv-approve-employee-to-work", result);
               if (result.success) {
                 notificationController.addNotification(
@@ -3175,7 +3166,6 @@ io.sockets.on("connection", function (socket) {
           data.lat,
           data.lng,
         ]);
-        console.log(jobLists);
         socket.emit("sv-get-near-job", jobLists);
 
         jwt.verify(
