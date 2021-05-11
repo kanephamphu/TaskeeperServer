@@ -2760,8 +2760,8 @@ io.sockets.on("connection", function (socket) {
                 addToList(decoded._id, socket.id);
               }
               let addNewTagsPromises = [];
-              for(let tag in data.tags){
-                addNewTagsPromises.push(userController.addTags(decoded._id, tag));
+              for(let index in data.tags){
+                addNewTagsPromises.push(userController.addTags(decoded._id, data.tags[index]));
               }
               let result = await Promise.all(addNewTagsPromises);
               if(result){
