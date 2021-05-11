@@ -2737,6 +2737,51 @@ io.sockets.on("connection", function (socket) {
     }
   });
 
+  socket.on("cl-send-new-tags", async (data) => {
+    try {
+      const v = new niv.Validator(data, {
+        secret_key: "required",
+        tags: "required"
+      });
+      const matched = await v.check();
+      if (matched) {
+        jwt.verify(
+          data.secret_key,
+          process.env.login_secret_key,
+          async (err, decoded) => {
+            if (err) {
+              socket.emit("sv-send-new-tags", {
+                success: false,
+                errors: { message: "Token error", rule: "token" },
+              });
+            }
+            if (decoded) {
+              if ((await checkExist(decoded._id)) == false) {
+                addToList(decoded._id, socket.id);
+              }
+              let addNewTagsPromises = [];
+              for(let tag in tags){
+                addNewTagsPromises.push(userController.addTags(decoded._id, tag));
+              }
+              let result = await Promise.all(addNewTagsPromises);
+              socket.emit("sv-send-new-tags", result);
+            }
+          }
+        );
+      } else {
+        socket.emit("sv-send-new-tags", {
+          success: false,
+          errors: v.errors,
+        });
+      }
+    } catch (e) {
+      socket.emit("sv-send-new-tags", {
+        success: false,
+        errors: { message: "Undefiend error" },
+      });
+    }
+  });
+
   //Client send vote user
   socket.on("cl-send-vote", async (data) => {
     try {
