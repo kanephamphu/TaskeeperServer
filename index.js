@@ -1460,7 +1460,6 @@ io.sockets.on("connection", function (socket) {
         month_of_birth: "required|integer",
         year_of_birth: "required|integer",
       });
-      console.log(data);
       const matched = await v.check();
       if (matched) {
         jwt.verify(
@@ -2706,7 +2705,7 @@ io.sockets.on("connection", function (socket) {
           process.env.login_secret_key,
           async (err, decoded) => {
             if (err) {
-              socket.emit("cl-send-new-location", {
+              socket.emit("sv-send-new-location", {
                 success: false,
                 errors: { message: "Token error", rule: "token" },
               });
@@ -2720,18 +2719,18 @@ io.sockets.on("connection", function (socket) {
                 data.lat,
                 data.lng
               );
-              socket.emit("cl-send-new-location", result);
+              socket.emit("sv-send-new-location", result);
             }
           }
         );
       } else {
-        socket.emit("cl-send-new-location", {
+        socket.emit("sv-send-new-location", {
           success: false,
           errors: v.errors,
         });
       }
     } catch (e) {
-      socket.emit("cl-send-new-location", {
+      socket.emit("sv-send-new-location", {
         success: false,
         errors: { message: "Undefiend error" },
       });
