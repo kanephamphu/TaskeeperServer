@@ -2766,8 +2766,9 @@ io.sockets.on("connection", function (socket) {
               let result = await Promise.all(addNewTagsPromises);
               if(result){
                 socket.emit("sv-send-new-tags", {success: true});
-              }
-              socket.emit("sv-send-new-tags", {success: false});
+              }else{
+                socket.emit("sv-send-new-tags", {success: false});
+              }   
             }
           }
         );
@@ -3398,16 +3399,13 @@ function getSocketID(userId) {
 }
 
 function addToList(userId, socketId) {
-  console.log(userId);
-  console.log(checkExist(userId));
-  if(checkExist(userId) != false){
-    console.log(userId);
+  if(checkExist(userId) == false){
     let clientInfo = new Object();
     clientInfo.userId = userId;
     clientInfo.socketId = socketId;
     clients.push(clientInfo);
+    console.log(clients);
   }
-  console.log(clients);
 }
 
 function removeFromList(socketId) {
