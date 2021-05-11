@@ -2760,11 +2760,14 @@ io.sockets.on("connection", function (socket) {
                 addToList(decoded._id, socket.id);
               }
               let addNewTagsPromises = [];
-              for(let tag in tags){
+              for(let tag in data.tags){
                 addNewTagsPromises.push(userController.addTags(decoded._id, tag));
               }
               let result = await Promise.all(addNewTagsPromises);
-              socket.emit("sv-send-new-tags", result);
+              if(result){
+                socket.emit("sv-send-new-tags", {success: true});
+              }
+              socket.emit("sv-send-new-tags", {success: false});
             }
           }
         );
