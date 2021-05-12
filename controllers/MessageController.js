@@ -30,7 +30,7 @@ async function addMessage(sender_id,receiver_id, text, image, video, audio){
                 "room" : room.room
             });
         if(result){
-            return {"success" : true}
+            return {"success" : true, "message": result}
         }else{
             return {"success" : false}
         }   
