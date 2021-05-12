@@ -55,7 +55,7 @@ async function addMessage(sender_id,receiver_id, text, image, video, audio){
 
 // Get newest message 
 async function getNewestMessage(sender_id, receiver_id){
-    let newestmessage = await message.findOne( {"participants.user_id" : {$in : [sender_id, receiver_id]}},{},{limit: 1});
+    let newestMessage = await message.findOne( {"user._id" : {$in : [sender_id, receiver_id]}},{});
     if(newestmessage){
         return newestmessage;
     }

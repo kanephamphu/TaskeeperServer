@@ -1532,11 +1532,8 @@ io.sockets.on("connection", function (socket) {
                 null
               );
               socket.emit("sv-send-message", result);
-              console.log(data.receiver_id);
-              console.log(getSocketID(data.receiver_id));
               if (checkExist(data.receiver_id)) {
                 const socketUserId = getSocketID(data.receiver_id);
-                console.log(socketUserId);
                 const newestMessage = await messageController.getNewestMessage(
                   decoded._id,
                   data.receiver_id
