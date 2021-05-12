@@ -1011,16 +1011,19 @@ io.sockets.on("connection", function (socket) {
                   data.price
                 );
                 socket.emit("sv-apply-job", result);
-                let task_owner_id = await tasksController.getTaskOwnerId(
-                  data.task_id
-                );
-                notificationController.addNotification(
-                  task_owner_id,
-                  "applied to your job",
-                  "applied",
-                  data.task_id,
-                  decoded._id
-                );
+                if(result.success == true){
+                  let task_owner_id = await tasksController.getTaskOwnerId(
+                    data.task_id
+                  );
+                  notificationController.addNotification(
+                    task_owner_id,
+                    "applied to your job",
+                    "applied",
+                    data.task_id,
+                    decoded._id
+                  );
+                }
+
                 if (checkExist(task_owner_id)) {
                   console.log("OK");
                   let socketUserId = getSocketID(task_owner_id);
@@ -3322,7 +3325,7 @@ app.post("/avataruploader", (req, res) => {
             "image/bmp",
           ];
           if (allowedExtension.indexOf(file.mimetype) != -1) {
-            let uploaded = await mediaController.avatarUpload(
+            let uploaded = await mediaController.mediaUpload(
               decoded._id,
               file.mimetype,
               file.size || 0,
@@ -3340,6 +3343,68 @@ app.post("/avataruploader", (req, res) => {
                 } else {
                   let result = await userController.avatarChange(
                     decoded._id,
+                    "https://taskeepererver.herokuapp.com/images/" + name
+                  );
+                  if (result.success == true) {
+                    res.send({ success: true });
+                  } else {
+                    res.send({ success: false });
+                  }
+                }
+              });
+            } else {
+              res.send({ success: false });
+            }
+          } else {
+            res.send({ success: false, error: "File format" });
+          }
+        }
+      }
+    );
+  } else {
+    res.send({ success: false, error: "Input data" });
+  }
+});
+
+app.post("/taskImageUploader", (req, res) => {
+  if (req.files && req.body.secret_key) {
+    jwt.verify(
+      req.body.secret_key,
+      process.env.login_secret_key,
+      async (err, decoded) => {
+        if (err) {
+          res.send({ success: false });
+        }
+        if (decoded) {
+          const file = req.files.file;
+          const taskId = req.body.postId;
+          const allowedExtension = [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/gif",
+            "image/bmp",
+          ];
+          if (allowedExtension.indexOf(file.mimetype) != -1) {
+            let uploaded = await mediaController.mediaUpload(
+              decoded._id,
+              file.mimetype,
+              file.size || 0,
+              "./public/images"
+            );
+            if (uploaded.success == true) {
+              let mimetype = file.mimetype;
+              name =
+                uploaded.data +
+                "." +
+                mimetype.substring(mimetype.indexOf("/") + 1, mimetype.length);
+              file.mv("./public/images/" + name, async function (err) {
+                if (err) {
+                  res.send(err);
+                } else {
+                  let result = await userController.uploadTaskImage(
+                    decoded._id,
+                    taskId,
                     "https://taskeepererver.herokuapp.com/images/" + name
                   );
                   if (result.success == true) {

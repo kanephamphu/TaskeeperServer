@@ -167,6 +167,9 @@ var Tasks= new mongoose.Schema({
         type : String,
         default : 'active',
         enum : ['deleted','active']
+    }, 
+    image: {
+        type: String
     }
 });
 

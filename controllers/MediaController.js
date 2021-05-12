@@ -1,6 +1,6 @@
 const media = require("../models/MediaModel");
 
-async function avatarUpload(owner_id, mimetype, size, fileLocation){
+async function mediaUpload(owner_id, mimetype, size, fileLocation){
     try{
         let mediaDocs = {
             "owner_id" : owner_id,

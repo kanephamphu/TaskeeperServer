@@ -768,6 +768,18 @@ async function updateAvatarTaskData(user_id, avatar) {
   }
 }
 
+async function uploadTaskImage(taskOwnerId, taskId, imageUrl){
+  let result = task.updateOne(
+    { _id: taskId, task_owner_id: taskOwnerId },
+    { image: imageUrl }
+  );
+  if (result) {
+    return { sucess: true };
+  } else {
+    return { success: false };
+  }
+}
+
 // Recommend task for candidate
 async function recommendTask(user_id) {
   try {
@@ -1003,3 +1015,4 @@ module.exports.getTaskDetail = getTaskDetail;
 module.exports.recommendTaskBasedOnTaskID = recommendTaskBasedOnTaskID;
 module.exports.getApprovedJobs = getApprovedJobs;
 module.exports.getNearTask = getNearTask;
+module.exports.uploadTaskImage = uploadTaskImage;
