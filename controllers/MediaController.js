@@ -19,5 +19,5 @@ async function mediaUpload(owner_id, mimetype, size, fileLocation){
     }
 }
 
-module.exports.avatarUpload = avatarUpload;
+module.exports.mediaUpload = mediaUpload;
 //avatarUpload("123213", "image/jpeg", "234234", "/images");

@@ -214,6 +214,7 @@ async function getTasks(number_task, skip) {
           "end_year",
           "working_time",
           "isDone",
+          "image"
         ],
         { limit: number_task, skip: skip }
       )
