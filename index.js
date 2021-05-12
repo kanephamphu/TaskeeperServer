@@ -1025,7 +1025,6 @@ io.sockets.on("connection", function (socket) {
                 }
 
                 if (checkExist(task_owner_id)) {
-                  console.log("OK");
                   let socketUserId = getSocketID(task_owner_id);
                   let result = await notificationController.getTotalUnreadNotification(
                     task_owner_id
@@ -2993,6 +2992,16 @@ io.sockets.on("connection", function (socket) {
                   data.task_id,
                   decoded._id
                 );
+                if (checkExist(data.employee_id)) {
+                  let socketUserId = getSocketID(data.employee_id);
+                  let result = await notificationController.getTotalUnreadNotification(
+                    data.employee_id
+                  );
+                  io.to(socketUserId).emit(
+                    "sv-get-total-unread-notification",
+                    result
+                  );
+                }
               }
             }
           }
