@@ -3382,7 +3382,7 @@ app.post("/taskImageUploader", (req, res) => {
       process.env.login_secret_key,
       async (err, decoded) => {
         if (err) {
-          res.send({ success: false });
+          res.status(400).send({ success: false, message: "Invalid token" });
         }
         if (decoded) {
           const file = req.files.file;

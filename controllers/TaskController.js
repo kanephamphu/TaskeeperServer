@@ -775,7 +775,7 @@ async function uploadTaskImage(taskOwnerId, taskId, imageUrl){
     { image: imageUrl }
   );
   if (result) {
-    return { sucess: true };
+    return { success: true };
   } else {
     return { success: false };
   }
