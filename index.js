@@ -3395,14 +3395,14 @@ app.post("/taskImageUploader", (req, res) => {
             "image/bmp",
           ];
           if (allowedExtension.indexOf(file.mimetype) != -1) {
-            let uploaded = await mediaController.mediaUpload(
+            const uploaded = await mediaController.mediaUpload(
               decoded._id,
               file.mimetype,
               file.size || 0,
               "./public/images"
             );
             if (uploaded.success == true) {
-              let mimetype = file.mimetype;
+              const mimetype = file.mimetype;
               name =
                 uploaded.data +
                 "." +
@@ -3411,13 +3411,13 @@ app.post("/taskImageUploader", (req, res) => {
                 if (err) {
                   res.send(err);
                 } else {
-                  let result = await userController.uploadTaskImage(
+                  let result = await taskController.uploadTaskImage(
                     decoded._id,
                     taskId,
                     "https://taskeepererver.herokuapp.com/images/" + name
                   );
                   if (result.success == true) {
-                    res.send({ success: true });
+                    res.send({ success: true, status: 200});
                   } else {
                     res.send({ success: false });
                   }
