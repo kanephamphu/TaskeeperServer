@@ -3411,7 +3411,7 @@ app.post("/taskImageUploader", (req, res) => {
                 if (err) {
                   res.send(err);
                 } else {
-                  let result = await taskController.uploadTaskImage(
+                  const result = await tasksController.uploadTaskImage(
                     decoded._id,
                     taskId,
                     "https://taskeepererver.herokuapp.com/images/" + name
