@@ -770,7 +770,7 @@ async function updateAvatarTaskData(user_id, avatar) {
 }
 
 async function uploadTaskImage(taskOwnerId, taskId, imageUrl){
-  let result = task.updateOne(
+  let result = await task.updateOne(
     { _id: taskId, task_owner_id: taskOwnerId },
     { image: imageUrl }
   );
