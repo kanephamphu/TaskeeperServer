@@ -22,11 +22,13 @@ async function addMoneyTransaction(sender_id, receiver_id, money_amount, descrip
                 "description" : description,
                 "type" : 'user'
             };
+            
             await moneytransaction.create([transaction_docs], { session: session });
             await user.updateOne({"_id" : sender_id}, {"wallet.amount" : sender_amount},  { session: session });
             await user.updateOne({"_id" : receiver_id}, {"wallet.amount" : receiver_amount}, { session: session }); 
             await session.commitTransaction();
             session.endSession();
+            return {"success": true};
         }catch(e){
             await session.abortTransaction();
             session.endSession();
