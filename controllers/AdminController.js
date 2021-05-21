@@ -308,6 +308,39 @@ async function getStatisticalByYear(year) {
     throw e;
   }
 }
+
+async function isActiveUser(user_id) {
+  try {
+    var result = await users.updateOne(
+      { _id: user_id },
+      { status: "isActive"}
+    );
+    if (result) {
+      return { success: true };
+    } else return { success: false, errors: { message: "Undefined errors" } };
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+async function unActiveUser(user_id) {
+  try {
+    var result = await users.updateOne(
+      { _id: user_id },
+      { status: "unActive"}
+    );
+    if (result) {
+      return { success: true };
+    } else return { success: false, errors: { message: "Undefined errors" } };
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+module.exports.isActiveUser=isActiveUser;
+module.exports.unActiveUser = unActiveUser;
 module.exports.getStatisticalByYear=getStatisticalByYear;
 module.exports.getRankTags = getRankTags;
 module.exports.getTransaction = getTransaction;
