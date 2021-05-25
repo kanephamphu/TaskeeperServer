@@ -3805,3 +3805,29 @@ app.get("/admin-get-rank-tags-choosed", async (req, res) => {
     res.status(404).send({ success: false, message: "API key error" });
   }
 });
+
+app.get("/admin-set-isActive-user", async (req, res) => {
+  /**
+   * api_key
+   */
+  if (req.query.api_key == api_key) {
+    const user_id = req.query.user_id;
+    const result = await adminController.isActiveUser(user_id);
+    res.status(200).send(result);
+  } else {
+    res.status(404).send({ success: false, message: "API key error" });
+  }
+});
+
+app.get("/admin-set-unActive-user", async (req, res) => {
+  /**
+   * api_key
+   */
+  if (req.query.api_key == api_key) {
+    const user_id = req.query.user_id;
+    const result = await adminController.unActiveUser(user_id);
+    res.status(200).send(result);
+  } else {
+    res.status(404).send({ success: false, message: "API key error" });
+  }
+});
