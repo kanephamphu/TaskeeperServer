@@ -1394,7 +1394,7 @@ async function searchUserAutoComplete(searchString){
       $text : {
           $search : searchString
       }
-  },["_id", "first_name", "last_name", "avatar"],{limit : 10}).sort({'search_count' : -1});
+  },["_id", "first_name", "last_name", "avatar", "email.current_email"],{limit : 10}).sort({'search_count' : -1});
 
   return {success: true, status: 200, data: searchResult};    
 }
