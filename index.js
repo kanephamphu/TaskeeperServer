@@ -376,6 +376,7 @@ io.sockets.on("connection", function (socket) {
                           result.data._id
                         );
                         wallController.addWall(decoded._id, result.data._id);
+                        socket.broadcast.emit('new-task-recommend', {data: result});
                       }
                     } else {
                       socket.emit("sv-new-tasks", {
