@@ -243,6 +243,7 @@ async function viewTaskHistoryList(employee_id, number_of_skip) {
           "month_of_working_done",
           "year_of_working_done",
           "votes.vote_point",
+          "image"
         ],
         { skip: number_of_skip }
       )

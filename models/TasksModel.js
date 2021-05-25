@@ -120,7 +120,7 @@ var Tasks= new mongoose.Schema({
         },
         status : {
             type : String,
-            enum : ["approved", "unapproved", "deleted"],
+            enum : ["approved", "unapproved", "deleted", "done"],
             default : "approved" 
         }
     }],

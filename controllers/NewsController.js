@@ -115,7 +115,7 @@ async function getNewsData(user_id, number_task, skip){
             $in : list_task_id
         }}, ["_id", "task_title", "task_description", "created_time","location", "price.price_type", "price.floor_price", "price.ceiling_price","task_owner_id", 
         "task_owner_first_name", "task_owner_last_name", "task_owner_avatar", 
-        "end_day", "end_month", "end_year", "working_time"]).sort({created_time : -1});
+        "end_day", "end_month", "end_year", "working_time", "image"]).sort({created_time : -1});
         if(result){
             let data = [];
             for(let i of result){
@@ -142,7 +142,8 @@ async function getNewsData(user_id, number_task, skip){
                         "end_year" :i.end_year,
                         "working_time" : i.working_time,
                         "isSaved" : isSaved.isSaved,
-                        "isApplied" : isApplied.isApplied
+                        "isApplied" : isApplied.isApplied,
+                        "image": i.image
                     }
                     data.push(docs);
                 }
