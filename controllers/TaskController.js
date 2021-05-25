@@ -983,6 +983,19 @@ async function checkApplied(user_id, task_id) {
   }
 }
 
+async function setEmployeeDoneStatus(taskOwnerId, taskId, employeeId){
+  const result = await task.updateOne({_id: taskId, task_owner_id: taskOwnerId, "work_employee_list.employee_id": employeeId},
+  {
+    "$set" : {
+    "work_employee_list.$.status" : "done"
+  }});
+
+  if(result){
+    return { success: true};
+  }
+  return { success: false};
+}
+
 
 //getWorkEmployee("5fb378656eae3400041711a3");
 //deleteApplicationJob("5f2546def9ca2b000466c467","5f3629ac1e62e1000425540c")
@@ -1018,3 +1031,4 @@ module.exports.recommendTaskBasedOnTaskID = recommendTaskBasedOnTaskID;
 module.exports.getApprovedJobs = getApprovedJobs;
 module.exports.getNearTask = getNearTask;
 module.exports.uploadTaskImage = uploadTaskImage;
+module.exports.setEmployeeDoneStatus = setEmployeeDoneStatus;

@@ -3249,6 +3249,37 @@ io.sockets.on("connection", function (socket) {
     }
   });
 
+  // Send work invitation
+  socket.on("cl-set-employee-done-status", async (data) => {
+    try {
+      const v = new niv.Validator(data, {
+        secret_key: "required",
+        taskId: "required",
+        employeeId: "required",
+      });
+      const matched = await v.check();
+      if (matched) {
+        jwt.verify(
+          data.secret_key,
+          process.env.login_secret_key,
+          async (err, decoded) => {
+            if (decoded) {
+              const result = await tasksController.setEmployeeDoneStatus(decoded._id, data.taskId, data.employeeId);
+              socket.emit("sv-set-employee-done-status", result);
+            }
+          }
+        );
+      } else {
+        socket.emit("sv-set-employee-done-status", { success: false, errors: v.errors });
+      }
+    } catch (e) {
+      socket.emit("sv-set-employee-done-status", {
+        success: false,
+        errors: { message: "Undefined error" },
+      });
+    }
+  });
+
   //Disconnect
   socket.on("disconnect", function () {
     removeFromList(socket.id);
