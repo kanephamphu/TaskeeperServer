@@ -34,6 +34,7 @@ const adminController = require("./controllers/AdminController");
 const media = require("./models/MediaModel");
 const user = require("./models/UsersModel");
 const api_key = process.env.APIKEY || "Taibodoiqua";
+const STRIPE_API_KEY = process.env.STRIPE_API_KEY || "";
 const cors = require("cors");
 server.listen(process.env.PORT || 3000);
 require("dotenv").config();

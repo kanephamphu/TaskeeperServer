@@ -234,7 +234,7 @@ async function updateWalletAmount(userId, moneyAmount){
     return false;
   }
 
-  const updatedUser = await user.updateOne({ _id: user_id }, {"wallet.amount" : Number(walletAmount - moneyAmount)});
+  const updatedUser = await user.updateOne({ _id: userId }, {"wallet.amount" : Number(walletAmount) - Number(moneyAmount)});
 
   if(updatedUser){
     return true;
