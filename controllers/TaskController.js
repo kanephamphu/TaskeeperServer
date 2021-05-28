@@ -123,7 +123,7 @@ async function addTask(
   working_time
 ) {
   try {
-    const checkIfMoneyAmountMinus = await userController.updateWalletAmount(user_id, 2);
+    const checkIfMoneyAmountMinus = await userController.updateWalletAmount(task_owner_id, 2);
     if(checkIfMoneyAmountMinus == false){
       return {"success": false, errors: { message: "Money amount is not enough" }};
     }
