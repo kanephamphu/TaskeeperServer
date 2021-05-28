@@ -122,6 +122,12 @@ async function addTask(
   working_time
 ) {
   try {
+    const checkIfMoneyAmountMinus = await userController.updateWalletAmount(user_id, 2);
+    if(checkIfMoneyAmountMinus == false){
+      return {"success": false, errors: { message: "Money amount is not enough" }};
+    }
+
+    userController.updateWalletAmount(task_owner_id, 2);
     if (endDay != null && endMonth != null && endYear != null) {
       let validDay = isValidDay(endDay + "/" + endMonth + "/" + endYear);
       console.log(validDay);

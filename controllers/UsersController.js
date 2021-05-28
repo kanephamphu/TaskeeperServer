@@ -9,6 +9,8 @@ const isValidDay = require("is-valid-date");
 const fetch = require("node-fetch");
 const { URLSearchParams } = require("url");
 const { resolve } = require("path");
+const paymentHistoryController = require("./PaymenHistoryController");
+
 //Send verify account email
 async function sendVerifyAccountEMail(user_id) {
   try {
@@ -224,6 +226,23 @@ async function checkLogin(loginquery, passwordquery) {
     };
   }
 }
+
+async function updateWalletAmount(userId, moneyAmount){
+  const walletAmount = await paymentHistoryController.getCurrentWalletAmount(userId);
+
+  if(moneyAmount>walletAmount){
+    return false;
+  }
+
+  const updatedUser = await user.updateOne({ _id: user_id }, {"wallet.amount" : Number(walletAmount - moneyAmount)});
+
+  if(updatedUser){
+    return true;
+  }
+
+  return false;
+}
+
 //Register new account
 async function register(first_name, last_name, email, phone_number, password) {
   try {
@@ -1454,3 +1473,4 @@ module.exports.addListTags = addListTags;
 module.exports.checkFollowed = checkFollowed;
 module.exports.checkTaskSaved = checkTaskSaved;
 module.exports.searchUserAutoComplete = searchUserAutoComplete;
+module.exports.updateWalletAmount = updateWalletAmount;

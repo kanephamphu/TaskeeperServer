@@ -352,7 +352,7 @@ var UserChema = new mongoose.Schema({
   wallet: {
     amount: {
       type: Number,
-      default: 0,
+      default: 5,
     },
   },
   location_history: {

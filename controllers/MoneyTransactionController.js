@@ -13,8 +13,8 @@ async function addMoneyTransaction(sender_id, receiver_id, money_amount, descrip
         const session = await mongoose.startSession();
         session.startTransaction();
         try{
-            sender_amount = sender_amount - money_amount;
-            receiver_amount = receiver_amount + money_amount;
+            sender_amount = Number(sender_amount - money_amount);
+            receiver_amount = Number(receiver_amount + money_amount);
             let transaction_docs = {
                 "sender_id" : sender_id,
                 "receiver_id" : receiver_id,
