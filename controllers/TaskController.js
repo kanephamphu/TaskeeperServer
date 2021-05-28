@@ -127,8 +127,7 @@ async function addTask(
     if(checkIfMoneyAmountMinus == false){
       return {"success": false, errors: { message: "Money amount is not enough" }};
     }
-
-    userController.updateWalletAmount(task_owner_id, 2);
+    
     notificationController.addNotification(task_owner_id, "Your money wallet is reduced $2", "moneyTransaction", null, null);
     if (endDay != null && endMonth != null && endYear != null) {
       let validDay = isValidDay(endDay + "/" + endMonth + "/" + endYear);
