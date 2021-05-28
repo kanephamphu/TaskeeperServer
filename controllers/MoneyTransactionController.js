@@ -13,8 +13,8 @@ async function addMoneyTransaction(sender_id, receiver_id, money_amount, descrip
         const session = await mongoose.startSession();
         session.startTransaction();
         try{
-            sender_amount = Number(sender_amount - money_amount);
-            receiver_amount = Number(receiver_amount + money_amount);
+            sender_amount = Number(sender_amount) - Number(money_amount);
+            receiver_amount = Number(receiver_amount) + Number(money_amount);
             let transaction_docs = {
                 "sender_id" : sender_id,
                 "receiver_id" : receiver_id,
@@ -28,6 +28,8 @@ async function addMoneyTransaction(sender_id, receiver_id, money_amount, descrip
             await user.updateOne({"_id" : receiver_id}, {"wallet.amount" : receiver_amount}, { session: session }); 
             await session.commitTransaction();
             session.endSession();
+            notificationController.addNotification(sender_id, `Your money wallet is reduced $${money_amount}`, "moneyTransaction", null, null);
+            notificationController.addNotification(sender_id, `Your money wallet is increased $${money_amount}`, "moneyTransaction", null, null);
             return {"success": true};
         }catch(e){
             await session.abortTransaction();

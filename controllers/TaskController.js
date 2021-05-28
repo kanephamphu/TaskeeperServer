@@ -4,6 +4,7 @@ const isValidDay = require("is-valid-date");
 const { findOne } = require("../models/UsersModel");
 const userController = require("../controllers/UsersController");
 const { permittedCrossDomainPolicies } = require("helmet");
+const notificationController = require("./NotificationController");
 const fetch = require("node-fetch");
 const newsController = require("../controllers/NewsController");
 const _ = require("lodash");
@@ -128,6 +129,7 @@ async function addTask(
     }
 
     userController.updateWalletAmount(task_owner_id, 2);
+    notificationController.addNotification(task_owner_id, "Your money wallet is reduced $2", "moneyTransaction", null, null);
     if (endDay != null && endMonth != null && endYear != null) {
       let validDay = isValidDay(endDay + "/" + endMonth + "/" + endYear);
       console.log(validDay);
