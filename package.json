@@ -29,6 +29,7 @@
     "random-token": "0.0.8",
     "random-token-generator": "^1.0.2",
     "socket.io": "^2.3.0",
+    "stripe": "^8.150.0",
     "validator": "^13.1.1"
   }
 }

@@ -34,7 +34,9 @@ const adminController = require("./controllers/AdminController");
 const media = require("./models/MediaModel");
 const user = require("./models/UsersModel");
 const api_key = process.env.APIKEY || "Taibodoiqua";
-const STRIPE_API_KEY = process.env.STRIPE_API_KEY || "";
+const STRIPE_API_KEY = process.env.STRIPE_API_KEY || "sk_test_51Iw8tuHQgcgz7McqsCPx0Jhqc0qtpWPGzS7eUJgiFgA4hkryyjxQtMgy1nIt60ebBTP58XkKi33lst5ZuM3NvGse00Qk2OWJ9C";
+const Stripe = require('stripe');
+const stripe = Stripe(STRIPE_API_KEY);
 const cors = require("cors");
 server.listen(process.env.PORT || 3000);
 require("dotenv").config();
@@ -59,6 +61,9 @@ app.use(express.static("./public"));
 app.use(upload());
 app.use(express.json({ limit: "300kb" })); // body-parser defaults to a body size limit of 300kb
 let clients = [];
+stripe.balance.retrieve(function(err, balance) {
+  console.log(balance);
+});
 io.sockets.on("connection", function (socket) {
   console.log(socket.id + " is connecting");
   //Login server listener, if the account status is unActive send result unActive to client
