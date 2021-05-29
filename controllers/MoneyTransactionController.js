@@ -29,7 +29,7 @@ async function addMoneyTransaction(sender_id, receiver_id, money_amount, descrip
             await session.commitTransaction();
             session.endSession();
             notificationController.addNotification(sender_id, `Your money wallet is reduced $${money_amount}`, "moneyTransaction", null, null);
-            notificationController.addNotification(sender_id, `Your money wallet is increased $${money_amount}`, "moneyTransaction", null, null);
+            notificationController.addNotification(receiver_id, `Your money wallet is increased $${money_amount}`, "moneyTransaction", null, null);
             return {"success": true};
         }catch(e){
             await session.abortTransaction();
