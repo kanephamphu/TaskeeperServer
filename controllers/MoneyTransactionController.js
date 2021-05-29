@@ -1,6 +1,7 @@
 const moneytransaction = require('../models/MoneyTransactionModel');
 const paymentcontroller = require('../controllers/PaymenHistoryController');
 const mongoose = require('mongoose');
+const notificationController = require("./NotificationController");
 const user = require('../models/UsersModel');
 //Add money transaction
 async function addMoneyTransaction(sender_id, receiver_id, money_amount, description){
