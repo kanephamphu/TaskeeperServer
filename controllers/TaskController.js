@@ -822,6 +822,7 @@ async function recommendTask(user_id) {
         "task_owner_avatar",
         "task_owner_id",
         "task_description",
+        "image"
       ]
     );
     if (result) {
@@ -862,6 +863,7 @@ async function recommendTaskBasedOnTaskID(task_id) {
         "task_owner_avatar",
         "task_owner_id",
         "task_description",
+        "image"
       ]
     );
     if (result) {
